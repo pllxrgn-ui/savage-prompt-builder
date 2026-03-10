@@ -3,6 +3,8 @@ export interface TemplateField {
   label: string;
   placeholder: string;
   required?: boolean;
+  question?: string;
+  color?: string;
 }
 
 export interface Template {
@@ -13,14 +15,15 @@ export interface Template {
   description: string;
   fields: TemplateField[];
   defaultNegative?: string;
+  tip?: string;
 }
 
 export type TemplateGroupId =
-  | "photography"
-  | "illustration"
-  | "design"
-  | "3d"
-  | "experimental";
+  | "design-print"
+  | "branding"
+  | "art"
+  | "product"
+  | "other";
 
 export interface TemplateGroup {
   id: TemplateGroupId;

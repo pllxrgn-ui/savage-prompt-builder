@@ -12,7 +12,7 @@ import { formatForGenerator, } from "./generator-formats";
 /**
  * Assemble the full positive prompt from template output + styles + palette + keywords + phrases.
  */
-function assemblePositive(templatePrompt, styles, palette, keywords, phrases) {
+function assemblePositive(templatePrompt, styles, palette, keywords, phrases, mockup) {
     const parts = [templatePrompt];
     if (styles.length > 0) {
         parts.push(styles.join(", "));
@@ -25,6 +25,18 @@ function assemblePositive(templatePrompt, styles, palette, keywords, phrases) {
     }
     if (phrases.length > 0) {
         parts.push(phrases.join(", "));
+    }
+    if (mockup) {
+        const mockupParts = [];
+        if (mockup.item)
+            mockupParts.push(`on a ${mockup.item}`);
+        if (mockup.color)
+            mockupParts.push(mockup.color);
+        if (mockup.display)
+            mockupParts.push(mockup.display);
+        if (mockupParts.length > 0) {
+            parts.push(mockupParts.join(", "));
+        }
     }
     return parts.join(", ");
 }
@@ -41,7 +53,7 @@ export function buildPrompt(input) {
     // Step 1: Build core prompt from template fields
     const templatePrompt = buildTemplatePrompt(input.templateId, input.fields);
     // Step 2: Assemble full positive prompt
-    const positive = assemblePositive(templatePrompt, input.styles, input.palette, input.keywords, input.phrases);
+    const positive = assemblePositive(templatePrompt, input.styles, input.palette, input.keywords, input.phrases, input.mockup);
     // Step 3: Negative prompt (as-is)
     const negative = input.negative;
     // Step 4: No extra parameters by default (can be extended later)

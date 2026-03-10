@@ -59,6 +59,8 @@ export interface KeywordCategory {
 export interface StyleEntry {
   label: string;
   category: string;
+  content?: string;
+  defaultActive?: boolean;
 }
 
 export interface Phrase {
@@ -85,14 +87,28 @@ export interface StylePack {
   preview?: string;
 }
 
-export interface MockupConfig {
-  templateId: string;
-  layers: MockupLayer[];
-}
-
-export interface MockupLayer {
+export interface MockupItem {
   id: string;
   label: string;
-  type: "background" | "overlay" | "frame" | "shadow";
-  options: string[];
+  prompt: string;
+}
+
+export interface MockupColor {
+  id: string;
+  label: string;
+  value: string;
+}
+
+export interface MockupDisplay {
+  id: string;
+  label: string;
+  value: string;
+}
+
+export interface MockupConfig {
+  templateId: string;
+  label: string;
+  items: MockupItem[];
+  colors: MockupColor[];
+  displays: MockupDisplay[];
 }

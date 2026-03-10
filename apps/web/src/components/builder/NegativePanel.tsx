@@ -9,7 +9,10 @@ export function NegativePanel() {
   const setNegative = useBuilderStore((s) => s.setNegative);
   const templateId = useBuilderStore((s) => s.activeTemplateId);
 
-  const presets = templateId ? (NEGATIVE_PRESETS[templateId] ?? []) : [];
+  const presetEntry = templateId
+    ? (NEGATIVE_PRESETS[templateId] ?? NEGATIVE_PRESETS._default)
+    : NEGATIVE_PRESETS._default;
+  const presets = presetEntry?.presets ?? [];
 
   return (
     <div className="rounded-xl border border-border bg-bg-2 overflow-hidden">

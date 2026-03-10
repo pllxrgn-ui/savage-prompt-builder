@@ -1,21 +1,20 @@
 import { describe, it, expect } from "vitest";
 import { buildTemplatePrompt, templateBuilders } from "../src/template-builders";
 
-/** All 20 template IDs that must have a builder */
+/** All 21 template IDs that must have a builder */
 const TEMPLATE_IDS = [
-  "portrait", "landscape", "street", "product",
-  "digital-art", "anime", "watercolor", "comic",
-  "logo", "ui-mockup", "poster", "pattern",
-  "3d-render", "isometric", "arch-viz", "character-3d",
-  "abstract", "surreal", "pixel-art", "collage",
+  "clothing", "social", "marketing", "brand", "threeD", "jewelry",
+  "collection", "freestyle", "album", "poster", "sticker", "wallpaper",
+  "mockup", "tattoo", "sneaker", "pattern", "character", "bookcover",
+  "pin", "carwrap", "meme",
 ];
 
 describe("templateBuilders", () => {
-  it("has a builder for all 20 templates", () => {
+  it("has a builder for all 21 templates", () => {
     for (const id of TEMPLATE_IDS) {
       expect(templateBuilders[id]).toBeDefined();
     }
-    expect(Object.keys(templateBuilders)).toHaveLength(20);
+    expect(Object.keys(templateBuilders)).toHaveLength(21);
   });
 
   it("returns non-empty string for each builder with minimal input", () => {
@@ -28,63 +27,63 @@ describe("templateBuilders", () => {
 });
 
 describe("buildTemplatePrompt", () => {
-  it("uses the correct builder for portrait", () => {
-    const result = buildTemplatePrompt("portrait", {
-      subject: "A young woman with freckles",
-      setting: "Natural light studio",
-      mood: "Ethereal",
-      camera: "Sony A7III, 85mm f/1.4",
+  it("uses the correct builder for clothing", () => {
+    const result = buildTemplatePrompt("clothing", {
+      subject: "Roaring lion",
+      style: "Streetwear",
+      mood: "Bold",
+      colors: "Black and gold",
     });
-    expect(result).toContain("A young woman with freckles");
-    expect(result).toContain("Natural light studio");
-    expect(result).toContain("Ethereal");
-    expect(result).toContain("Sony A7III");
-    expect(result).toContain("professional photography");
+    expect(result).toContain("Roaring lion");
+    expect(result).toContain("Streetwear style");
+    expect(result).toContain("Bold mood");
+    expect(result).toContain("print-ready");
   });
 
-  it("uses the correct builder for landscape", () => {
-    const result = buildTemplatePrompt("landscape", {
-      scene: "Misty mountain valley at sunrise",
-      weather: "Golden hour, low fog",
-    });
-    expect(result).toContain("Misty mountain valley at sunrise");
-    expect(result).toContain("Golden hour");
-    expect(result).toContain("landscape photography");
-  });
-
-  it("uses the correct builder for logo", () => {
-    const result = buildTemplatePrompt("logo", {
-      brand: "Nebula Labs",
-      style: "Geometric, minimal",
-      icon: "Abstract star",
+  it("uses the correct builder for brand", () => {
+    const result = buildTemplatePrompt("brand", {
+      brandname: "Nebula Labs",
+      subject: "Abstract star",
+      style: "Geometric minimal",
     });
     expect(result).toContain('"Nebula Labs"');
-    expect(result).toContain("Geometric, minimal");
     expect(result).toContain("Abstract star");
-    expect(result).toContain("logo design");
+    expect(result).toContain("brand logo design");
+    expect(result).toContain("vector quality");
   });
 
-  it("uses the correct builder for 3d-render", () => {
-    const result = buildTemplatePrompt("3d-render", {
+  it("uses the correct builder for threeD", () => {
+    const result = buildTemplatePrompt("threeD", {
       subject: "Floating crystal",
       material: "Iridescent glass",
       lighting: "Studio HDRI",
-      renderer: "Octane render, 8K",
     });
-    expect(result).toContain("Floating crystal");
-    expect(result).toContain("Iridescent glass");
-    expect(result).toContain("3D render");
+    expect(result).toContain("3D render of Floating crystal");
+    expect(result).toContain("Iridescent glass material");
+    expect(result).toContain("octane render quality");
   });
 
-  it("uses the correct builder for pixel-art", () => {
-    const result = buildTemplatePrompt("pixel-art", {
-      scene: "Fantasy tavern",
-      resolution: "256x224",
-      palette: "NES palette",
-      style: "SNES-era RPG",
+  it("uses the correct builder for tattoo", () => {
+    const result = buildTemplatePrompt("tattoo", {
+      subject: "Koi fish",
+      style: "Japanese traditional",
+      placement: "forearm",
     });
-    expect(result).toContain("Fantasy tavern");
-    expect(result).toContain("pixel art");
+    expect(result).toContain("Koi fish tattoo design");
+    expect(result).toContain("Japanese traditional tattoo style");
+    expect(result).toContain("designed for forearm");
+    expect(result).toContain("tattoo flash sheet quality");
+  });
+
+  it("uses the correct builder for pattern", () => {
+    const result = buildTemplatePrompt("pattern", {
+      subject: "Tropical leaves",
+      style: "Modern minimal",
+      colors: "Green and cream",
+    });
+    expect(result).toContain("seamless tileable pattern");
+    expect(result).toContain("Tropical leaves motif");
+    expect(result).toContain("fabric-ready");
   });
 
   it("falls back to comma-joined fields for unknown template", () => {
@@ -96,12 +95,11 @@ describe("buildTemplatePrompt", () => {
   });
 
   it("handles empty fields gracefully", () => {
-    const result = buildTemplatePrompt("portrait", {
-      subject: "A man",
+    const result = buildTemplatePrompt("clothing", {
+      subject: "A dragon",
     });
-    expect(result).toContain("A man");
-    expect(result).toContain("professional photography");
-    // Should not have "in undefined" or trailing commas
+    expect(result).toContain("A dragon");
+    expect(result).toContain("print-ready");
     expect(result).not.toContain("undefined");
   });
 });
@@ -110,26 +108,27 @@ describe("buildTemplatePrompt", () => {
 
 describe("template builder snapshots", () => {
   const SNAPSHOT_INPUTS: Record<string, Record<string, string>> = {
-    portrait: { subject: "A young woman", setting: "Golden hour field", mood: "Warm", camera: "Canon 5D" },
-    landscape: { scene: "Mountain lake", weather: "Sunrise fog", composition: "Rule of thirds", camera: "Nikon Z7" },
-    street: { scene: "Tokyo alley at night", subject: "Lone figure", mood: "Noir", style: "35mm film" },
-    product: { product: "Perfume bottle", surface: "Marble", lighting: "Rim light", style: "Editorial" },
-    "digital-art": { subject: "Dragon on crystal", style: "Fantasy realism", colors: "Purple and gold", mood: "Epic" },
-    anime: { character: "Cyberpunk mage", action: "Casting spell", style: "Ghibli", background: "Neon rooftop" },
-    watercolor: { subject: "Wildflowers", technique: "Wet-on-wet", colors: "Soft pastels", paper: "Cold press" },
-    comic: { scene: "Hero vs villain", style: "Jim Lee", inking: "Bold linework", colors: "Vibrant" },
-    logo: { brand: "Nebula Labs", style: "Geometric minimal", icon: "Star shape", colors: "Navy and blue" },
-    "ui-mockup": { app: "Trading dashboard", platform: "Desktop dark mode", style: "Glassmorphism", features: "Charts" },
-    poster: { title: "ECLIPSE", theme: "Sci-fi premiere", style: "Retro", elements: "Nebula, silhouettes" },
-    pattern: { motif: "Tropical leaves", style: "Modern minimal", colors: "Green and cream", repeat: "Half-drop" },
-    "3d-render": { subject: "Crystal sculpture", material: "Glass", lighting: "HDRI", renderer: "Octane 8K" },
-    isometric: { scene: "Coffee shop", style: "Low-poly pastel", details: "Tiny people", scale: "Miniature" },
-    "arch-viz": { space: "Scandinavian loft", style: "Minimalist", lighting: "Natural light", details: "Plants" },
-    "character-3d": { character: "Steampunk inventor", style: "Pixar-quality", pose: "Confident stance", material: "Subsurface skin" },
-    abstract: { concept: "Nostalgia dissolving", medium: "Oil on canvas", colors: "Burnt sienna, midnight blue", texture: "Heavy impasto" },
-    surreal: { scene: "Floating library", elements: "Melting clocks", style: "Hyperrealistic", mood: "Dreamlike" },
-    "pixel-art": { scene: "Fantasy tavern", resolution: "256x224", palette: "NES palette", style: "SNES RPG" },
-    collage: { theme: "Retro-futurism botanical", materials: "Vintage magazines", composition: "Layered", colors: "Faded pastels" },
+    clothing: { subject: "Roaring lion", style: "Streetwear", mood: "Bold", colors: "Black and gold" },
+    social: { subject: "Coffee shop aesthetic", style: "Warm minimalist", mood: "Cozy", colors: "Earth tones" },
+    marketing: { product: "Smart Watch Pro", headline: "Time reimagined", style: "Tech minimal", mood: "Innovative" },
+    brand: { brandname: "Nebula Labs", subject: "Abstract star", style: "Geometric minimal", mood: "Futuristic", colors: "Navy and silver" },
+    threeD: { subject: "Floating crystal", style: "Hyperrealistic", material: "Iridescent glass", lighting: "Studio HDRI", camera: "Low angle" },
+    jewelry: { piece: "Statement ring", style: "Art Deco", material: "Rose gold", gemstones: "Sapphire cluster", colors: "Blue and gold" },
+    collection: { subject: "Skull motif", style: "Gothic street", theme: "Dark Royalty", colors: "Black, purple, gold", unique: "Crown elements" },
+    freestyle: { subject: "Neon samurai", style: "Cyberpunk", mood: "Electric", colors: "Neon pink and blue", details: "Rain and reflections" },
+    album: { subject: "Silhouette on mountain", style: "Dreamy analog", mood: "Melancholic", genre: "Indie folk", colors: "Faded earth" },
+    poster: { subject: "Music festival", style: "Psychedelic", mood: "Energetic", colors: "Rainbow neon", composition: "Radial symmetry" },
+    sticker: { subject: "Happy cat astronaut", style: "Kawaii", mood: "Playful", colors: "Pastel rainbow", shape: "Round" },
+    wallpaper: { subject: "Sakura tree", style: "Japanese watercolor", mood: "Serene", colors: "Soft pink and white", device: "desktop 16:9" },
+    mockup: { product: "Ceramic mug", scene: "Rustic wood table", style: "Lifestyle", colors: "Warm neutrals", lighting: "Natural window" },
+    tattoo: { subject: "Koi fish", style: "Japanese traditional", placement: "Forearm sleeve", size: "Medium", colors: "Black and red ink" },
+    sneaker: { silhouette: "Air Max 1", style: "Y2K futurism", materials: "Translucent TPU", colors: "Chrome and powder blue", details: "LED sole" },
+    pattern: { subject: "Tropical leaves", style: "Modern minimal", mood: "Fresh", colors: "Green and cream", density: "Medium" },
+    character: { character: "Steampunk inventor", style: "Anime-inspired", outfit: "Brass goggles and leather coat", colors: "Copper and brown", pose: "Confident stance" },
+    bookcover: { subject: "Mysterious lighthouse", style: "Moody atmospheric", genre: "Gothic horror", colors: "Dark teal and amber", composition: "Upper third clear" },
+    pin: { subject: "Sleeping fox", style: "Minimalist cute", mood: "Cozy", colors: "Orange, white, gold", shape: "Irregular organic" },
+    carwrap: { design: "Digital camo", vehicle: "BMW M3", style: "Military tactical", colors: "Matte black and olive", coverage: "Full wrap" },
+    meme: { subject: "Surprised capybara", expression: "Shocked open mouth", style: "Photorealistic", colors: "Natural", context: "Office cubicle" },
   };
 
   for (const [id, fields] of Object.entries(SNAPSHOT_INPUTS)) {

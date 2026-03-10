@@ -1,41 +1,43 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`template builder snapshots > snapshot: 3d-render 1`] = `"Crystal sculpture, material: Glass, HDRI, Octane 8K, 3D render"`;
+exports[`template builder snapshots > snapshot: album 1`] = `"Silhouette on mountain, Dreamy analog, Melancholic atmosphere, Indie folk aesthetic, colors: Faded earth, square 1:1, album cover quality, cinematic lighting"`;
 
-exports[`template builder snapshots > snapshot: abstract 1`] = `"Nostalgia dissolving, medium: Oil on canvas, Burnt sienna, midnight blue, Heavy impasto, abstract art"`;
+exports[`template builder snapshots > snapshot: bookcover 1`] = `"Mysterious lighthouse book cover artwork, Moody atmospheric, Gothic horror genre aesthetic, colors: Dark teal and amber, Upper third clear for title placement, portrait, editorial quality, high detail"`;
 
-exports[`template builder snapshots > snapshot: anime 1`] = `"Cyberpunk mage, Casting spell, in the style of Ghibli, Neon rooftop, anime illustration"`;
+exports[`template builder snapshots > snapshot: brand 1`] = `""Nebula Labs" brand logo design, Abstract star as the central brand mark symbol, Geometric minimal design style, Futuristic aesthetic, colors: Navy and silver, the text "Nebula Labs" must be prominently displayed, transparent background, scalable, vector quality"`;
 
-exports[`template builder snapshots > snapshot: arch-viz 1`] = `"architectural visualization of Scandinavian loft, Minimalist, Natural light, Plants, architecture visualization, interior design"`;
+exports[`template builder snapshots > snapshot: carwrap 1`] = `"Digital camo vehicle wrap, on BMW M3, Military tactical aesthetic, colors: Matte black and olive, Full wrap, side profile, showroom quality"`;
 
-exports[`template builder snapshots > snapshot: character-3d 1`] = `"Steampunk inventor, Pixar-quality, Confident stance, material: Subsurface skin, 3D character design"`;
+exports[`template builder snapshots > snapshot: character 1`] = `"Steampunk inventor character design, Anime-inspired style, wearing Brass goggles and leather coat, color scheme: Copper and brown, Confident stance pose, full body, character sheet, clean background"`;
 
-exports[`template builder snapshots > snapshot: collage 1`] = `"Retro-futurism botanical, materials: Vintage magazines, Layered, Faded pastels, mixed media collage art"`;
+exports[`template builder snapshots > snapshot: clothing 1`] = `"Roaring lion design, Streetwear style, Bold mood, isolated centered composition, colors: Black and gold, print-ready, high detail, clean edges"`;
 
-exports[`template builder snapshots > snapshot: comic 1`] = `"Hero vs villain, style of Jim Lee, Bold linework, Vibrant, comic book art"`;
+exports[`template builder snapshots > snapshot: collection 1`] = `"Skull motif design, Gothic street style, part of Dark Royalty series, colors: Black, purple, gold, featuring Crown elements, consistent composition, series-ready"`;
 
-exports[`template builder snapshots > snapshot: digital-art 1`] = `"Dragon on crystal, Fantasy realism, color palette: Purple and gold, Epic, digital art"`;
+exports[`template builder snapshots > snapshot: freestyle 1`] = `"Neon samurai, Cyberpunk style, Electric, colors: Neon pink and blue, Rain and reflections"`;
 
-exports[`template builder snapshots > snapshot: isometric 1`] = `"isometric view of Coffee shop, Low-poly pastel, Tiny people, Miniature, isometric 3D illustration"`;
+exports[`template builder snapshots > snapshot: jewelry 1`] = `"Statement ring jewelry design, Art Deco style, Rose gold metal, featuring Sapphire cluster, colors: Blue and gold, professional jewelry photography, studio lighting, macro detail"`;
 
-exports[`template builder snapshots > snapshot: landscape 1`] = `"Mountain lake, Sunrise fog, Rule of thirds, shot on Nikon Z7, landscape photography"`;
+exports[`template builder snapshots > snapshot: marketing 1`] = `"marketing visual for Smart Watch Pro, Time reimagined messaging concept, Tech minimal visual style, Innovative emotional tone, advertising quality, commercial grade, attention-grabbing"`;
 
-exports[`template builder snapshots > snapshot: logo 1`] = `"logo design for "Nebula Labs", Geometric minimal, featuring Star shape, Navy and blue, professional logo design, vector, clean"`;
+exports[`template builder snapshots > snapshot: meme 1`] = `"Surprised capybara, with Shocked open mouth expression, Photorealistic style, colors: Natural, Office cubicle background, expressive, shareable, reaction image quality, meme-ready"`;
 
-exports[`template builder snapshots > snapshot: pattern 1`] = `"seamless pattern of Tropical leaves, Modern minimal, Green and cream, Half-drop, seamless tileable pattern"`;
+exports[`template builder snapshots > snapshot: mockup 1`] = `"product photography of Ceramic mug, on Rustic wood table, Lifestyle photography, color scheme: Warm neutrals, Natural window lighting, commercial quality, professional product shot"`;
 
-exports[`template builder snapshots > snapshot: pixel-art 1`] = `"Fantasy tavern, 256x224, palette: NES palette, SNES RPG, pixel art"`;
+exports[`template builder snapshots > snapshot: pattern 1`] = `"seamless tileable pattern, Tropical leaves motif, Modern minimal technique, Fresh feel, colors: Green and cream, Medium density, seamless repeat, fabric-ready, no visible edges"`;
 
-exports[`template builder snapshots > snapshot: portrait 1`] = `"A young woman, in Golden hour field, Warm, shot on Canon 5D, professional photography"`;
+exports[`template builder snapshots > snapshot: pin 1`] = `"Sleeping fox enamel pin design, Minimalist cute, Cozy vibe, enamel colors: Orange, white, gold, Irregular organic shape, gold metal outlines, flat enamel fills, white background"`;
 
-exports[`template builder snapshots > snapshot: poster 1`] = `"poster design with title "ECLIPSE", Sci-fi premiere, Retro, Nebula, silhouettes, graphic design poster"`;
+exports[`template builder snapshots > snapshot: poster 1`] = `"Music festival poster design, Psychedelic, Energetic energy, colors: Rainbow neon, Radial symmetry, portrait orientation, print-ready, high impact"`;
 
-exports[`template builder snapshots > snapshot: product 1`] = `"Perfume bottle, on Marble, Rim light, Editorial, commercial product photography"`;
+exports[`template builder snapshots > snapshot: sneaker 1`] = `"Air Max 1 sneaker concept, Y2K futurism design, Translucent TPU materials, colorway: Chrome and powder blue, featuring LED sole, side profile, white background, sharp detail"`;
 
-exports[`template builder snapshots > snapshot: street 1`] = `"Tokyo alley at night, Lone figure, Noir, 35mm film, street photography"`;
+exports[`template builder snapshots > snapshot: social 1`] = `"Coffee shop aesthetic, Warm minimalist, Cozy tone, colors: Earth tones, social media ready, 1:1 square aspect ratio, high quality"`;
 
-exports[`template builder snapshots > snapshot: surreal 1`] = `"Floating library, Melting clocks, Hyperrealistic, Dreamlike, surrealism"`;
+exports[`template builder snapshots > snapshot: sticker 1`] = `"Happy cat astronaut sticker design, Kawaii style, Playful, limited palette: Pastel rainbow, Round shape, thick outlines, flat colors, die-cut ready, transparent background"`;
 
-exports[`template builder snapshots > snapshot: ui-mockup 1`] = `"UI design for Trading dashboard, Desktop dark mode, Glassmorphism, showing Charts, UI/UX design mockup"`;
+exports[`template builder snapshots > snapshot: tattoo 1`] = `"Koi fish tattoo design, Japanese traditional tattoo style, designed for Forearm sleeve, Medium scale, ink: Black and red ink, clean white background, crisp lines, tattoo flash sheet quality"`;
 
-exports[`template builder snapshots > snapshot: watercolor 1`] = `"Wildflowers, Wet-on-wet, Soft pastels, on Cold press, watercolor painting"`;
+exports[`template builder snapshots > snapshot: threeD 1`] = `"3D render of Floating crystal, Hyperrealistic 3D style, Iridescent glass material, Studio HDRI lighting, Low angle camera angle, high-quality 3D render, octane render quality, 8K detail"`;
+
+exports[`template builder snapshots > snapshot: wallpaper 1`] = `"Sakura tree, Japanese watercolor, Serene atmosphere, colors: Soft pink and white, desktop 16:9 aspect ratio, wallpaper, high resolution"`;

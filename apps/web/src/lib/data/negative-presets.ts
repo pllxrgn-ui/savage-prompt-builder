@@ -1,101 +1,88 @@
-/** Default negative prompts per template */
-export const NEGATIVE_PRESETS: Record<string, string[]> = {
-  portrait: [
-    "deformed, bad anatomy, disfigured, poorly drawn face, mutation, extra limbs",
-    "blurry, out of focus, low quality, amateur",
-    "oversaturated, HDR, overprocessed",
-    "watermark, text, logo, signature",
-    "cartoon, anime, 3D render, illustration",
-  ],
-  landscape: [
-    "oversaturated, HDR, artificial, overprocessed",
-    "watermark, text, logo, signature",
-    "people, buildings, urban",
-    "blurry, low quality, out of focus",
-    "cartoon, painting, illustration",
-  ],
-  street: [
-    "digital look, overprocessed, HDR",
-    "cartoon, anime, illustration",
-    "studio photo, posed, artificial",
-    "blurry, low quality, out of focus",
-    "watermark, text, logo",
-  ],
-  product: [
-    "low quality, blurry, amateur, bad lighting",
-    "cluttered background, messy",
-    "watermark, text, logo",
-    "oversaturated, overprocessed",
-    "people, hands visible",
-  ],
-  "digital-art": [
-    "photo, realistic photo, amateur",
-    "clipart, simple, flat, boring",
-    "blurry, low quality, pixelated",
-    "watermark, text, signature",
-    "bad anatomy, extra limbs",
-  ],
-  anime: [
-    "realistic, 3D render, western cartoon",
-    "low quality, extra fingers, bad anatomy",
-    "blurry, deformed, ugly",
-    "watermark, text, signature",
-    "NSFW, inappropriate",
-  ],
-  logo: [
-    "clipart, complex, photorealistic",
-    "too many details, busy, cluttered",
-    "text errors, misspelled, blurry text",
-    "3D, drop shadow, beveled",
-    "photograph, realistic",
-  ],
-  "ui-mockup": [
-    "blurry text, inconsistent UI",
-    "low resolution, pixelated",
-    "wireframe, sketch, rough",
-    "artistic, abstract, painterly",
-    "real photo, photograph",
-  ],
-  "3d-render": [
-    "2D, flat, cartoon, low poly draft",
-    "blurry, noisy, grainy",
-    "amateur, bad lighting",
-    "watermark, text",
-    "unrealistic proportions",
-  ],
-  isometric: [
-    "realistic, dark, horror",
-    "complex, messy, cluttered",
-    "flat 2D, photograph",
-    "blurry, low quality",
-    "watermark, text",
-  ],
-  abstract: [
-    "representational, figurative, faces",
-    "clipart, simple, boring",
-    "text, watermark, logo",
-    "photograph, realistic",
-    "low quality, amateur",
-  ],
-  surreal: [
-    "normal, mundane, boring",
-    "cartoon, anime, clipart",
-    "simple, low detail",
-    "blurry, out of focus",
-    "watermark, text, logo",
-  ],
-  "pixel-art": [
-    "high resolution, smooth, anti-aliased",
-    "realistic, 3D, photograph",
-    "blurry, gradient, soft",
-    "watermark, text overlay",
-    "complex shading, photorealistic",
-  ],
-  collage: [
-    "clean, digital, vector, uniform",
-    "sterile, clinical, perfect",
-    "single medium, flat",
-    "photograph only, no layers",
-    "watermark, logo",
-  ],
-} as const;
+/** Per-template negative prompt presets (keywords to avoid) */
+export const NEGATIVE_PRESETS: Record<
+  string,
+  { label: string; presets: string[] }
+> = {
+  clothing: {
+    label: "Clothing",
+    presets: [
+      "text", "watermark", "words", "letters", "human body", "hands",
+      "fingers", "face", "blurry", "low quality", "deformed", "extra limbs",
+      "bad anatomy", "pixelated", "cropped", "out of frame", "ugly", "duplicate",
+    ],
+  },
+  brand: {
+    label: "Brand/Logo",
+    presets: [
+      "text", "realistic photo", "3D render", "gradients", "busy background",
+      "multiple colors", "thin lines", "complex detail", "pixelated", "blurry",
+      "shadows", "perspective distortion",
+    ],
+  },
+  tattoo: {
+    label: "Tattoo",
+    presets: [
+      "blurry lines", "color bleeding", "skin texture", "realistic skin",
+      "shading errors", "watermark", "text", "low resolution", "jagged edges",
+      "asymmetric",
+    ],
+  },
+  threeD: {
+    label: "3D Model",
+    presets: [
+      "flat 2D", "pixelated", "text", "watermark", "low polygon artifacts",
+      "UV seams", "blurry", "noisy render", "unrealistic scale", "floating objects",
+    ],
+  },
+  jewelry: {
+    label: "Jewelry",
+    presets: [
+      "text", "fingers", "skin", "mannequin", "blurry", "low quality",
+      "watermark", "busy background", "unrealistic proportions", "floating stones",
+      "plastic looking",
+    ],
+  },
+  social: {
+    label: "Social Media",
+    presets: [
+      "text", "watermark", "blurry", "low resolution", "cropped", "out of frame",
+      "busy background", "cluttered", "ugly borders", "pixelated",
+    ],
+  },
+  mockup: {
+    label: "Product Mockup",
+    presets: [
+      "text", "logos", "hands", "fingers", "blurry", "low quality", "watermark",
+      "busy background", "unrealistic lighting", "floating products",
+    ],
+  },
+  marketing: {
+    label: "Marketing",
+    presets: [
+      "text", "fine print", "blurry", "low quality", "watermark", "cluttered",
+      "confusing layout", "too many elements", "dark shadows", "grainy",
+    ],
+  },
+  collection: {
+    label: "Collection",
+    presets: [
+      "text", "watermark", "inconsistent style", "different lighting",
+      "mismatched colors", "varying quality", "blurry", "cropped",
+    ],
+  },
+  pattern: {
+    label: "Pattern",
+    presets: [
+      "visible seams", "non-repeating edges", "text", "watermark", "blurry",
+      "asymmetric", "gaps in pattern", "color banding", "low resolution",
+    ],
+  },
+  _default: {
+    label: "General",
+    presets: [
+      "text", "watermark", "blurry", "low quality", "deformed", "extra limbs",
+      "bad anatomy", "pixelated", "cropped", "out of frame", "ugly", "duplicate",
+      "disfigured", "mutation",
+    ],
+  },
+};

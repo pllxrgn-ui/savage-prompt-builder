@@ -6,215 +6,242 @@
 function compact(parts) {
     return parts.filter(Boolean).join(", ");
 }
-function sentence(parts) {
-    return parts.filter(Boolean).join(". ");
-}
-function wrap(prefix, value) {
-    return value ? `${prefix} ${value}` : undefined;
-}
-// --- Photography ---
-function portrait(f) {
-    const base = f.subject || "portrait photograph";
+// --- Builders ---
+function clothing(f) {
     return compact([
-        base,
-        wrap("in", f.setting),
-        f.mood,
-        wrap("shot on", f.camera),
-        "professional photography",
-    ]);
-}
-function landscape(f) {
-    const base = f.scene || "landscape photograph";
-    return compact([
-        base,
-        f.weather,
-        f.composition,
-        wrap("shot on", f.camera),
-        "landscape photography",
-    ]);
-}
-function street(f) {
-    const base = f.scene || "street photography scene";
-    return compact([
-        base,
-        f.subject,
-        f.mood,
-        f.style,
-        "street photography",
-    ]);
-}
-function product(f) {
-    const base = f.product || "product photograph";
-    return compact([
-        base,
-        wrap("on", f.surface),
-        f.lighting,
-        f.style,
-        "commercial product photography",
-    ]);
-}
-// --- Illustration ---
-function digitalArt(f) {
-    const base = f.subject || "digital artwork";
-    return compact([
-        base,
-        f.style,
-        wrap("color palette:", f.colors),
-        f.mood,
-        "digital art",
-    ]);
-}
-function anime(f) {
-    const base = f.character || "anime character";
-    return compact([
-        base,
-        f.action,
-        wrap("in the style of", f.style),
+        (f.subject || "[SUBJECT]") + " design",
+        f.style ? f.style + " style" : undefined,
+        f.mood ? f.mood + " mood" : undefined,
+        "isolated centered composition",
+        f.colors ? "colors: " + f.colors : undefined,
         f.background,
-        "anime illustration",
+        "print-ready, high detail, clean edges",
+        f.avoid ? "--no " + f.avoid : undefined,
     ]);
 }
-function watercolor(f) {
-    const base = f.subject || "watercolor painting";
+function social(f) {
     return compact([
-        base,
-        f.technique,
-        f.colors,
-        wrap("on", f.paper),
-        "watercolor painting",
-    ]);
-}
-function comic(f) {
-    const base = f.scene || "comic book panel";
-    return compact([
-        base,
-        wrap("style of", f.style),
-        f.inking,
-        f.colors,
-        "comic book art",
-    ]);
-}
-// --- Design ---
-function logo(f) {
-    const brand = f.brand || "brand";
-    return compact([
-        `logo design for "${brand}"`,
+        f.subject || "[SUBJECT]",
         f.style,
-        wrap("featuring", f.icon),
-        f.colors,
-        "professional logo design, vector, clean",
+        f.mood ? f.mood + " tone" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        f.composition ? f.composition + " composition" : undefined,
+        "social media ready, 1:1 square aspect ratio, high quality",
+        f.avoid ? "--no " + f.avoid : undefined,
     ]);
 }
-function uiMockup(f) {
-    const app = f.app || "application";
+function marketing(f) {
     return compact([
-        `UI design for ${app}`,
-        f.platform,
+        f.product
+            ? "marketing visual for " + f.product
+            : "[PRODUCT/SERVICE] marketing visual",
+        f.headline ? f.headline + " messaging concept" : undefined,
+        f.style ? f.style + " visual style" : undefined,
+        f.mood ? f.mood + " emotional tone" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        "advertising quality, commercial grade, attention-grabbing",
+        f.avoid ? "--no " + f.avoid : undefined,
+    ]);
+}
+function brand(f) {
+    const bn = f.brandname || "[BRAND NAME]";
+    return compact([
+        `"${bn}" brand logo design`,
+        (f.subject || "[SUBJECT]") + " as the central brand mark symbol",
+        f.style ? f.style + " design style" : undefined,
+        f.mood ? f.mood + " aesthetic" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        f.composition ? f.composition + " layout" : undefined,
+        `the text "${bn}" must be prominently displayed, transparent background, scalable, vector quality`,
+        f.avoid ? "--no " + f.avoid : undefined,
+    ]);
+}
+function threeD(f) {
+    return compact([
+        "3D render of " + (f.subject || "[SUBJECT]"),
+        f.style ? f.style + " 3D style" : undefined,
+        f.material ? f.material + " material" : undefined,
+        f.lighting ? f.lighting + " lighting" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        f.camera ? f.camera + " camera angle" : undefined,
+        "high-quality 3D render, octane render quality, 8K detail",
+        f.avoid ? "--no " + f.avoid : undefined,
+    ]);
+}
+function jewelry(f) {
+    return compact([
+        (f.piece || "[PIECE TYPE]") + " jewelry design",
+        f.style ? f.style + " style" : undefined,
+        f.material ? f.material + " metal" : undefined,
+        f.gemstones ? "featuring " + f.gemstones : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        "professional jewelry photography, studio lighting, macro detail",
+        f.avoid ? "--no " + f.avoid : undefined,
+    ]);
+}
+function collection(f) {
+    return compact([
+        (f.subject || "[SUBJECT]") + " design",
+        f.style ? f.style + " style" : undefined,
+        "part of " + (f.theme || "[THEME]") + " series",
+        f.colors ? "colors: " + f.colors : undefined,
+        f.unique ? "featuring " + f.unique : undefined,
+        f.details,
+        "consistent composition, series-ready",
+    ]);
+}
+function freestyle(f) {
+    return compact([
+        f.subject || "[SUBJECT]",
+        f.style ? f.style + " style" : undefined,
+        f.mood,
+        f.colors ? "colors: " + f.colors : undefined,
+        f.composition ? f.composition + " composition" : undefined,
+        f.details,
+    ]);
+}
+function album(f) {
+    return compact([
+        f.subject || "[SUBJECT]",
         f.style,
-        wrap("showing", f.features),
-        "UI/UX design mockup",
+        f.mood ? f.mood + " atmosphere" : undefined,
+        f.genre ? f.genre + " aesthetic" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        "square 1:1, album cover quality, cinematic lighting",
+        f.avoid ? "--no " + f.avoid : undefined,
     ]);
 }
 function poster(f) {
-    const title = f.title || "poster";
     return compact([
-        `poster design with title "${title}"`,
-        f.theme,
+        (f.subject || "[SUBJECT]") + " poster design",
         f.style,
-        f.elements,
-        "graphic design poster",
+        f.mood ? f.mood + " energy" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        f.composition,
+        "portrait orientation, print-ready, high impact",
+        f.avoid ? "--no " + f.avoid : undefined,
+    ]);
+}
+function sticker(f) {
+    return compact([
+        (f.subject || "[SUBJECT]") + " sticker design",
+        f.style ? f.style + " style" : undefined,
+        f.mood,
+        f.colors ? "limited palette: " + f.colors : undefined,
+        f.shape ? f.shape + " shape" : undefined,
+        "thick outlines, flat colors, die-cut ready, transparent background",
+        f.avoid ? "--no " + f.avoid : undefined,
+    ]);
+}
+function wallpaper(f) {
+    return compact([
+        f.subject || "[SUBJECT]",
+        f.style,
+        f.mood ? f.mood + " atmosphere" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        (f.device || "phone 9:16 portrait") + " aspect ratio",
+        "wallpaper, high resolution",
+        f.avoid ? "--no " + f.avoid : undefined,
+    ]);
+}
+function mockup(f) {
+    return compact([
+        "product photography of " + (f.product || "[PRODUCT]"),
+        f.scene ? "on " + f.scene : undefined,
+        f.style ? f.style + " photography" : undefined,
+        f.colors ? "color scheme: " + f.colors : undefined,
+        f.lighting ? f.lighting + " lighting" : undefined,
+        "commercial quality, professional product shot",
+        f.avoid ? "--no " + f.avoid : undefined,
+    ]);
+}
+function tattoo(f) {
+    return compact([
+        (f.subject || "[SUBJECT]") + " tattoo design",
+        f.style ? f.style + " tattoo style" : undefined,
+        f.placement ? "designed for " + f.placement : undefined,
+        f.size ? f.size + " scale" : undefined,
+        f.colors ? "ink: " + f.colors : undefined,
+        "clean white background, crisp lines, tattoo flash sheet quality",
+        f.avoid ? "--no " + f.avoid : undefined,
+    ]);
+}
+function sneaker(f) {
+    return compact([
+        (f.silhouette || "[SILHOUETTE]") + " sneaker concept",
+        f.style ? f.style + " design" : undefined,
+        f.materials ? f.materials + " materials" : undefined,
+        f.colors ? "colorway: " + f.colors : undefined,
+        f.details ? "featuring " + f.details : undefined,
+        "side profile, white background, sharp detail",
+        f.avoid ? "--no " + f.avoid : undefined,
     ]);
 }
 function pattern(f) {
-    const motif = f.motif || "decorative pattern";
     return compact([
-        `seamless pattern of ${motif}`,
-        f.style,
-        f.colors,
-        f.repeat,
         "seamless tileable pattern",
+        (f.subject || "[ELEMENTS]") + " motif",
+        f.style ? f.style + " technique" : undefined,
+        f.mood ? f.mood + " feel" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        f.density ? f.density + " density" : undefined,
+        "seamless repeat, fabric-ready, no visible edges",
+        f.avoid ? "--no " + f.avoid : undefined,
     ]);
 }
-// --- 3D & Render ---
-function threeDRender(f) {
-    const base = f.subject || "3D object";
+function character(f) {
     return compact([
-        base,
-        wrap("material:", f.material),
-        f.lighting,
-        f.renderer,
-        "3D render",
+        (f.character || "[CHARACTER]") + " character design",
+        f.style ? f.style + " style" : undefined,
+        f.outfit ? "wearing " + f.outfit : undefined,
+        f.colors ? "color scheme: " + f.colors : undefined,
+        f.pose ? f.pose + " pose" : undefined,
+        "full body, character sheet, clean background",
+        f.avoid ? "--no " + f.avoid : undefined,
     ]);
 }
-function isometric(f) {
-    const base = f.scene || "isometric scene";
+function bookcover(f) {
     return compact([
-        `isometric view of ${base}`,
+        (f.subject || "[CONCEPT]") + " book cover artwork",
         f.style,
-        f.details,
-        f.scale,
-        "isometric 3D illustration",
+        f.genre ? f.genre + " genre aesthetic" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        f.composition ? f.composition + " for title placement" : undefined,
+        "portrait, editorial quality, high detail",
+        f.avoid ? "--no " + f.avoid : undefined,
     ]);
 }
-function archViz(f) {
-    const space = f.space || "architectural space";
+function pin(f) {
     return compact([
-        `architectural visualization of ${space}`,
+        (f.subject || "[SUBJECT]") + " enamel pin design",
         f.style,
-        f.lighting,
-        f.details,
-        "architecture visualization, interior design",
+        f.mood ? f.mood + " vibe" : undefined,
+        f.colors ? "enamel colors: " + f.colors : undefined,
+        f.shape ? f.shape + " shape" : undefined,
+        "gold metal outlines, flat enamel fills, white background",
+        f.avoid ? "--no " + f.avoid : undefined,
     ]);
 }
-function character3d(f) {
-    const character = f.character || "3D character";
+function carwrap(f) {
     return compact([
-        character,
-        f.style,
-        f.pose,
-        wrap("material:", f.material),
-        "3D character design",
+        (f.design || "[DESIGN]") + " vehicle wrap",
+        "on " + (f.vehicle || "[VEHICLE]"),
+        f.style ? f.style + " aesthetic" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        f.coverage,
+        "side profile, showroom quality",
+        f.avoid ? "--no " + f.avoid : undefined,
     ]);
 }
-// --- Experimental ---
-function abstract(f) {
-    const concept = f.concept || "abstract composition";
+function meme(f) {
     return compact([
-        concept,
-        wrap("medium:", f.medium),
-        f.colors,
-        f.texture,
-        "abstract art",
-    ]);
-}
-function surreal(f) {
-    const base = f.scene || "surreal scene";
-    return compact([
-        base,
-        f.elements,
-        f.style,
-        f.mood,
-        "surrealism",
-    ]);
-}
-function pixelArt(f) {
-    const base = f.scene || "pixel art scene";
-    return compact([
-        base,
-        f.resolution,
-        wrap("palette:", f.palette),
-        f.style,
-        "pixel art",
-    ]);
-}
-function collage(f) {
-    const theme = f.theme || "mixed media collage";
-    return compact([
-        theme,
-        wrap("materials:", f.materials),
-        f.composition,
-        f.colors,
-        "mixed media collage art",
+        f.subject || "[SUBJECT]",
+        f.expression ? "with " + f.expression + " expression" : undefined,
+        f.style ? f.style + " style" : undefined,
+        f.colors ? "colors: " + f.colors : undefined,
+        f.context ? f.context + " background" : undefined,
+        "expressive, shareable, reaction image quality, meme-ready",
+        f.avoid ? "--no " + f.avoid : undefined,
     ]);
 }
 /**
@@ -222,26 +249,27 @@ function collage(f) {
  * Each builder assembles the core prompt from the user's field values.
  */
 export const templateBuilders = {
-    portrait,
-    landscape,
-    street,
-    product,
-    "digital-art": digitalArt,
-    anime,
-    watercolor,
-    comic,
-    logo,
-    "ui-mockup": uiMockup,
+    clothing,
+    social,
+    marketing,
+    brand,
+    threeD,
+    jewelry,
+    collection,
+    freestyle,
+    album,
     poster,
+    sticker,
+    wallpaper,
+    mockup,
+    tattoo,
+    sneaker,
     pattern,
-    "3d-render": threeDRender,
-    isometric,
-    "arch-viz": archViz,
-    "character-3d": character3d,
-    abstract,
-    surreal,
-    "pixel-art": pixelArt,
-    collage,
+    character,
+    bookcover,
+    pin,
+    carwrap,
+    meme,
 };
 /**
  * Build the core prompt for any template.

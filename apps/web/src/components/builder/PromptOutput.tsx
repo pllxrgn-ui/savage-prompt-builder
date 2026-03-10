@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Copy, Check, ChevronDown } from "lucide-react";
 import { clsx } from "clsx";
@@ -20,6 +20,7 @@ export function PromptOutput() {
     negativePrompt,
     selectedGenerator,
     selectedPhrases,
+    mockup,
     setGenerator,
     togglePhrase,
   } = useBuilderStore();
@@ -27,6 +28,27 @@ export function PromptOutput() {
   const addToast = useUIStore((s) => s.addToast);
   const [copied, setCopied] = useState(false);
   const [showGenerators, setShowGenerators] = useState(false);
+  const genDropdownRef = useRef<HTMLDivElement>(null);
+
+  const closeDropdown = useCallback(() => setShowGenerators(false), []);
+
+  useEffect(() => {
+    if (!showGenerators) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (genDropdownRef.current && !genDropdownRef.current.contains(e.target as Node)) {
+        closeDropdown();
+      }
+    }
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") closeDropdown();
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [showGenerators, closeDropdown]);
 
   const result = useMemo(() => {
     if (!activeTemplateId) return null;
@@ -39,6 +61,9 @@ export function PromptOutput() {
       negative: negativePrompt,
       generator: selectedGenerator,
       phrases: selectedPhrases,
+      mockup: mockup.enabled
+        ? { item: mockup.item, color: mockup.color, display: mockup.display }
+        : undefined,
     });
   }, [
     activeTemplateId,
@@ -49,6 +74,7 @@ export function PromptOutput() {
     negativePrompt,
     selectedGenerator,
     selectedPhrases,
+    mockup,
   ]);
 
   const activeGen = GENERATORS.find((g) => g.id === selectedGenerator);
@@ -81,7 +107,7 @@ export function PromptOutput() {
       {/* Header with generator selector */}
       <div className="relative z-10 flex items-center justify-between px-4 py-3 border-b border-border">
         <h3 className="text-sm font-semibold text-text-1">Output</h3>
-        <div className="relative">
+        <div className="relative" ref={genDropdownRef}>
           <button
             onClick={() => setShowGenerators(!showGenerators)}
             className={clsx(
@@ -140,7 +166,7 @@ export function PromptOutput() {
       </div>
 
       {/* Phrases */}
-      <div className="relative z-10 px-4 py-3 border-b border-border">
+      <div className="relative px-4 py-3 border-b border-border">
         <p className="text-[10px] text-text-3 mb-2 uppercase tracking-wider font-medium">
           Boost Phrases
         </p>
@@ -167,7 +193,7 @@ export function PromptOutput() {
       </div>
 
       {/* Output preview */}
-      <div className="relative z-10 p-4">
+      <div className="relative p-4">
         {!result ? (
           <p className="text-xs text-text-3 text-center py-6">
             Fill in template fields to see your prompt.

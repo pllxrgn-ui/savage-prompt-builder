@@ -15,10 +15,15 @@ export const metadata: Metadata = {
 
 const accentScript = `
   (function() {
-    var a = localStorage.getItem('spb-accent') || '#FF4D6D';
-    document.documentElement.style.setProperty('--accent', a);
-    var t = localStorage.getItem('spb-theme');
-    if (t) document.documentElement.setAttribute('data-theme', t);
+    try {
+      var s = JSON.parse(localStorage.getItem('spb-settings') || '{}');
+      var st = (s.state || {});
+      var a = st.accent;
+      var t = st.theme;
+      var colors = {rose:'#FF4D6D',violet:'#A78BFA',blue:'#3B82F6',cyan:'#22D3EE',emerald:'#34D399',amber:'#F59E0B',orange:'#F97316',pink:'#EC4899'};
+      document.documentElement.style.setProperty('--accent', colors[a] || '#FF4D6D');
+      if (t) document.documentElement.setAttribute('data-theme', t);
+    } catch(e) {}
   })();
 `;
 

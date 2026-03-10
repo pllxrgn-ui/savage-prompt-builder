@@ -2,6 +2,13 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { GeneratorId } from "@/types";
 
+interface MockupState {
+  enabled: boolean;
+  item: string;
+  color: string;
+  display: string;
+}
+
 interface BuilderState {
   activeTemplateId: string | null;
   templateFields: Record<string, string>;
@@ -11,6 +18,7 @@ interface BuilderState {
   negativePrompt: string;
   selectedGenerator: GeneratorId;
   selectedPhrases: string[];
+  mockup: MockupState;
 }
 
 interface BuilderActions {
@@ -22,10 +30,18 @@ interface BuilderActions {
   setNegative: (value: string) => void;
   setGenerator: (id: GeneratorId) => void;
   togglePhrase: (phrase: string) => void;
+  setMockup: (mockup: MockupState) => void;
   resetBuilder: () => void;
 }
 
 type BuilderStore = BuilderState & BuilderActions;
+
+const INITIAL_MOCKUP: MockupState = {
+  enabled: false,
+  item: "",
+  color: "",
+  display: "",
+};
 
 const INITIAL_STATE: BuilderState = {
   activeTemplateId: null,
@@ -36,6 +52,7 @@ const INITIAL_STATE: BuilderState = {
   negativePrompt: "",
   selectedGenerator: "midjourney",
   selectedPhrases: [],
+  mockup: INITIAL_MOCKUP,
 };
 
 export const useBuilderStore = create<BuilderStore>()(
@@ -85,6 +102,8 @@ export const useBuilderStore = create<BuilderStore>()(
             ? state.selectedPhrases.filter((p) => p !== phrase)
             : [...state.selectedPhrases, phrase],
         })),
+
+      setMockup: (mockup) => set({ mockup }),
 
       resetBuilder: () => set(INITIAL_STATE),
     }),

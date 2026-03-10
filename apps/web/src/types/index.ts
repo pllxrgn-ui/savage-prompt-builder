@@ -12,5 +12,7 @@ export type {
   ImageGenModel,
   StylePack,
   MockupConfig,
-  MockupLayer,
+  MockupItem,
+  MockupColor,
+  MockupDisplay,
 } from "./generation";

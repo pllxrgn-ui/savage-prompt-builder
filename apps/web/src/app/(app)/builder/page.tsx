@@ -36,6 +36,7 @@ export default function BuilderPage() {
   const activeTemplateId = useBuilderStore((s) => s.activeTemplateId);
   const resetBuilder = useBuilderStore((s) => s.resetBuilder);
   const setNegative = useBuilderStore((s) => s.setNegative);
+  const setMockup = useBuilderStore((s) => s.setMockup);
   const [activeTab, setActiveTab] = useState<BuilderTab>("styles");
 
   const template = useMemo(
@@ -100,6 +101,7 @@ export default function BuilderPage() {
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={resetBuilder}
+          aria-label="Back to templates"
           className="flex items-center justify-center w-8 h-8 rounded-lg bg-surface hover:bg-bg-3 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 text-text-2" />
@@ -168,7 +170,7 @@ export default function BuilderPage() {
               {activeTab === "mockup" && (
                 <MockupPanel
                   templateId={template.id}
-                  onMockupChange={() => {}}
+                  onMockupChange={setMockup}
                 />
               )}
             </motion.div>

@@ -39,6 +39,7 @@ export function ToastProvider() {
             <span className="text-sm flex-1">{toast.message}</span>
             <button
               onClick={() => removeToast(toast.id)}
+              aria-label="Dismiss toast"
               className="text-text-3 hover:text-text-1 transition-colors"
             >
               <X className="w-3.5 h-3.5" />

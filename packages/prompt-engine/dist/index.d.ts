@@ -15,6 +15,11 @@ export interface PromptInput {
     negative: string;
     generator: string;
     phrases: string[];
+    mockup?: {
+        item: string;
+        color: string;
+        display: string;
+    };
 }
 export interface BuiltPrompt {
     /** The positive prompt (before generator formatting) */

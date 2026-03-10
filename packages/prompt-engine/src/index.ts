@@ -25,6 +25,7 @@ export interface PromptInput {
   negative: string;
   generator: string;
   phrases: string[];
+  mockup?: { item: string; color: string; display: string };
 }
 
 export interface BuiltPrompt {
@@ -49,6 +50,7 @@ function assemblePositive(
   palette: string | null,
   keywords: string[],
   phrases: string[],
+  mockup?: { item: string; color: string; display: string },
 ): string {
   const parts: string[] = [templatePrompt];
 
@@ -66,6 +68,16 @@ function assemblePositive(
 
   if (phrases.length > 0) {
     parts.push(phrases.join(", "));
+  }
+
+  if (mockup) {
+    const mockupParts: string[] = [];
+    if (mockup.item) mockupParts.push(`on a ${mockup.item}`);
+    if (mockup.color) mockupParts.push(mockup.color);
+    if (mockup.display) mockupParts.push(mockup.display);
+    if (mockupParts.length > 0) {
+      parts.push(mockupParts.join(", "));
+    }
   }
 
   return parts.join(", ");
@@ -91,6 +103,7 @@ export function buildPrompt(input: PromptInput): BuiltPrompt {
     input.palette,
     input.keywords,
     input.phrases,
+    input.mockup,
   );
 
   // Step 3: Negative prompt (as-is)
