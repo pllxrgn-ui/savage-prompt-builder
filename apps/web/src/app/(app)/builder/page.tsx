@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Wand2, ArrowLeft, Paintbrush, Palette, Tags, Ban, Layers } from "lucide-react";
 import { clsx } from "clsx";
-import { useBuilderStore, useUIStore } from "@/lib/store";
+import { useBuilderStore } from "@/lib/store";
 import {
   getTemplateById,
   getStylesForTemplate,
@@ -16,11 +16,22 @@ import { StaggerContainer, FadeUpItem, PageTransition } from "@/components/ui/An
 import { TemplateCard } from "@/components/builder/TemplateCard";
 import { FieldInput } from "@/components/builder/FieldInput";
 import { StylesDrawer } from "@/components/builder/StylesDrawer";
+import { AIStyleGenerator } from "@/components/builder/AIStyleGenerator";
 import { PalettePanel } from "@/components/builder/PalettePanel";
 import { KeywordsPanel } from "@/components/builder/KeywordsPanel";
 import { NegativePanel } from "@/components/builder/NegativePanel";
 import { MockupPanel } from "@/components/builder/MockupPanel";
+import { GarmentSelector } from "@/components/builder/GarmentSelector";
+import { PlatformDropdown } from "@/components/builder/PlatformDropdown";
+import { BuilderActions } from "@/components/builder/BuilderActions";
+import { UndoRedo } from "@/components/builder/UndoRedo";
+import { ReferenceImage } from "@/components/builder/ReferenceImage";
+import { VariablesPanel } from "@/components/builder/VariablesPanel";
+import { VariationTabs } from "@/components/builder/VariationTabs";
+import { SaveRecipeModal } from "@/components/builder/SaveRecipeModal";
 import { PromptOutput } from "@/components/builder/PromptOutput";
+import { decodeBuilderState } from "@/lib/services/share-service";
+import { useSearchParams } from "next/navigation";
 
 type BuilderTab = "styles" | "palettes" | "keywords" | "negative" | "mockup";
 
@@ -38,6 +49,18 @@ export default function BuilderPage() {
   const setNegative = useBuilderStore((s) => s.setNegative);
   const setMockup = useBuilderStore((s) => s.setMockup);
   const [activeTab, setActiveTab] = useState<BuilderTab>("styles");
+  const [recipeModalOpen, setRecipeModalOpen] = useState(false);
+  const searchParams = useSearchParams();
+
+  // Hydrate builder from share URL
+  useEffect(() => {
+    const share = searchParams.get("share");
+    if (share) {
+      decodeBuilderState(share);
+      // Clean up URL without reload
+      window.history.replaceState(null, "", "/builder");
+    }
+  }, [searchParams]);
 
   const template = useMemo(
     () => (activeTemplateId ? getTemplateById(activeTemplateId) : null),
@@ -50,11 +73,11 @@ export default function BuilderPage() {
   );
 
   // Load default negative when template changes
-  useMemo(() => {
+  useEffect(() => {
     if (template?.defaultNegative) {
       setNegative(template.defaultNegative);
     }
-  }, [template?.id]);
+  }, [template?.defaultNegative, setNegative]);
 
   // Template picker view (no template selected)
   if (!template) {
@@ -106,7 +129,7 @@ export default function BuilderPage() {
         >
           <ArrowLeft className="w-4 h-4 text-text-2" />
         </button>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-accent/10">
             <LucideIcon name={template.icon} className="w-4.5 h-4.5 text-accent" />
           </div>
@@ -115,6 +138,12 @@ export default function BuilderPage() {
             <p className="text-text-3 text-xs">{template.description}</p>
           </div>
         </div>
+        <UndoRedo />
+      </div>
+
+      {/* Variation tabs */}
+      <div className="mb-4">
+        <VariationTabs />
       </div>
 
       {/* Two-column layout */}
@@ -124,14 +153,33 @@ export default function BuilderPage() {
           {/* Template fields */}
           <div className="rounded-xl border border-border bg-bg-2 p-4 space-y-4">
             <h3 className="text-sm font-semibold text-text-1">Fields</h3>
-            {template.fields.map((field) => (
-              <FieldInput
-                key={field.id}
-                field={field}
-                templateId={template.id}
-              />
-            ))}
+            {template.fields.map((field) => {
+              if (template.id === "social" && field.id === "subject") {
+                return <PlatformDropdown key={field.id} />;
+              }
+              return (
+                <FieldInput
+                  key={field.id}
+                  field={field}
+                  templateId={template.id}
+                />
+              );
+            })}
           </div>
+
+          {/* Garment selector — only for clothing/collection */}
+          {(template.id === "clothing" || template.id === "collection") && (
+            <GarmentSelector />
+          )}
+
+          {/* Action buttons */}
+          <BuilderActions template={template} onRecipe={() => setRecipeModalOpen(true)} />
+
+          {/* Reference image */}
+          <ReferenceImage />
+
+          {/* Variables — collapsible token replacement */}
+          <VariablesPanel />
 
           {/* Panel tabs */}
           <div className="flex flex-wrap gap-1.5">
@@ -162,7 +210,10 @@ export default function BuilderPage() {
               transition={{ duration: 0.2, ease: "easeInOut" }}
             >
               {activeTab === "styles" && (
-                <StylesDrawer templateId={template.id} styles={styles} />
+                <div className="space-y-4">
+                  <StylesDrawer templateId={template.id} styles={styles} />
+                  <AIStyleGenerator />
+                </div>
               )}
               {activeTab === "palettes" && <PalettePanel />}
               {activeTab === "keywords" && <KeywordsPanel />}
@@ -182,6 +233,10 @@ export default function BuilderPage() {
           <PromptOutput />
         </div>
       </div>
+      <SaveRecipeModal
+        open={recipeModalOpen}
+        onClose={() => setRecipeModalOpen(false)}
+      />
     </PageTransition>
   );
 }

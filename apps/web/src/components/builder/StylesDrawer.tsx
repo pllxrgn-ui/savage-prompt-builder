@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Plus, Pencil, X, Check } from "lucide-react";
 import { clsx } from "clsx";
 import { useBuilderStore } from "@/lib/store";
+import type { CustomStyle } from "@/types";
 
 interface DrawerSectionProps {
   title: string;
@@ -80,6 +81,104 @@ function StyleChip({ label, selected, onToggle }: StyleChipProps) {
   );
 }
 
+/* ── Custom style chip with edit/delete ── */
+function CustomStyleChip({
+  style,
+  selected,
+  onToggle,
+  onEdit,
+  onDelete,
+}: {
+  style: CustomStyle;
+  selected: boolean;
+  onToggle: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  return (
+    <div className="group flex items-center gap-1">
+      <button
+        onClick={onToggle}
+        className={clsx(
+          "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-150",
+          "border cursor-pointer",
+          selected
+            ? "bg-accent/15 text-accent border-accent/30"
+            : "bg-surface text-text-3 border-transparent hover:text-text-2 hover:bg-bg-3",
+        )}
+      >
+        {style.label}
+      </button>
+      <button
+        onClick={onEdit}
+        className="hidden group-hover:flex items-center justify-center w-5 h-5 rounded text-text-3 hover:text-text-1 hover:bg-surface transition-colors"
+        aria-label={`Edit ${style.label}`}
+      >
+        <Pencil className="w-3 h-3" />
+      </button>
+      <button
+        onClick={onDelete}
+        className="hidden group-hover:flex items-center justify-center w-5 h-5 rounded text-text-3 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+        aria-label={`Delete ${style.label}`}
+      >
+        <X className="w-3 h-3" />
+      </button>
+    </div>
+  );
+}
+
+/* ── Inline create/edit form ── */
+function CustomStyleForm({
+  initial,
+  onSave,
+  onCancel,
+}: {
+  initial?: { label: string; content: string };
+  onSave: (label: string, content: string) => void;
+  onCancel: () => void;
+}) {
+  const [label, setLabel] = useState(initial?.label ?? "");
+  const [content, setContent] = useState(initial?.content ?? "");
+
+  return (
+    <div className="p-3 rounded-lg bg-bg-3 border border-accent/20 space-y-2">
+      <input
+        type="text"
+        placeholder="Style name…"
+        value={label}
+        onChange={(e) => setLabel(e.target.value)}
+        aria-label="Style name"
+        className="w-full px-2.5 py-1.5 rounded-md bg-bg-input border border-border text-xs text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/50"
+      />
+      <textarea
+        placeholder="Style instruction (e.g. 'dramatic rim lighting, cinematic color grading')…"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        rows={2}
+        aria-label="Style content"
+        className="w-full px-2.5 py-1.5 rounded-md bg-bg-input border border-border text-xs text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/50 resize-none"
+      />
+      <div className="flex gap-2 justify-end">
+        <button
+          onClick={onCancel}
+          className="px-2.5 py-1 rounded-md text-[11px] text-text-3 hover:text-text-1 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => {
+            if (label.trim() && content.trim()) onSave(label.trim(), content.trim());
+          }}
+          disabled={!label.trim() || !content.trim()}
+          className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-accent text-white text-[11px] font-medium hover:opacity-90 disabled:opacity-40 transition-opacity"
+        >
+          <Check className="w-3 h-3" /> Save
+        </button>
+      </div>
+    </div>
+  );
+}
+
 interface StylesDrawerProps {
   templateId: string;
   styles: Array<{ label: string; category: string }>;
@@ -88,6 +187,13 @@ interface StylesDrawerProps {
 export function StylesDrawer({ templateId, styles }: StylesDrawerProps) {
   const selectedStyles = useBuilderStore((s) => s.selectedStyles);
   const toggleStyle = useBuilderStore((s) => s.toggleStyle);
+  const customStyles = useBuilderStore((s) => s.customStyles);
+  const addCustomStyle = useBuilderStore((s) => s.addCustomStyle);
+  const updateCustomStyle = useBuilderStore((s) => s.updateCustomStyle);
+  const deleteCustomStyle = useBuilderStore((s) => s.deleteCustomStyle);
+
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Group styles by category
   const categories = new Map<string, Array<{ label: string }>>();
@@ -96,8 +202,6 @@ export function StylesDrawer({ templateId, styles }: StylesDrawerProps) {
     existing.push({ label: style.label });
     categories.set(style.category, existing);
   }
-
-  if (styles.length === 0) return null;
 
   return (
     <div className="rounded-xl border border-border bg-bg-2 overflow-hidden">
@@ -109,6 +213,59 @@ export function StylesDrawer({ templateId, styles }: StylesDrawerProps) {
           </span>
         )}
       </div>
+
+      {/* Custom styles section */}
+      <DrawerSection
+        title="Custom"
+        count={customStyles.length}
+        defaultOpen={customStyles.length > 0}
+      >
+        <div className="space-y-2">
+          <div className="flex flex-wrap gap-1.5">
+            {customStyles.map((cs) =>
+              editingId === cs.id ? (
+                <CustomStyleForm
+                  key={cs.id}
+                  initial={{ label: cs.label, content: cs.content }}
+                  onSave={(label, content) => {
+                    updateCustomStyle(cs.id, { label, content });
+                    setEditingId(null);
+                  }}
+                  onCancel={() => setEditingId(null)}
+                />
+              ) : (
+                <CustomStyleChip
+                  key={cs.id}
+                  style={cs}
+                  selected={selectedStyles.includes(cs.label)}
+                  onToggle={() => toggleStyle(cs.label)}
+                  onEdit={() => setEditingId(cs.id)}
+                  onDelete={() => deleteCustomStyle(cs.id)}
+                />
+              ),
+            )}
+          </div>
+
+          {showCreateForm ? (
+            <CustomStyleForm
+              onSave={(label, content) => {
+                addCustomStyle({ id: crypto.randomUUID(), label, content });
+                setShowCreateForm(false);
+              }}
+              onCancel={() => setShowCreateForm(false)}
+            />
+          ) : (
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="flex items-center gap-1 text-[11px] text-accent hover:text-accent/80 transition-colors"
+            >
+              <Plus className="w-3 h-3" /> Add Custom Style
+            </button>
+          )}
+        </div>
+      </DrawerSection>
+
+      {/* Preset categories */}
       {Array.from(categories.entries()).map(([category, items], index) => (
         <DrawerSection
           key={category}

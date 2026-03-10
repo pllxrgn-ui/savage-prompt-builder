@@ -4,10 +4,10 @@
 ---
 
 ## Current Status
-**Phase:** Phase 2 — Builder UI ✅ COMPLETE  
-**Last updated:** 2026-03-07  
-**Last session:** Completed Phase 2 (Steps 11-18) — all builder UI components, full end-to-end prompt building  
-**Next session should start at:** Step 19 — History auto-save (Phase 3)
+**Phase:** Phase 3 — Library + Persistence ✅ COMPLETE  
+**Last updated:** 2026-03-09  
+**Last session:** Completed Phase 3 — Auto-saving prompts, Library view with searching/filtering, Recipe save/load, and Settings data management (export/import).  
+**Next session should start at:** Step 23 — Supabase setup (Phase 4)
 
 ---
 
@@ -165,10 +165,10 @@
 ### Phase 3 — Library + Persistence (still frontend, localStorage)
 > Goal: Saved prompts, recipes, history — all in localStorage for free tier.
 
-- [ ] **Step 19:** `history-store` — auto-save built prompts to localStorage
-- [ ] **Step 20:** Library view — saved prompts grid (`PromptCard`), search/filter
-- [ ] **Step 21:** Recipe save/load — save builder config as recipe, restore from library
-- [ ] **Step 22:** Settings view — accent picker, theme toggle, default generator, export/import data
+- [x] **Step 19:** `history-store` — auto-save built prompts to localStorage (via `PromptOutput.handleCopy`)
+- [x] **Step 20:** Library view — saved prompts grid (`PromptCard`), search/filter, tabbed navigation
+- [x] **Step 21:** Recipe save/load — save builder config as recipe, restore from library via `loadRecipe`
+- [x] **Step 22:** Settings view — accent picker, theme toggle, export/import data (JSON mobility)
 
 ---
 

@@ -26,6 +26,8 @@ export interface PromptInput {
   generator: string;
   phrases: string[];
   mockup?: { item: string; color: string; display: string };
+  garmentMode?: "dark" | "light" | null;
+  referenceImageUrl?: string | null;
 }
 
 export interface BuiltPrompt {
@@ -51,8 +53,15 @@ function assemblePositive(
   keywords: string[],
   phrases: string[],
   mockup?: { item: string; color: string; display: string },
+  garmentMode?: "dark" | "light" | null,
 ): string {
   const parts: string[] = [templatePrompt];
+
+  if (garmentMode === "dark") {
+    parts.push("light and neon colors on dark fabric");
+  } else if (garmentMode === "light") {
+    parts.push("dark and saturated colors on light fabric");
+  }
 
   if (styles.length > 0) {
     parts.push(styles.join(", "));
@@ -104,16 +113,30 @@ export function buildPrompt(input: PromptInput): BuiltPrompt {
     input.keywords,
     input.phrases,
     input.mockup,
+    input.garmentMode,
   );
 
   // Step 3: Negative prompt (as-is)
   const negative = input.negative;
 
-  // Step 4: No extra parameters by default (can be extended later)
-  const parameters = "";
+  // Step 4: Reference image injection
+  let parameters = "";
+  if (input.referenceImageUrl) {
+    if (input.generator === "midjourney") {
+      parameters = `--sref ${input.referenceImageUrl}`;
+    } else {
+      // For non-Midjourney generators, append as text in positive
+    }
+  }
+
+  // For non-Midjourney generators, append reference image text to positive
+  let finalPositive = positive;
+  if (input.referenceImageUrl && input.generator !== "midjourney") {
+    finalPositive = `${positive}, style reference: ${input.referenceImageUrl}`;
+  }
 
   // Step 5: Format for the selected generator
-  const formatInput: FormatInput = { positive, negative, parameters };
+  const formatInput: FormatInput = { positive: finalPositive, negative, parameters };
   const full = formatForGenerator(input.generator, formatInput);
 
   return { positive, negative, parameters, full };

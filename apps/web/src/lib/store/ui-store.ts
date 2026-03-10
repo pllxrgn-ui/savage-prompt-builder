@@ -22,7 +22,7 @@ interface UIActions {
   removeToast: (id: string) => void;
 }
 
-type UIStore = UIState & UIActions;
+export type UIStore = UIState & UIActions;
 
 let toastCounter = 0;
 

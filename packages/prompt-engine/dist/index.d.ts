@@ -20,6 +20,8 @@ export interface PromptInput {
         color: string;
         display: string;
     };
+    garmentMode?: "dark" | "light" | null;
+    referenceImageUrl?: string | null;
 }
 export interface BuiltPrompt {
     /** The positive prompt (before generator formatting) */

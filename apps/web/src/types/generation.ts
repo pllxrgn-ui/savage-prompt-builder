@@ -1,14 +1,23 @@
+import type { GeneratorId } from "./prompt";
+
 export interface SavedPrompt {
   id: string;
   title: string;
   content: string;
   templateId: string;
-  generatorId: string;
+  generatorId: GeneratorId;
   fieldData: Record<string, string>;
   styles: string[];
   palette: string | null;
   keywords: string[];
   negative: string;
+  starred: boolean;
+  score: number | null;
+  note: string;
+  parentId: string | null;
+  version: number;
+  projectId: string | null;
+  variations: Record<string, string>[];
   createdAt: string;
   updatedAt: string;
 }
@@ -22,7 +31,19 @@ export interface Recipe {
   palette: string | null;
   keywords: string[];
   negative: string;
-  generatorId: string;
+  generatorId: GeneratorId;
+  phrases: string[];
+  garmentMode: "dark" | "light" | null;
+  referenceImageUrl: string | null;
+  variables: Record<string, string>;
+  variations: Record<string, string>[];
+  mockup: { enabled: boolean; item: string; color: string; display: string } | null;
+  createdAt: string;
+}
+
+export interface Project {
+  id: string;
+  name: string;
   createdAt: string;
 }
 

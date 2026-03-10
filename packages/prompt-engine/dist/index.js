@@ -12,8 +12,14 @@ import { formatForGenerator, } from "./generator-formats";
 /**
  * Assemble the full positive prompt from template output + styles + palette + keywords + phrases.
  */
-function assemblePositive(templatePrompt, styles, palette, keywords, phrases, mockup) {
+function assemblePositive(templatePrompt, styles, palette, keywords, phrases, mockup, garmentMode) {
     const parts = [templatePrompt];
+    if (garmentMode === "dark") {
+        parts.push("light and neon colors on dark fabric");
+    }
+    else if (garmentMode === "light") {
+        parts.push("dark and saturated colors on light fabric");
+    }
     if (styles.length > 0) {
         parts.push(styles.join(", "));
     }
@@ -53,13 +59,26 @@ export function buildPrompt(input) {
     // Step 1: Build core prompt from template fields
     const templatePrompt = buildTemplatePrompt(input.templateId, input.fields);
     // Step 2: Assemble full positive prompt
-    const positive = assemblePositive(templatePrompt, input.styles, input.palette, input.keywords, input.phrases, input.mockup);
+    const positive = assemblePositive(templatePrompt, input.styles, input.palette, input.keywords, input.phrases, input.mockup, input.garmentMode);
     // Step 3: Negative prompt (as-is)
     const negative = input.negative;
-    // Step 4: No extra parameters by default (can be extended later)
-    const parameters = "";
+    // Step 4: Reference image injection
+    let parameters = "";
+    if (input.referenceImageUrl) {
+        if (input.generator === "midjourney") {
+            parameters = `--sref ${input.referenceImageUrl}`;
+        }
+        else {
+            // For non-Midjourney generators, append as text in positive
+        }
+    }
+    // For non-Midjourney generators, append reference image text to positive
+    let finalPositive = positive;
+    if (input.referenceImageUrl && input.generator !== "midjourney") {
+        finalPositive = `${positive}, style reference: ${input.referenceImageUrl}`;
+    }
     // Step 5: Format for the selected generator
-    const formatInput = { positive, negative, parameters };
+    const formatInput = { positive: finalPositive, negative, parameters };
     const full = formatForGenerator(input.generator, formatInput);
     return { positive, negative, parameters, full };
 }

@@ -9,14 +9,12 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
-  Zap,
-  BrainCircuit,
-  Gauge,
+  LogOut,
   Flame,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { useUIStore } from "@/lib/store";
+import { useAuth } from "@/hooks/useAuth";
 
 const NAV_ITEMS = [
   { href: "/home", label: "Home", icon: Home },
@@ -29,6 +27,16 @@ export function Sidebar() {
   const pathname = usePathname();
   const collapsed = useUIStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+  const { user, isPro, isAuthenticated, logout } = useAuth();
+
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "?";
 
   return (
     <aside
@@ -97,7 +105,51 @@ export function Sidebar() {
         })}
       </nav>
 
+      {/* User section */}
+      {isAuthenticated && user && (
+        <div className="border-t border-border px-2 py-3">
+          <div className="flex items-center gap-2.5 px-2">
+            {/* Avatar */}
+            {user.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={user.avatarUrl}
+                alt={user.name}
+                className="w-8 h-8 rounded-full object-cover shrink-0"
+              />
+            ) : (
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-accent/15 text-accent text-xs font-bold shrink-0">
+                {initials}
+              </div>
+            )}
 
+            {!collapsed && (
+              <>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-text-1 truncate">{user.name}</p>
+                  <span
+                    className={clsx(
+                      "text-[10px] font-medium px-1.5 py-0.5 rounded-full",
+                      isPro
+                        ? "bg-accent/15 text-accent"
+                        : "bg-surface text-text-3",
+                    )}
+                  >
+                    {isPro ? "Pro" : "Free"}
+                  </span>
+                </div>
+                <button
+                  onClick={logout}
+                  className="flex items-center justify-center w-7 h-7 rounded-md text-text-3 hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
+                  aria-label="Log out"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

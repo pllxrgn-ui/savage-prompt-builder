@@ -2,10 +2,18 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { AccentId, GeneratorId } from "@/types";
 
+export interface CustomPhrase {
+  id: string;
+  name: string;
+  content: string;
+}
+
 interface SettingsState {
   accent: AccentId;
   theme: "dark" | "light";
   defaultGenerator: GeneratorId;
+  installedStylePacks: string[];
+  customPhrases: CustomPhrase[];
 }
 
 interface SettingsActions {
@@ -13,9 +21,14 @@ interface SettingsActions {
   setTheme: (theme: "dark" | "light") => void;
   toggleTheme: () => void;
   setDefaultGenerator: (id: GeneratorId) => void;
+  installStylePack: (packId: string) => void;
+  uninstallStylePack: (packId: string) => void;
+  addCustomPhrase: (phrase: CustomPhrase) => void;
+  updateCustomPhrase: (id: string, updates: Partial<Omit<CustomPhrase, "id">>) => void;
+  deleteCustomPhrase: (id: string) => void;
 }
 
-type SettingsStore = SettingsState & SettingsActions;
+export type SettingsStore = SettingsState & SettingsActions;
 
 export const useSettingsStore = create<SettingsStore>()(
   persist(
@@ -23,6 +36,8 @@ export const useSettingsStore = create<SettingsStore>()(
       accent: "rose",
       theme: "dark",
       defaultGenerator: "midjourney",
+      installedStylePacks: [],
+      customPhrases: [],
 
       setAccent: (id) => {
         document.documentElement.style.setProperty(
@@ -45,6 +60,35 @@ export const useSettingsStore = create<SettingsStore>()(
         }),
 
       setDefaultGenerator: (id) => set({ defaultGenerator: id }),
+
+      installStylePack: (packId) =>
+        set((state) => ({
+          installedStylePacks: state.installedStylePacks.includes(packId)
+            ? state.installedStylePacks
+            : [...state.installedStylePacks, packId],
+        })),
+
+      uninstallStylePack: (packId) =>
+        set((state) => ({
+          installedStylePacks: state.installedStylePacks.filter((id) => id !== packId),
+        })),
+
+      addCustomPhrase: (phrase) =>
+        set((state) => ({
+          customPhrases: [...state.customPhrases, phrase],
+        })),
+
+      updateCustomPhrase: (id, updates) =>
+        set((state) => ({
+          customPhrases: state.customPhrases.map((p) =>
+            p.id === id ? { ...p, ...updates } : p,
+          ),
+        })),
+
+      deleteCustomPhrase: (id) =>
+        set((state) => ({
+          customPhrases: state.customPhrases.filter((p) => p.id !== id),
+        })),
     }),
     {
       name: "spb-settings",

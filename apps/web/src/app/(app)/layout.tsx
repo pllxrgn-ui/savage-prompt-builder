@@ -4,10 +4,12 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import { useUIStore } from "@/lib/store";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { clsx } from "clsx";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const collapsed = useUIStore((s) => s.sidebarCollapsed);
+  useKeyboardShortcuts();
 
   return (
     <>

@@ -28,6 +28,8 @@ export interface PromptInput {
   negative: string;
   generator: GeneratorId;
   phrases: string[];
+  garmentMode?: "dark" | "light" | null;
+  referenceImageUrl?: string | null;
 }
 
 export interface BuiltPrompt {
