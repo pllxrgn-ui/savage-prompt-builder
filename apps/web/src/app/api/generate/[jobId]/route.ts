@@ -4,10 +4,10 @@ const IMAGE_GEN_STATUS_API_URL = process.env.NANOBANANA_STATUS_API_URL || 'https
 
 export async function GET(
     req: Request,
-    { params }: { params: { jobId: string } }
+    { params }: { params: Promise<{ jobId: string }> }
 ) {
     try {
-        const { jobId } = params;
+        const { jobId } = await params;
         const apiKey = process.env.NANOBANANA_API_KEY;
 
         if (!apiKey) {

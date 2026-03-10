@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { Suspense, useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Wand2, ArrowLeft, Paintbrush, Palette, Tags, Ban, Layers } from "lucide-react";
 import { clsx } from "clsx";
@@ -44,6 +44,14 @@ const BUILDER_TABS: { id: BuilderTab; label: string; icon: React.ReactNode }[] =
 ];
 
 export default function BuilderPage() {
+  return (
+    <Suspense fallback={null}>
+      <BuilderPageInner />
+    </Suspense>
+  );
+}
+
+function BuilderPageInner() {
   const activeTemplateId = useBuilderStore((s) => s.activeTemplateId);
   const resetBuilder = useBuilderStore((s) => s.resetBuilder);
   const setNegative = useBuilderStore((s) => s.setNegative);

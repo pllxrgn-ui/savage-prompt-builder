@@ -23,17 +23,18 @@ import { useAuth } from "@/hooks/useAuth";
 import { GENERATORS, STYLE_PACKS, PHRASES } from "@/lib/data";
 import type { HistoryStore, UIStore, SettingsStore, GeneratorId } from "@/types";
 import { useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import { clsx } from "clsx";
 
 export default function SettingsPage() {
   const { savedPrompts, recipes, clearHistory, savePrompt, saveRecipe } =
-    useHistoryStore((s: HistoryStore) => ({
+    useHistoryStore(useShallow((s: HistoryStore) => ({
       savedPrompts: s.savedPrompts,
       recipes: s.recipes,
       clearHistory: s.clearHistory,
       savePrompt: s.savePrompt,
       saveRecipe: s.saveRecipe,
-    }));
+    })));
 
   const {
     defaultGenerator,
@@ -45,7 +46,7 @@ export default function SettingsPage() {
     addCustomPhrase,
     updateCustomPhrase,
     deleteCustomPhrase,
-  } = useSettingsStore((s: SettingsStore) => ({
+  } = useSettingsStore(useShallow((s: SettingsStore) => ({
     defaultGenerator: s.defaultGenerator,
     setDefaultGenerator: s.setDefaultGenerator,
     installedStylePacks: s.installedStylePacks,
@@ -55,7 +56,7 @@ export default function SettingsPage() {
     addCustomPhrase: s.addCustomPhrase,
     updateCustomPhrase: s.updateCustomPhrase,
     deleteCustomPhrase: s.deleteCustomPhrase,
-  }));
+  })));
 
   const addToast = useUIStore((s: UIStore) => s.addToast);
   const { user, isPro, isAuthenticated, devMode, setPro } = useAuth();
