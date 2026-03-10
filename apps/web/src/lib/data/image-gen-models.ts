@@ -1,0 +1,68 @@
+import type { ImageGenModel } from "@/types";
+
+export const IMAGE_GEN_MODELS: ImageGenModel[] = [
+  {
+    id: "midjourney-v6",
+    name: "Midjourney v6.1",
+    provider: "midjourney",
+    maxWidth: 2048,
+    maxHeight: 2048,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3"],
+  },
+  {
+    id: "dall-e-3",
+    name: "DALL·E 3",
+    provider: "dalle3",
+    maxWidth: 1792,
+    maxHeight: 1792,
+    supportedRatios: ["1:1", "16:9", "9:16"],
+  },
+  {
+    id: "sdxl-1.0",
+    name: "Stable Diffusion XL",
+    provider: "stable-diffusion",
+    maxWidth: 1024,
+    maxHeight: 1024,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16"],
+  },
+  {
+    id: "flux-1.1-pro",
+    name: "Flux 1.1 Pro",
+    provider: "flux",
+    maxWidth: 2048,
+    maxHeight: 2048,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3"],
+  },
+  {
+    id: "flux-schnell",
+    name: "Flux Schnell",
+    provider: "flux",
+    maxWidth: 1024,
+    maxHeight: 1024,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16"],
+  },
+  {
+    id: "leonardo-phoenix",
+    name: "Leonardo Phoenix",
+    provider: "leonardo",
+    maxWidth: 1472,
+    maxHeight: 1472,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16"],
+  },
+  {
+    id: "firefly-3",
+    name: "Adobe Firefly 3",
+    provider: "firefly",
+    maxWidth: 2048,
+    maxHeight: 2048,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2"],
+  },
+  {
+    id: "ideogram-v2",
+    name: "Ideogram v2",
+    provider: "ideogram",
+    maxWidth: 1536,
+    maxHeight: 1536,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16", "3:2", "2:3", "10:16", "16:10"],
+  },
+] as const;

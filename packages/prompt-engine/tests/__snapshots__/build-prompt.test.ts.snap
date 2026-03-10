@@ -1,0 +1,561 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`integration snapshots > 3d-render × dalle3 1`] = `
+{
+  "full": "Crystal sculpture, 3D render, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Crystal sculpture, 3D render, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > 3d-render × midjourney 1`] = `
+{
+  "full": "Crystal sculpture, 3D render, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Crystal sculpture, 3D render, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > 3d-render × stable-diffusion 1`] = `
+{
+  "full": "Crystal sculpture, 3D render, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Crystal sculpture, 3D render, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > abstract × dalle3 1`] = `
+{
+  "full": "Nostalgia, abstract art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Nostalgia, abstract art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > abstract × midjourney 1`] = `
+{
+  "full": "Nostalgia, abstract art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Nostalgia, abstract art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > abstract × stable-diffusion 1`] = `
+{
+  "full": "Nostalgia, abstract art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Nostalgia, abstract art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > anime × dalle3 1`] = `
+{
+  "full": "Cyberpunk mage, anime illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Cyberpunk mage, anime illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > anime × midjourney 1`] = `
+{
+  "full": "Cyberpunk mage, anime illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Cyberpunk mage, anime illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > anime × stable-diffusion 1`] = `
+{
+  "full": "Cyberpunk mage, anime illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Cyberpunk mage, anime illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > arch-viz × dalle3 1`] = `
+{
+  "full": "architectural visualization of Scandinavian loft, architecture visualization, interior design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "architectural visualization of Scandinavian loft, architecture visualization, interior design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > arch-viz × midjourney 1`] = `
+{
+  "full": "architectural visualization of Scandinavian loft, architecture visualization, interior design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "architectural visualization of Scandinavian loft, architecture visualization, interior design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > arch-viz × stable-diffusion 1`] = `
+{
+  "full": "architectural visualization of Scandinavian loft, architecture visualization, interior design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "architectural visualization of Scandinavian loft, architecture visualization, interior design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > character-3d × dalle3 1`] = `
+{
+  "full": "Steampunk inventor, 3D character design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Steampunk inventor, 3D character design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > character-3d × midjourney 1`] = `
+{
+  "full": "Steampunk inventor, 3D character design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Steampunk inventor, 3D character design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > character-3d × stable-diffusion 1`] = `
+{
+  "full": "Steampunk inventor, 3D character design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Steampunk inventor, 3D character design, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > collage × dalle3 1`] = `
+{
+  "full": "Retro-futurism, mixed media collage art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Retro-futurism, mixed media collage art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > collage × midjourney 1`] = `
+{
+  "full": "Retro-futurism, mixed media collage art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Retro-futurism, mixed media collage art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > collage × stable-diffusion 1`] = `
+{
+  "full": "Retro-futurism, mixed media collage art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Retro-futurism, mixed media collage art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > comic × dalle3 1`] = `
+{
+  "full": "Hero vs villain, comic book art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Hero vs villain, comic book art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > comic × midjourney 1`] = `
+{
+  "full": "Hero vs villain, comic book art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Hero vs villain, comic book art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > comic × stable-diffusion 1`] = `
+{
+  "full": "Hero vs villain, comic book art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Hero vs villain, comic book art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > digital-art × dalle3 1`] = `
+{
+  "full": "Dragon, Fantasy, digital art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Dragon, Fantasy, digital art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > digital-art × midjourney 1`] = `
+{
+  "full": "Dragon, Fantasy, digital art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Dragon, Fantasy, digital art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > digital-art × stable-diffusion 1`] = `
+{
+  "full": "Dragon, Fantasy, digital art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Dragon, Fantasy, digital art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > isometric × dalle3 1`] = `
+{
+  "full": "isometric view of Coffee shop, isometric 3D illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "isometric view of Coffee shop, isometric 3D illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > isometric × midjourney 1`] = `
+{
+  "full": "isometric view of Coffee shop, isometric 3D illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "isometric view of Coffee shop, isometric 3D illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > isometric × stable-diffusion 1`] = `
+{
+  "full": "isometric view of Coffee shop, isometric 3D illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "isometric view of Coffee shop, isometric 3D illustration, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > landscape × dalle3 1`] = `
+{
+  "full": "Mountain at sunrise, landscape photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Mountain at sunrise, landscape photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > landscape × midjourney 1`] = `
+{
+  "full": "Mountain at sunrise, landscape photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Mountain at sunrise, landscape photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > landscape × stable-diffusion 1`] = `
+{
+  "full": "Mountain at sunrise, landscape photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Mountain at sunrise, landscape photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > logo × dalle3 1`] = `
+{
+  "full": "logo design for "Nebula Labs", professional logo design, vector, clean, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "logo design for "Nebula Labs", professional logo design, vector, clean, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > logo × midjourney 1`] = `
+{
+  "full": "logo design for "Nebula Labs", professional logo design, vector, clean, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "logo design for "Nebula Labs", professional logo design, vector, clean, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > logo × stable-diffusion 1`] = `
+{
+  "full": "logo design for "Nebula Labs", professional logo design, vector, clean, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "logo design for "Nebula Labs", professional logo design, vector, clean, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > pattern × dalle3 1`] = `
+{
+  "full": "seamless pattern of Tropical leaves, seamless tileable pattern, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "seamless pattern of Tropical leaves, seamless tileable pattern, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > pattern × midjourney 1`] = `
+{
+  "full": "seamless pattern of Tropical leaves, seamless tileable pattern, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "seamless pattern of Tropical leaves, seamless tileable pattern, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > pattern × stable-diffusion 1`] = `
+{
+  "full": "seamless pattern of Tropical leaves, seamless tileable pattern, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "seamless pattern of Tropical leaves, seamless tileable pattern, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > pixel-art × dalle3 1`] = `
+{
+  "full": "Fantasy tavern, pixel art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Fantasy tavern, pixel art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > pixel-art × midjourney 1`] = `
+{
+  "full": "Fantasy tavern, pixel art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Fantasy tavern, pixel art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > pixel-art × stable-diffusion 1`] = `
+{
+  "full": "Fantasy tavern, pixel art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Fantasy tavern, pixel art, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > portrait × dalle3 1`] = `
+{
+  "full": "Young woman, Ethereal, professional photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Young woman, Ethereal, professional photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > portrait × midjourney 1`] = `
+{
+  "full": "Young woman, Ethereal, professional photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Young woman, Ethereal, professional photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > portrait × stable-diffusion 1`] = `
+{
+  "full": "Young woman, Ethereal, professional photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Young woman, Ethereal, professional photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > poster × dalle3 1`] = `
+{
+  "full": "poster design with title "ECLIPSE", graphic design poster, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "poster design with title "ECLIPSE", graphic design poster, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > poster × midjourney 1`] = `
+{
+  "full": "poster design with title "ECLIPSE", graphic design poster, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "poster design with title "ECLIPSE", graphic design poster, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > poster × stable-diffusion 1`] = `
+{
+  "full": "poster design with title "ECLIPSE", graphic design poster, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "poster design with title "ECLIPSE", graphic design poster, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > product × dalle3 1`] = `
+{
+  "full": "Perfume bottle, commercial product photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Perfume bottle, commercial product photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > product × midjourney 1`] = `
+{
+  "full": "Perfume bottle, commercial product photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Perfume bottle, commercial product photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > product × stable-diffusion 1`] = `
+{
+  "full": "Perfume bottle, commercial product photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Perfume bottle, commercial product photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > street × dalle3 1`] = `
+{
+  "full": "Tokyo rain, street photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Tokyo rain, street photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > street × midjourney 1`] = `
+{
+  "full": "Tokyo rain, street photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Tokyo rain, street photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > street × stable-diffusion 1`] = `
+{
+  "full": "Tokyo rain, street photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Tokyo rain, street photography, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > surreal × dalle3 1`] = `
+{
+  "full": "Floating library, surrealism, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Floating library, surrealism, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > surreal × midjourney 1`] = `
+{
+  "full": "Floating library, surrealism, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Floating library, surrealism, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > surreal × stable-diffusion 1`] = `
+{
+  "full": "Floating library, surrealism, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Floating library, surrealism, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > ui-mockup × dalle3 1`] = `
+{
+  "full": "UI design for Trading dashboard, UI/UX design mockup, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "UI design for Trading dashboard, UI/UX design mockup, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > ui-mockup × midjourney 1`] = `
+{
+  "full": "UI design for Trading dashboard, UI/UX design mockup, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "UI design for Trading dashboard, UI/UX design mockup, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > ui-mockup × stable-diffusion 1`] = `
+{
+  "full": "UI design for Trading dashboard, UI/UX design mockup, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "UI design for Trading dashboard, UI/UX design mockup, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > watercolor × dalle3 1`] = `
+{
+  "full": "Wildflowers, watercolor painting, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Wildflowers, watercolor painting, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > watercolor × midjourney 1`] = `
+{
+  "full": "Wildflowers, watercolor painting, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Wildflowers, watercolor painting, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;
+
+exports[`integration snapshots > watercolor × stable-diffusion 1`] = `
+{
+  "full": "Wildflowers, watercolor painting, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+Negative prompt: blurry, low quality",
+  "negative": "blurry, low quality",
+  "parameters": "",
+  "positive": "Wildflowers, watercolor painting, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+}
+`;

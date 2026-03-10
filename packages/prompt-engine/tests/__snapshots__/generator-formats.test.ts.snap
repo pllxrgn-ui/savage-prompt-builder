@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`generator format snapshots > snapshot: dalle3 1`] = `"A dragon perched on a crystal spire, fantasy realism, deep purples and gold, epic, digital art. Avoid: photo, amateur, clipart, watermark"`;
+
+exports[`generator format snapshots > snapshot: firefly 1`] = `"A dragon perched on a crystal spire, fantasy realism, deep purples and gold, epic, digital art. Exclude: photo, amateur, clipart, watermark"`;
+
+exports[`generator format snapshots > snapshot: flux 1`] = `"A dragon perched on a crystal spire, fantasy realism, deep purples and gold, epic, digital art. Without: photo, amateur, clipart, watermark"`;
+
+exports[`generator format snapshots > snapshot: ideogram 1`] = `"A dragon perched on a crystal spire, fantasy realism, deep purples and gold, epic, digital art. Do not include: photo, amateur, clipart, watermark"`;
+
+exports[`generator format snapshots > snapshot: leonardo 1`] = `
+"A dragon perched on a crystal spire, fantasy realism, deep purples and gold, epic, digital art
+Negative prompt: photo, amateur, clipart, watermark"
+`;
+
+exports[`generator format snapshots > snapshot: midjourney 1`] = `"A dragon perched on a crystal spire, fantasy realism, deep purples and gold, epic, digital art --no photo, amateur, clipart, watermark"`;
+
+exports[`generator format snapshots > snapshot: nanobanana 1`] = `
+"A dragon perched on a crystal spire, fantasy realism, deep purples and gold, epic, digital art
+Negative: photo, amateur, clipart, watermark"
+`;
+
+exports[`generator format snapshots > snapshot: replicate 1`] = `
+"A dragon perched on a crystal spire, fantasy realism, deep purples and gold, epic, digital art
+Negative prompt: photo, amateur, clipart, watermark"
+`;
+
+exports[`generator format snapshots > snapshot: stable-diffusion 1`] = `
+"A dragon perched on a crystal spire, fantasy realism, deep purples and gold, epic, digital art
+Negative prompt: photo, amateur, clipart, watermark"
+`;

@@ -1,0 +1,17 @@
+# env files
+.env
+.env.*
+!.env.example
+
+# dependencies
+node_modules/
+
+# turbo
+.turbo/
+
+# misc
+.DS_Store
+*.pem
+
+# playwright mcp screenshots
+.playwright-mcp/

@@ -1,0 +1,41 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`template builder snapshots > snapshot: 3d-render 1`] = `"Crystal sculpture, material: Glass, HDRI, Octane 8K, 3D render"`;
+
+exports[`template builder snapshots > snapshot: abstract 1`] = `"Nostalgia dissolving, medium: Oil on canvas, Burnt sienna, midnight blue, Heavy impasto, abstract art"`;
+
+exports[`template builder snapshots > snapshot: anime 1`] = `"Cyberpunk mage, Casting spell, in the style of Ghibli, Neon rooftop, anime illustration"`;
+
+exports[`template builder snapshots > snapshot: arch-viz 1`] = `"architectural visualization of Scandinavian loft, Minimalist, Natural light, Plants, architecture visualization, interior design"`;
+
+exports[`template builder snapshots > snapshot: character-3d 1`] = `"Steampunk inventor, Pixar-quality, Confident stance, material: Subsurface skin, 3D character design"`;
+
+exports[`template builder snapshots > snapshot: collage 1`] = `"Retro-futurism botanical, materials: Vintage magazines, Layered, Faded pastels, mixed media collage art"`;
+
+exports[`template builder snapshots > snapshot: comic 1`] = `"Hero vs villain, style of Jim Lee, Bold linework, Vibrant, comic book art"`;
+
+exports[`template builder snapshots > snapshot: digital-art 1`] = `"Dragon on crystal, Fantasy realism, color palette: Purple and gold, Epic, digital art"`;
+
+exports[`template builder snapshots > snapshot: isometric 1`] = `"isometric view of Coffee shop, Low-poly pastel, Tiny people, Miniature, isometric 3D illustration"`;
+
+exports[`template builder snapshots > snapshot: landscape 1`] = `"Mountain lake, Sunrise fog, Rule of thirds, shot on Nikon Z7, landscape photography"`;
+
+exports[`template builder snapshots > snapshot: logo 1`] = `"logo design for "Nebula Labs", Geometric minimal, featuring Star shape, Navy and blue, professional logo design, vector, clean"`;
+
+exports[`template builder snapshots > snapshot: pattern 1`] = `"seamless pattern of Tropical leaves, Modern minimal, Green and cream, Half-drop, seamless tileable pattern"`;
+
+exports[`template builder snapshots > snapshot: pixel-art 1`] = `"Fantasy tavern, 256x224, palette: NES palette, SNES RPG, pixel art"`;
+
+exports[`template builder snapshots > snapshot: portrait 1`] = `"A young woman, in Golden hour field, Warm, shot on Canon 5D, professional photography"`;
+
+exports[`template builder snapshots > snapshot: poster 1`] = `"poster design with title "ECLIPSE", Sci-fi premiere, Retro, Nebula, silhouettes, graphic design poster"`;
+
+exports[`template builder snapshots > snapshot: product 1`] = `"Perfume bottle, on Marble, Rim light, Editorial, commercial product photography"`;
+
+exports[`template builder snapshots > snapshot: street 1`] = `"Tokyo alley at night, Lone figure, Noir, 35mm film, street photography"`;
+
+exports[`template builder snapshots > snapshot: surreal 1`] = `"Floating library, Melting clocks, Hyperrealistic, Dreamlike, surrealism"`;
+
+exports[`template builder snapshots > snapshot: ui-mockup 1`] = `"UI design for Trading dashboard, Desktop dark mode, Glassmorphism, showing Charts, UI/UX design mockup"`;
+
+exports[`template builder snapshots > snapshot: watercolor 1`] = `"Wildflowers, Wet-on-wet, Soft pastels, on Cold press, watercolor painting"`;
