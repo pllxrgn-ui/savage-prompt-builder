@@ -1,16 +1,59 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Flame, Github, Mail, Zap } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { Flame, Github, Mail, Zap, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setDevMode } = useAuth();
+  const supabase = createClient();
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  async function handleOAuthLogin(provider: 'google' | 'github') {
+    setIsLoading(true);
+    setError(null);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      setError(error.message);
+      setIsLoading(false);
+    }
+  }
+
+  async function handleMagicLink(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    
+    setIsLoading(true);
+    setError(null);
+    setMessage(null);
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+    } else {
+      setMessage("Check your email for the magic link!");
+    }
+    setIsLoading(false);
+  }
 
   function handleDevLogin() {
-    setDevMode(true);
-    router.push("/home");
+    // We'll keep this as a fallback but suggest real login
+    router.push("/builder");
   }
 
   return (
@@ -29,11 +72,21 @@ export default function LoginPage() {
 
         {/* Auth Card */}
         <div className="rounded-2xl border border-border bg-bg-2 p-6 space-y-4">
-          {/* OAuth buttons — disabled */}
+          {error && (
+            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs">
+              {error}
+            </div>
+          )}
+          {message && (
+            <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 text-xs text-center">
+              {message}
+            </div>
+          )}
+
           <button
-            disabled
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-border bg-surface text-text-3 text-sm font-medium cursor-not-allowed opacity-60"
-            title="Coming soon"
+            onClick={() => handleOAuthLogin('google')}
+            disabled={isLoading}
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-border bg-surface text-text-1 text-sm font-medium hover:bg-bg-1 transition-colors disabled:opacity-50"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -45,9 +98,9 @@ export default function LoginPage() {
           </button>
 
           <button
-            disabled
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-border bg-surface text-text-3 text-sm font-medium cursor-not-allowed opacity-60"
-            title="Coming soon"
+            onClick={() => handleOAuthLogin('github')}
+            disabled={isLoading}
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg border border-border bg-surface text-text-1 text-sm font-medium hover:bg-bg-1 transition-colors disabled:opacity-50"
           >
             <Github className="w-4 h-4" />
             Continue with GitHub
@@ -60,25 +113,27 @@ export default function LoginPage() {
             <div className="flex-1 h-px bg-border" />
           </div>
 
-          {/* Magic link — disabled */}
-          <div className="flex gap-2">
-            <div className="flex items-center gap-1.5 flex-1 rounded-lg border border-border bg-bg-1 px-3 py-2 opacity-60">
+          {/* Magic link */}
+          <form onSubmit={handleMagicLink} className="flex gap-2">
+            <div className="flex items-center gap-1.5 flex-1 rounded-lg border border-border bg-bg-1 px-3 py-2">
               <Mail className="w-3.5 h-3.5 text-text-3 shrink-0" />
               <input
                 type="email"
-                disabled
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 placeholder="your@email.com"
-                className="flex-1 bg-transparent text-sm text-text-3 placeholder:text-text-3 outline-none cursor-not-allowed"
+                className="flex-1 bg-transparent text-sm text-text-1 placeholder:text-text-3 outline-none"
               />
             </div>
             <button
-              disabled
-              className="px-3 py-2 rounded-lg bg-surface text-text-3 text-xs font-medium cursor-not-allowed opacity-60"
-              title="Coming soon"
+              type="submit"
+              disabled={isLoading || !email}
+              className="px-3 py-2 rounded-lg bg-surface text-text-1 text-xs font-medium hover:bg-bg-1 transition-colors disabled:opacity-50"
             >
-              Send
+              {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Send"}
             </button>
-          </div>
+          </form>
 
           {/* Divider */}
           <div className="flex items-center gap-3">
@@ -90,17 +145,18 @@ export default function LoginPage() {
           {/* Dev mode skip */}
           <button
             onClick={handleDevLogin}
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-accent text-white text-sm font-bold hover:bg-accent/90 transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-accent/10 border border-accent/20 text-accent text-sm font-medium hover:bg-accent/15 transition-colors"
           >
-            <Zap className="w-4 h-4" />
-            Skip Login (Dev Mode)
+            <Zap className="w-4 h-4 text-accent" />
+            Explore as Guest
           </button>
         </div>
 
         <p className="text-center text-[10px] text-text-3">
-          BACKEND: Wire OAuth buttons to Supabase Auth
+          Secure authentication powered by Supabase
         </p>
       </div>
     </div>
   );
 }
+

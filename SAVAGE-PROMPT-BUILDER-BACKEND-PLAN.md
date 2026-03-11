@@ -21,12 +21,12 @@ The foundation of the backend to handle users, sessions, and cloud syncing for P
 - [ ] Implement Row Level Security (RLS) policies in Supabase so users can only access their own data.
 
 ### 2. Authentication Flows
-- [ ] Set up NextAuth.js or Supabase Auth.
-- [ ] Configure OAuth providers: Google and GitHub.
-- [ ] Configure Magic Link (email) authentication.
-- [ ] Create `/login` and `/signup` UI pages with auth state integration inside `apps/web`.
-- [ ] Implement secure session handling using standard httpOnly cookies or JWTs.
-- [ ] Set up an Auth Middleware to protect `(app)` dashboard routes and redirect unauthorized users.
+- [x] Set up NextAuth.js or Supabase Auth.
+- [x] Configure OAuth providers: Google and GitHub.
+- [x] Configure Magic Link (email) authentication.
+- [x] Create `/login` and `/signup` UI pages with auth state integration inside `apps/web`.
+- [x] Implement secure session handling using standard httpOnly cookies or JWTs.
+- [x] Set up an Auth Middleware to protect `(app)` dashboard routes and redirect unauthorized users.
 - [ ] Create simple onboarding flow (post-login) to migrate LocalStorage data to the Cloud for new users.
 
 ---
@@ -72,10 +72,11 @@ Making sure the system correctly restricts Pro features to paying users.
 
 ### 7. Stripe Billing Integration
 - [ ] Set up products in the Stripe Dashboard (Free & Pro tiers).
-- [ ] Create `POST /api/checkout` endpoint to create a Stripe Checkout Session.
-- [ ] Create `POST /api/webhook/stripe` endpoint to securely receive Stripe events (payment_success, subscription_updated, subscription_cancelled).
-- [ ] Update the user's `tier` in the Supabase database when the webhook confirms payment.
-- [ ] Implement `useProGate` hook on the frontend to display Upgrade Modals when free users click AI or Generate actions.
+- [x] Create `POST /api/checkout` Stripe Checkout session generation.
+- [x] Create `POST /api/webhook/stripe` Webhook handler for `checkout.session.completed` and `customer.subscription.deleted`.
+- [x] Implement database logic for user `tier` updates on payment completion.
+- [x] Create frontend `useProGate` hook to manage Pro state and trigger Stripe redirects.
+- [x] Implement `useProGate` hook on the frontend to display Upgrade Modals when free users click AI or Generate actions.
 
 ---
 

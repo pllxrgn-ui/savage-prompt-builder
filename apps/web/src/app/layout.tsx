@@ -27,6 +27,8 @@ const accentScript = `
   })();
 `;
 
+import { AuthProvider } from "@/components/auth/AuthProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,7 +40,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: accentScript }} />
       </head>
       <body className={`${dmSans.variable} antialiased`}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

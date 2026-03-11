@@ -34,10 +34,10 @@ const DEV_USER: AuthUser = {
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
-      user: DEV_USER,
-      isPro: true,
-      isAuthenticated: true,
-      devMode: true,
+      user: null,
+      isPro: false,
+      isAuthenticated: false,
+      devMode: false,
 
       // BACKEND: Replace with real Supabase Auth session check
       login: (user) =>
