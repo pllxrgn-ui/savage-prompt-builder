@@ -60,7 +60,7 @@ export default function LoginPage() {
     setIsLoading(true);
     const res = await fetch('/api/auth/guest', { method: 'POST' });
     if (res.ok) {
-      router.push("/builder");
+      router.push("/home");
     } else {
       setError("Failed to start guest session");
       setIsLoading(false);

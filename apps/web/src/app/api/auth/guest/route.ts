@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createGuestToken } from '@/lib/guest-token';
 
 export async function POST() {
-  const token = createGuestToken();
+  const token = await createGuestToken();
 
   const response = NextResponse.json({ ok: true });
   response.cookies.set('spb-guest', token, {

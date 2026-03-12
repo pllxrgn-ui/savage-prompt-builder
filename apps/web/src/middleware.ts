@@ -41,7 +41,7 @@ export async function middleware(request: NextRequest) {
   const isProtectedPage = request.nextUrl.pathname.startsWith('/builder') || request.nextUrl.pathname.startsWith('/library') || request.nextUrl.pathname.startsWith('/settings') || request.nextUrl.pathname.startsWith('/home')
 
   const guestCookie = request.cookies.get('spb-guest')?.value;
-  const isGuest = guestCookie ? verifyGuestToken(guestCookie) : false;
+  const isGuest = guestCookie ? await verifyGuestToken(guestCookie) : false;
 
   if (!user && !isGuest && isProtectedPage) {
     // no user and no guest cookie → redirect to login
