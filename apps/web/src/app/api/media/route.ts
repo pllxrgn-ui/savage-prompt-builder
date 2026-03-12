@@ -2,21 +2,18 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db/index';
 import { media } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
-// Import auth helper when setup (e.g. Supabase Auth)
-// import { getUser } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET(req: Request) {
     try {
-        // const user = await getUser(req);
-        // if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-        // Hardcoded dev ID for now since auth isn't fully integrated yet
-        const userId = "00000000-0000-0000-0000-000000000000";
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
         const savedMedia = await db
             .select()
             .from(media)
-            .where(eq(media.userId, userId))
+            .where(eq(media.userId, user.id))
             .orderBy(desc(media.createdAt));
 
         return NextResponse.json({ media: savedMedia });
@@ -28,15 +25,15 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
     try {
-        // const user = await getUser(req);
-        // if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        const userId = "00000000-0000-0000-0000-000000000000";
         const body = await req.json();
         const { url, provider, model, metadata, promptId } = body;
 
         const newMedia = await db.insert(media).values({
-            userId,
+            userId: user.id,
             url,
             provider,
             model,

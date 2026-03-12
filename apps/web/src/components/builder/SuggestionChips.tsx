@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 import { useBuilderStore } from "@/lib/store";
 import { getPresetsForField } from "@/lib/data";
 
@@ -30,12 +30,12 @@ export function SuggestionChips({ templateId, fieldId }: SuggestionChipsProps) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setField(fieldId, isActive ? "" : preset)}
-            className={clsx(
-              "px-2.5 py-1 rounded-md text-[11px] font-medium transition-[background-color,color,border-color] duration-150",
+            className={cn(
+              "px-2.5 py-1 font-mono text-[10px] font-medium transition-[background-color,color,border-color] duration-150",
               "border cursor-pointer",
               isActive
-                ? "bg-accent/15 text-accent border-accent/30"
-                : "bg-surface text-text-3 border-transparent hover:text-text-2 hover:bg-bg-3",
+                ? "bg-accent text-black border-accent"
+                : "bg-surface text-text-3 border-accent/10 hover:text-text-2 hover:border-accent/30",
             )}
           >
             {preset}

@@ -111,7 +111,7 @@ export function PlatformDropdown() {
 
   return (
     <div className="space-y-1">
-      <label className="flex items-center gap-1.5 text-xs font-medium text-text-2">
+      <label className="flex items-center gap-1.5 text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">
         PLATFORM / POST TYPE
         <span className="text-accent">*</span>
       </label>
@@ -122,9 +122,9 @@ export function PlatformDropdown() {
           type="button"
           onClick={() => setOpen(!open)}
           className={clsx(
-            "w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-left",
-            "bg-bg-input border border-border",
-            "focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20",
+            "w-full flex items-center justify-between px-3 py-2.5 text-sm font-mono text-left",
+            "bg-bg-input border border-accent/8",
+            "focus:outline-none focus:border-accent/40",
             "transition-all duration-150",
           )}
         >
@@ -132,7 +132,7 @@ export function PlatformDropdown() {
             <div className="flex items-center gap-2 min-w-0">
               <span className="text-text-1 truncate">{selected.label}</span>
               {selected.ratio && (
-                <span className="shrink-0 px-1.5 py-0.5 rounded bg-accent/10 text-accent text-[10px] font-medium">
+                <span className="shrink-0 px-1.5 py-0.5 bg-accent/10 text-accent text-[10px] font-mono font-medium">
                   {selected.ratio}
                 </span>
               )}
@@ -145,9 +145,9 @@ export function PlatformDropdown() {
 
         {/* Dropdown */}
         {open && (
-          <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-bg-1 border border-border rounded-xl shadow-lg overflow-hidden">
+          <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-bg-1 border border-accent/8 shadow-lg overflow-hidden">
             {/* Search */}
-            <div className="p-2 border-b border-border">
+            <div className="p-2 border-b border-accent/8">
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-3" />
                 <input
@@ -157,10 +157,10 @@ export function PlatformDropdown() {
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search platforms..."
                   className={clsx(
-                    "w-full pl-8 pr-8 py-2 rounded-lg text-xs",
-                    "bg-bg-input border border-border",
+                    "w-full pl-8 pr-8 py-2 text-xs font-mono",
+                    "bg-bg-input border border-accent/8",
                     "text-text-1 placeholder:text-text-3",
-                    "focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20",
+                    "focus:outline-none focus:border-accent/40",
                   )}
                 />
                 {search && (

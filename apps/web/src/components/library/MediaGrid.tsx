@@ -10,7 +10,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 import { useUIStore } from "@/lib/store";
 import type { GeneratedImage } from "@/lib/services/generate-service";
 
@@ -43,7 +43,7 @@ export function MediaGrid({ images, onDelete, onStar }: MediaGridProps) {
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <ImageIcon className="w-12 h-12 text-text-3/30 mb-3" />
         <p className="text-sm text-text-3">No generated images yet</p>
-        <p className="text-xs text-text-3/60 mt-1">
+        <p className="text-xs text-text-3 mt-1">
           Use the builder to create prompts and generate images.
         </p>
       </div>
@@ -145,7 +145,7 @@ export function MediaGrid({ images, onDelete, onStar }: MediaGridProps) {
                 <div className="flex gap-2 pt-1">
                   <button
                     onClick={() => handleCopyPrompt(selectedImage)}
-                    className={clsx(
+                    className={cn(
                       "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium",
                       "bg-surface border border-border hover:bg-bg-3 transition-colors text-text-2",
                     )}
@@ -154,7 +154,7 @@ export function MediaGrid({ images, onDelete, onStar }: MediaGridProps) {
                   </button>
                   <button
                     onClick={() => handleDownload(selectedImage)}
-                    className={clsx(
+                    className={cn(
                       "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium",
                       "bg-surface border border-border hover:bg-bg-3 transition-colors text-text-2",
                     )}
@@ -164,7 +164,7 @@ export function MediaGrid({ images, onDelete, onStar }: MediaGridProps) {
                   {onStar && (
                     <button
                       onClick={() => onStar(selectedImage.id)}
-                      className={clsx(
+                      className={cn(
                         "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium",
                         "bg-surface border border-border hover:bg-bg-3 transition-colors text-text-2",
                       )}
@@ -178,7 +178,7 @@ export function MediaGrid({ images, onDelete, onStar }: MediaGridProps) {
                         onDelete(selectedImage.id);
                         setSelectedImage(null);
                       }}
-                      className={clsx(
+                      className={cn(
                         "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium",
                         "bg-surface border border-red-500/30 hover:bg-red-500/10 transition-colors text-red-400",
                       )}

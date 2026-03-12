@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { verifyGuestToken } from '@/lib/guest-token'
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -39,8 +40,11 @@ export async function middleware(request: NextRequest) {
   const isAuthPage = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup') || request.nextUrl.pathname === '/'
   const isProtectedPage = request.nextUrl.pathname.startsWith('/builder') || request.nextUrl.pathname.startsWith('/library') || request.nextUrl.pathname.startsWith('/settings') || request.nextUrl.pathname.startsWith('/home')
 
-  if (!user && isProtectedPage) {
-    // no user, potentially respond by redirecting the user to the login page
+  const guestCookie = request.cookies.get('spb-guest')?.value;
+  const isGuest = guestCookie ? verifyGuestToken(guestCookie) : false;
+
+  if (!user && !isGuest && isProtectedPage) {
+    // no user and no guest cookie → redirect to login
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)

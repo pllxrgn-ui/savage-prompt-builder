@@ -23,12 +23,12 @@ export function DrawerSection({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="border-b border-border last:border-b-0">
+    <div className="border-b border-accent/8 last:border-b-0">
       <button
         onClick={() => setOpen(!open)}
         className="flex items-center justify-between w-full px-4 py-3 text-left hover:bg-surface transition-colors"
       >
-        <span className="text-xs font-semibold text-text-2 uppercase tracking-wider">
+        <span className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">
           {title}
         </span>
         <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ function StyleChip({ label, selected, onToggle }: StyleChipProps) {
     <button
       onClick={onToggle}
       className={clsx(
-        "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-150",
+        "px-2.5 py-1 text-[11px] font-mono font-medium transition-all duration-150",
         "border cursor-pointer",
         selected
           ? "bg-accent/15 text-accent border-accent/30"
@@ -100,7 +100,7 @@ function CustomStyleChip({
       <button
         onClick={onToggle}
         className={clsx(
-          "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-150",
+          "px-2.5 py-1 text-[11px] font-mono font-medium transition-all duration-150",
           "border cursor-pointer",
           selected
             ? "bg-accent/15 text-accent border-accent/30"
@@ -141,14 +141,14 @@ function CustomStyleForm({
   const [content, setContent] = useState(initial?.content ?? "");
 
   return (
-    <div className="p-3 rounded-lg bg-bg-3 border border-accent/20 space-y-2">
+    <div className="p-3 bg-bg-3 border border-accent/20 space-y-2">
       <input
         type="text"
         placeholder="Style name…"
         value={label}
         onChange={(e) => setLabel(e.target.value)}
         aria-label="Style name"
-        className="w-full px-2.5 py-1.5 rounded-md bg-bg-input border border-border text-xs text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/50"
+        className="w-full px-2.5 py-1.5 bg-bg-input border border-accent/8 text-xs font-mono text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/40"
       />
       <textarea
         placeholder="Style instruction (e.g. 'dramatic rim lighting, cinematic color grading')…"
@@ -156,12 +156,12 @@ function CustomStyleForm({
         onChange={(e) => setContent(e.target.value)}
         rows={2}
         aria-label="Style content"
-        className="w-full px-2.5 py-1.5 rounded-md bg-bg-input border border-border text-xs text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/50 resize-none"
+        className="w-full px-2.5 py-1.5 bg-bg-input border border-accent/8 text-xs font-mono text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/40 resize-none"
       />
       <div className="flex gap-2 justify-end">
         <button
           onClick={onCancel}
-          className="px-2.5 py-1 rounded-md text-[11px] text-text-3 hover:text-text-1 transition-colors"
+          className="px-2.5 py-1 text-[11px] text-text-3 hover:text-text-1 transition-colors"
         >
           Cancel
         </button>
@@ -170,7 +170,7 @@ function CustomStyleForm({
             if (label.trim() && content.trim()) onSave(label.trim(), content.trim());
           }}
           disabled={!label.trim() || !content.trim()}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-accent text-white text-[11px] font-medium hover:opacity-90 disabled:opacity-40 transition-opacity"
+          className="flex items-center gap-1 px-2.5 py-1 bg-accent text-white text-[11px] font-mono font-medium hover:opacity-90 disabled:opacity-40 transition-opacity"
         >
           <Check className="w-3 h-3" /> Save
         </button>
@@ -204,12 +204,12 @@ export function StylesDrawer({ templateId, styles }: StylesDrawerProps) {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-bg-2 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-        <h3 className="text-sm font-semibold text-text-1">Styles</h3>
+    <div className="border border-accent/8 bg-bg-2 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-accent/8">
+        <h3 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">Styles</h3>
         {selectedStyles.length > 0 && (
-          <span className="text-[10px] text-accent bg-accent/10 px-2 py-0.5 rounded-full">
-            {selectedStyles.length} selected
+          <span className="text-[10px] text-accent font-mono px-2 py-0.5 border border-accent/20">
+            [{selectedStyles.length}] selected
           </span>
         )}
       </div>

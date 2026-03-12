@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { AccentId, GeneratorId } from "@/types";
+import { ACCENTS } from "@/lib/data";
 
 export interface CustomPhrase {
   id: string;
@@ -33,7 +34,7 @@ export type SettingsStore = SettingsState & SettingsActions;
 export const useSettingsStore = create<SettingsStore>()(
   persist(
     (set) => ({
-      accent: "rose",
+      accent: "orange",
       theme: "dark",
       defaultGenerator: "midjourney",
       installedStylePacks: [],
@@ -96,17 +97,7 @@ export const useSettingsStore = create<SettingsStore>()(
   ),
 );
 
-/** Resolve accent ID → hex color. Must be kept in sync with accents.ts. */
+/** Resolve accent ID → hex color. Derives from the single source of truth in accents.ts. */
 function getAccentColor(id: AccentId): string {
-  const map: Record<AccentId, string> = {
-    rose: "#FF4D6D",
-    violet: "#A78BFA",
-    blue: "#3B82F6",
-    cyan: "#22D3EE",
-    emerald: "#34D399",
-    amber: "#F59E0B",
-    orange: "#F97316",
-    pink: "#EC4899",
-  };
-  return map[id];
+  return ACCENTS.find((a) => a.id === id)?.color ?? ACCENTS[0].color;
 }

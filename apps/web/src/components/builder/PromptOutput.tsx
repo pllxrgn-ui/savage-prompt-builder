@@ -1,19 +1,33 @@
 "use client";
 
-import { useMemo, useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Copy, Check, ChevronDown, ChefHat, Share2 } from "lucide-react";
-import { clsx } from "clsx";
-import { useBuilderStore, useUIStore } from "@/lib/store";
+import { useMemo, useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Copy, Check, ChevronDown, ChefHat, Share2,
+  Star, Save, GitBranch, Shuffle, RotateCw,
+  FileText, Sparkles, Loader2, Image as ImageIcon,
+  Lightbulb,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useBuilderStore, useUIStore, useHistoryStore } from "@/lib/store";
 import * as promptService from "@/lib/services/prompt-service";
 import * as recipeServiceMod from "@/lib/services/recipe-service";
-import { GENERATORS, PHRASES, getTemplateById } from "@/lib/data";
+import { GENERATORS, PHRASES, getTemplateById, getPresetsForField } from "@/lib/data";
 import { buildPrompt } from "@/lib/prompt-engine";
 import { LucideIcon } from "@/components/ui/LucideIcon";
-import { Sparkles, Loader2, Image as ImageIcon } from "lucide-react";
 import type { GeneratorId, UIStore } from "@/types";
 import { GenerateModal } from "@/components/generate/GenerateModal";
 import { copyShareUrl } from "@/lib/services/share-service";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function PromptOutput() {
   const {
@@ -35,33 +49,24 @@ export function PromptOutput() {
   } = useBuilderStore();
 
   const addToast = useUIStore((s: UIStore) => s.addToast);
+  const projects = useHistoryStore((s) => s.projects);
+  const savedPrompts = useHistoryStore((s) => s.savedPrompts);
+
   const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
   const [isPolishing, setIsPolishing] = useState(false);
   const [polishedResult, setPolishedResult] = useState<string | null>(null);
-  const [showGenerators, setShowGenerators] = useState(false);
   const [generateOpen, setGenerateOpen] = useState(false);
-  const genDropdownRef = useRef<HTMLDivElement>(null);
 
-  const closeDropdown = useCallback(() => setShowGenerators(false), []);
+  // Pre-save metadata (matches prototype: set before saving)
+  const [promptStarred, setPromptStarred] = useState(false);
+  const [promptScore, setPromptScore] = useState<number | null>(null);
+  const [promptNote, setPromptNote] = useState("");
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!showGenerators) return;
-    function handleClickOutside(e: MouseEvent) {
-      if (genDropdownRef.current && !genDropdownRef.current.contains(e.target as Node)) {
-        closeDropdown();
-      }
-    }
-    function handleEscape(e: KeyboardEvent) {
-      if (e.key === "Escape") closeDropdown();
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [showGenerators, closeDropdown]);
+  // AI variations state
+  const [variationsLoading, setVariationsLoading] = useState(false);
+  const [variationsResult, setVariationsResult] = useState<string[] | null>(null);
 
   const result = useMemo(() => {
     if (!activeTemplateId) return null;
@@ -141,12 +146,12 @@ export function PromptOutput() {
       palette: selectedPalette,
       keywords: selectedKeywords,
       negative: negativePrompt,
-      starred: false,
-      score: null,
-      note: "",
+      starred: promptStarred,
+      score: promptScore,
+      note: promptNote,
       parentId: null,
       version: 1,
-      projectId: null,
+      projectId: selectedProject,
       variations,
     });
 
@@ -209,16 +214,137 @@ export function PromptOutput() {
   };
 
   const currentDisplayPrompt = polishedResult || result?.full;
+  const wordCount = result ? result.full.split(/\s+/).filter(Boolean).length : 0;
+  const charCount = result ? result.full.length : 0;
+
+  const handleSavePrompt = () => {
+    if (!result || !activeTemplateId) return;
+    const tmpl = getTemplateById(activeTemplateId);
+    const firstFieldValue = Object.values(templateFields).find((v) => v.trim() !== "");
+    const title = tmpl
+      ? tmpl.name + (firstFieldValue ? ` — ${firstFieldValue}` : "")
+      : activeTemplateId;
+
+    promptService.savePrompt({
+      title,
+      content: result.full,
+      templateId: activeTemplateId,
+      generatorId: selectedGenerator,
+      fieldData: templateFields,
+      styles: selectedStyles,
+      palette: selectedPalette,
+      keywords: selectedKeywords,
+      negative: negativePrompt,
+      starred: promptStarred,
+      score: promptScore,
+      note: promptNote,
+      parentId: null,
+      version: 1,
+      projectId: selectedProject,
+      variations,
+    });
+    addToast({ message: "Prompt saved!", type: "success" });
+  };
+
+  const handleIterate = () => {
+    if (!result || !activeTemplateId) return;
+    const lastSaved = savedPrompts.find((p) => p.templateId === activeTemplateId);
+    if (!lastSaved) {
+      handleSavePrompt();
+      return;
+    }
+    const tmpl = getTemplateById(activeTemplateId);
+    promptService.iteratePrompt(lastSaved.id, {
+      title: (tmpl?.name ?? activeTemplateId) + ` v${lastSaved.version + 1}`,
+      content: result.full,
+      templateId: activeTemplateId,
+      generatorId: selectedGenerator,
+      fieldData: templateFields,
+      styles: selectedStyles,
+      palette: selectedPalette,
+      keywords: selectedKeywords,
+      negative: negativePrompt,
+      starred: promptStarred,
+      score: promptScore,
+      note: promptNote,
+      projectId: selectedProject,
+      variations,
+    });
+    addToast({ message: `Iteration v${lastSaved.version + 1} saved!`, type: "success" });
+  };
+
+  const handleVariations = async () => {
+    if (!result || !activeGen) return;
+    setVariationsLoading(true);
+    try {
+      const response = await fetch("/api/ai/variations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: result.full,
+          generator: activeGen.name,
+          count: 3,
+        }),
+      });
+      if (!response.ok) throw new Error("Failed");
+      const data = await response.json();
+      setVariationsResult(data.variations ?? []);
+      addToast({ message: "Variations generated!", type: "success" });
+    } catch {
+      addToast({ message: "Failed to generate variations.", type: "error" });
+    } finally {
+      setVariationsLoading(false);
+    }
+  };
+
+  const handleCopyRaw = async () => {
+    if (!result) return;
+    await navigator.clipboard.writeText(result.positive);
+    addToast({ message: "Raw prompt copied!", type: "success" });
+  };
+
+  const handleRandomFill = () => {
+    if (!activeTemplateId) return;
+    const tmpl = getTemplateById(activeTemplateId);
+    if (!tmpl) return;
+    const { setField } = useBuilderStore.getState();
+    for (const field of tmpl.fields) {
+      if (field.id === "avoid") continue;
+      const presets = getPresetsForField(tmpl.id, field.id);
+      if (presets.length > 0) {
+        setField(field.id, presets[Math.floor(Math.random() * presets.length)]);
+      }
+    }
+    addToast({ message: "Fields randomized!", type: "success" });
+  };
+
+  const handleRemix = () => {
+    if (!activeTemplateId) return;
+    const tmpl = getTemplateById(activeTemplateId);
+    if (!tmpl) return;
+    const { setField } = useBuilderStore.getState();
+    for (const field of tmpl.fields) {
+      if (field.id === "subject" || field.id === "avoid") continue;
+      const presets = getPresetsForField(tmpl.id, field.id);
+      if (presets.length > 0) {
+        setField(field.id, presets[Math.floor(Math.random() * presets.length)]);
+      }
+    }
+    addToast({ message: "Prompt remixed!", type: "success" });
+  };
 
   return (
-    <div className="relative rounded-xl border border-border bg-bg-2 overflow-hidden">
+    <Card className="relative overflow-hidden border-accent/10 bg-bg-1">
+      {/* Orange top accent bar */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-accent" />
+
       {/* Shimmer glow when output exists */}
       {(result || polishedResult) && (
         <motion.div
           className="absolute inset-0 rounded-xl pointer-events-none z-0"
           style={{
             background: polishedResult
-              ? "linear-gradient(90deg, transparent 0%, #a855f7 50%, transparent 100%)" // Purple glow for AI
+              ? "linear-gradient(90deg, transparent 0%, #a855f7 50%, transparent 100%)"
               : "linear-gradient(90deg, transparent 0%, var(--color-accent) 50%, transparent 100%)",
             backgroundSize: "200% 100%",
             opacity: 0.08,
@@ -228,89 +354,120 @@ export function PromptOutput() {
           transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
         />
       )}
-      {/* Header with generator selector */}
-      <div className="relative z-10 flex items-center justify-between px-4 py-3 border-b border-border">
-        <h3 className="text-sm font-semibold text-text-1">Output</h3>
-        <div className="relative" ref={genDropdownRef}>
-          <button
-            onClick={() => setShowGenerators(!showGenerators)}
-            className={clsx(
-              "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium",
-              "bg-surface border border-border hover:bg-bg-3 transition-all duration-150",
-            )}
-          >
-            {activeGen && (
-              <LucideIcon name={activeGen.icon} className="w-3.5 h-3.5 text-accent" />
-            )}
-            <span className="text-text-2">{activeGen?.name ?? "Generator"}</span>
-            <ChevronDown className="w-3 h-3 text-text-3" />
-          </button>
 
-          {showGenerators && (
-            <div
-              className={clsx(
-                "absolute right-0 top-full mt-1 z-50 w-56",
-                "bg-bg-1 border border-border rounded-xl shadow-lg",
-                "py-1 max-h-64 overflow-y-auto",
+      {/* Header with generator selector */}
+      <div className="relative z-10 flex items-center justify-between px-4 py-2.5 border-b border-accent/8">
+        <div className="flex items-center gap-2">
+          <h3 className="text-[10px] font-mono font-semibold text-text-1 uppercase tracking-[0.15em]">OUTPUT</h3>
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-7 w-7",
+              promptStarred ? "text-warn" : "text-text-3 hover:text-warn",
+            )}
+            onClick={() => setPromptStarred(!promptStarred)}
+          >
+            <Star className={cn("w-4 h-4", promptStarred && "fill-current")} />
+          </Button>
+        </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="h-7 gap-2 text-[10px] font-mono uppercase tracking-wider border-accent/15">
+              {activeGen && (
+                <LucideIcon name={activeGen.icon} className="w-3.5 h-3.5 text-accent" />
               )}
-            >
-              {GENERATORS.map((gen) => (
-                <button
-                  key={gen.id}
-                  onClick={() => {
-                    setGenerator(gen.id as GeneratorId);
-                    setShowGenerators(false);
-                  }}
-                  className={clsx(
-                    "w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-surface transition-colors",
-                    selectedGenerator === gen.id && "bg-accent/10",
-                  )}
-                >
-                  <LucideIcon name={gen.icon} className="w-4 h-4 text-text-3" />
-                  <div className="flex-1 min-w-0">
-                    <p
-                      className={clsx(
-                        "text-xs font-medium",
-                        selectedGenerator === gen.id
-                          ? "text-accent"
-                          : "text-text-1",
-                      )}
-                    >
-                      {gen.name}
-                    </p>
-                    <p className="text-[10px] text-text-3 truncate">
-                      {gen.description}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
+              <span className="text-text-2">{activeGen?.name ?? "Generator"}</span>
+              <ChevronDown className="w-3 h-3 text-text-3" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 max-h-64 overflow-y-auto">
+            {GENERATORS.map((gen) => (
+              <DropdownMenuItem
+                key={gen.id}
+                onClick={() => setGenerator(gen.id as GeneratorId)}
+                className={cn(
+                  "flex items-center gap-3 py-2",
+                  selectedGenerator === gen.id && "bg-accent/10",
+                )}
+              >
+                <LucideIcon name={gen.icon} className="w-4 h-4 text-text-3" />
+                <div className="flex-1 min-w-0">
+                  <p
+                    className={cn(
+                      "text-xs font-medium",
+                      selectedGenerator === gen.id ? "text-accent" : "text-text-1",
+                    )}
+                  >
+                    {gen.name}
+                  </p>
+                  <p className="text-[10px] text-text-3 truncate">{gen.description}</p>
+                </div>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Badge row */}
+      <div className="relative px-4 py-2 border-b border-accent/8">
+        <div className="flex flex-wrap gap-1.5">
+          {activeTemplateId && (
+            <Badge variant="outline" className="text-[10px] text-accent border-accent/30">
+              {getTemplateById(activeTemplateId)?.name}
+            </Badge>
+          )}
+          {activeGen && (
+            <Badge variant="outline" className="text-[10px] text-text-2">
+              {activeGen.name}
+            </Badge>
+          )}
+          {selectedStyles.length > 0 && (
+            <Badge variant="outline" className="text-[10px] text-accent2 border-accent2/30">
+              {selectedStyles.length} style{selectedStyles.length !== 1 && "s"}
+            </Badge>
+          )}
+          {selectedKeywords.length > 0 && (
+            <Badge variant="outline" className="text-[10px] text-info border-info/30">
+              {selectedKeywords.length} keyword{selectedKeywords.length !== 1 && "s"}
+            </Badge>
+          )}
+          {selectedPalette && (
+            <Badge variant="outline" className="text-[10px] text-text-2">
+              Palette
+            </Badge>
+          )}
+          {mockup.enabled && (
+            <Badge variant="outline" className="text-[10px] text-mockup border-mockup/30">
+              Mockup
+            </Badge>
           )}
         </div>
       </div>
 
       {/* Phrases */}
-      <div className="relative px-4 py-3 border-b border-border">
-        <p className="text-[10px] text-text-3 mb-2 uppercase tracking-wider font-medium">
-          Boost Phrases
+      <div className="relative px-4 py-3 border-b border-accent/8">
+        <p className="text-[9px] font-mono text-text-3 mb-2 uppercase tracking-[0.15em]">
+          BOOST PHRASES
         </p>
         <div className="flex flex-wrap gap-1.5">
           {PHRASES.map((phrase) => {
             const isSelected = selectedPhrases.includes(phrase.content);
             return (
-              <button
+              <Badge
                 key={phrase.id}
-                onClick={() => togglePhrase(phrase.content)}
-                className={clsx(
-                  "px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-150",
-                  "border cursor-pointer",
+                variant={isSelected ? "default" : "outline"}
+                className={cn(
+                  "cursor-pointer text-[11px] font-medium transition-all duration-150",
                   isSelected
-                    ? "bg-accent/15 text-accent border-accent/30"
-                    : "bg-surface text-text-3 border-transparent hover:text-text-2 hover:bg-bg-3",
+                    ? "bg-accent/15 text-accent border-accent/30 hover:bg-accent/20"
+                    : "text-text-3 hover:text-text-2 hover:bg-bg-3",
                 )}
+                onClick={() => togglePhrase(phrase.content)}
               >
                 {phrase.label}
-              </button>
+              </Badge>
             );
           })}
         </div>
@@ -319,17 +476,17 @@ export function PromptOutput() {
       {/* Output preview */}
       <div className="relative p-4">
         {!result ? (
-          <p className="text-xs text-text-3 text-center py-6">
-            Fill in template fields to see your prompt.
+          <p className="text-[11px] font-mono text-text-3 text-center py-8 tracking-wider">
+            &gt;_ FILL IN FIELDS TO GENERATE OUTPUT
           </p>
         ) : (
           <div className="space-y-3">
             {/* Positive */}
             <div>
-              <p className="text-[10px] text-text-3 mb-1 uppercase tracking-wider font-medium">
-                Positive
+              <p className="text-[9px] font-mono text-text-3 mb-1 uppercase tracking-[0.15em]">
+                POSITIVE
               </p>
-              <div className="bg-bg-input border border-border rounded-lg p-3">
+              <div className="bg-bg-input border border-accent/8 p-3">
                 <p className="text-xs text-text-1 leading-relaxed break-words whitespace-pre-wrap">
                   {result.positive || <span className="text-text-3 italic">Empty</span>}
                 </p>
@@ -339,10 +496,10 @@ export function PromptOutput() {
             {/* Negative */}
             {result.negative && (
               <div>
-                <p className="text-[10px] text-text-3 mb-1 uppercase tracking-wider font-medium">
-                  Negative
+                <p className="text-[9px] font-mono text-text-3 mb-1 uppercase tracking-[0.15em]">
+                  NEGATIVE
                 </p>
-                <div className="bg-bg-input border border-border rounded-lg p-3">
+                <div className="bg-bg-input border border-accent/8 p-3">
                   <p className="text-xs text-text-2 leading-relaxed break-words whitespace-pre-wrap">
                     {result.negative}
                   </p>
@@ -353,21 +510,21 @@ export function PromptOutput() {
             {/* Full formatted output */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <p className="text-[10px] text-text-3 uppercase tracking-wider font-medium">
-                  {polishedResult ? "AI Polished Output" : `Full Output (${activeGen?.name})`}
+                <p className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">
+                  {polishedResult ? "AI POLISHED OUTPUT" : `FULL OUTPUT // ${activeGen?.name?.toUpperCase() ?? "GENERATOR"}`}
                 </p>
                 {polishedResult && (
-                  <span className="text-[10px] text-purple-400 bg-purple-400/10 px-1.5 py-0.5 rounded flex items-center gap-1">
+                  <Badge variant="outline" className="text-[10px] text-purple-400 bg-purple-400/10 border-purple-400/30 gap-1">
                     <Sparkles className="w-3 h-3" />
                     AI Optimized
-                  </span>
+                  </Badge>
                 )}
               </div>
-              <div className={clsx(
-                "border rounded-lg p-3 transition-colors",
-                polishedResult ? "bg-purple-950/20 border-purple-500/30" : "bg-bg-input border-border"
+              <div className={cn(
+                "border p-3 transition-colors",
+                polishedResult ? "bg-purple-950/20 border-purple-500/30" : "bg-bg-input border-accent/8"
               )}>
-                <pre className={clsx(
+                <pre className={cn(
                   "text-xs leading-relaxed break-words whitespace-pre-wrap font-mono",
                   polishedResult ? "text-purple-300" : "text-accent"
                 )}>
@@ -376,156 +533,288 @@ export function PromptOutput() {
               </div>
             </div>
 
+            {/* Word / char count */}
+            <div className="flex items-center gap-3 text-[10px]">
+              <span className={cn("font-mono", wordCount > 75 ? "text-warn" : "text-text-3")}>
+                {wordCount} words
+              </span>
+              <span className="text-text-3">•</span>
+              <span className="text-text-3 font-mono">{charCount} chars</span>
+              {wordCount > 75 && (
+                <span className="text-warn">⚠ Token limit warning</span>
+              )}
+            </div>
+
+            {/* Score */}
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">SCORE</span>
+              <div className="flex gap-0.5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    aria-label={`Rate ${star} star${star !== 1 ? "s" : ""}`}
+                    onClick={() => setPromptScore(promptScore === star ? null : star)}
+                    className={cn(
+                      "p-0.5 transition-colors",
+                      (promptScore ?? 0) >= star ? "text-warn" : "text-text-3/30 hover:text-warn/50",
+                    )}
+                  >
+                    <Star className={cn("w-3.5 h-3.5", (promptScore ?? 0) >= star && "fill-current")} />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Note */}
+            <Input
+              placeholder=">_ Add a note..."
+              value={promptNote}
+              onChange={(e) => setPromptNote(e.target.value)}
+              className="h-7 text-[11px] font-mono bg-bg-input border-accent/8 placeholder:text-text-3/30"
+            />
+
             {/* Actions */}
-            <div className="flex flex-col gap-2.5">
-              <div className="flex gap-2.5">
-                {/* AI Polish Button */}
-                <motion.button
+            <div className="flex flex-col gap-2">
+              {/* Row 1: Copy + Generate (hero) */}
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleCopy}
+                  className={cn(
+                    "flex-1",
+                    copied
+                    ? "bg-success/15 text-success border border-success/30 hover:bg-success/20 font-mono uppercase tracking-wider text-[11px]"
+                    : "bg-accent text-black font-bold hover:bg-accent/90 font-mono uppercase tracking-wider text-[11px]",
+                  )}
+                >
+                  {copied ? (
+                    <span className="flex items-center gap-2">
+                      <Check className="w-4 h-4" />
+                      Copied!
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <Copy className="w-4 h-4" />
+                      Copy Prompt
+                    </span>
+                  )}
+                </Button>
+                <Button
+                  onClick={() => setGenerateOpen(true)}
+                  variant="outline"
+                  className="flex-1 hover:text-accent hover:border-accent/40 font-mono uppercase tracking-wider text-[11px]"
+                >
+                  <ImageIcon className="w-4 h-4" />
+                  Generate
+                </Button>
+              </div>
+
+              {/* Row 2: Save + Iterate + Recipe */}
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSavePrompt}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs hover:text-accent hover:border-accent/40"
+                >
+                  <Save className="w-3.5 h-3.5" />
+                  Save
+                </Button>
+                <Button
+                  onClick={handleIterate}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs hover:text-accent hover:border-accent/40"
+                >
+                  <GitBranch className="w-3.5 h-3.5" />
+                  Iterate
+                </Button>
+                <Button
+                  onClick={handleSaveRecipe}
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "flex-1 text-xs",
+                    saved
+                      ? "bg-success/15 text-success border-success/30"
+                      : "hover:text-text-1 hover:border-accent/40",
+                  )}
+                >
+                  {saved ? (
+                    <span className="flex items-center gap-1.5">
+                      <Check className="w-3.5 h-3.5" />
+                      Saved
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5">
+                      <ChefHat className="w-3.5 h-3.5" />
+                      Recipe
+                    </span>
+                  )}
+                </Button>
+              </div>
+
+              {/* Project selector */}
+              {projects.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="w-full h-7 text-xs justify-between">
+                      <span className="text-text-3">
+                        {selectedProject
+                          ? projects.find((p) => p.id === selectedProject)?.name ?? "Project"
+                          : "Assign to Project"}
+                      </span>
+                      <ChevronDown className="w-3 h-3 text-text-3" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={() => setSelectedProject(null)}>
+                      <span className="text-xs text-text-3">None</span>
+                    </DropdownMenuItem>
+                    {projects.map((proj) => (
+                      <DropdownMenuItem
+                        key={proj.id}
+                        onClick={() => setSelectedProject(proj.id)}
+                        className={cn(selectedProject === proj.id && "bg-accent/10")}
+                      >
+                        <span className="text-xs">{proj.name}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              {/* Row 3: AI Tools */}
+              <div className="flex gap-2">
+                <Button
                   onClick={handlePolish}
                   disabled={isPolishing || !!polishedResult}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.97 }}
-                  className={clsx(
-                    "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium",
-                    "transition-all duration-200 border",
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "flex-1 text-xs",
                     polishedResult
-                      ? "bg-purple-500/10 text-purple-400 border-purple-500/30 opacity-50 cursor-not-allowed"
-                      : "bg-bg-3 text-text-2 border-border hover:bg-surface hover:text-purple-400 hover:border-purple-400/40"
+                      ? "bg-purple-500/10 text-purple-400 border-purple-500/30 opacity-50"
+                      : "hover:text-purple-400 hover:border-purple-400/40",
                   )}
                 >
                   {isPolishing ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="flex items-center justify-center"
-                    >
-                      <Loader2 className="w-4 h-4 text-purple-400" />
-                    </motion.div>
+                    <Loader2 className="w-3.5 h-3.5 text-purple-400 animate-spin" />
                   ) : (
-                    <span className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" />
+                    <span className="flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
                       {polishedResult ? "Polished" : "AI Polish"}
                     </span>
                   )}
-                </motion.button>
+                </Button>
+                <Button
+                  onClick={handleVariations}
+                  disabled={variationsLoading}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs hover:text-purple-400 hover:border-purple-400/40"
+                >
+                  {variationsLoading ? (
+                    <Loader2 className="w-3.5 h-3.5 text-purple-400 animate-spin" />
+                  ) : (
+                    <span className="flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      Variations
+                    </span>
+                  )}
+                </Button>
+                <Button
+                  onClick={handleCopyRaw}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs hover:text-text-1 hover:border-accent/40"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  Copy Raw
+                </Button>
               </div>
 
-              <div className="flex gap-2.5">
-                {/* Copy prompt button */}
-                <motion.button
-                  onClick={handleCopy}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.97 }}
-                  className={clsx(
-                    "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium",
-                    "transition-[background-color,color,border-color] duration-200",
-                    copied
-                      ? "bg-success/15 text-success border border-success/30"
-                      : "bg-accent text-white hover:bg-accent/90",
-                  )}
+              {/* Row 4: Utility */}
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleRandomFill}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs hover:text-text-1 hover:border-accent/40"
                 >
-                  <AnimatePresence mode="wait">
-                    {copied ? (
-                      <motion.span
-                        key="copied"
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        transition={{ duration: 0.15 }}
-                        className="flex items-center gap-2"
-                      >
-                        <Check className="w-4 h-4" />
-                        Copied!
-                      </motion.span>
-                    ) : (
-                      <motion.span
-                        key="copy"
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        transition={{ duration: 0.15 }}
-                        className="flex items-center gap-2"
-                      >
-                        <Copy className="w-4 h-4" />
-                        Copy Prompt
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
-
-                {/* Save recipe button */}
-                <motion.button
-                  onClick={handleSaveRecipe}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.97 }}
-                  className={clsx(
-                    "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium",
-                    "transition-all duration-200 border",
-                    saved
-                      ? "bg-success/15 text-success border-success/30"
-                      : "bg-bg-3 text-text-2 border-border hover:bg-surface hover:text-text-1 hover:border-accent/40",
-                  )}
+                  <Shuffle className="w-3.5 h-3.5" />
+                  Random
+                </Button>
+                <Button
+                  onClick={handleRemix}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs hover:text-text-1 hover:border-accent/40"
                 >
-                  <AnimatePresence mode="wait">
-                    {saved ? (
-                      <motion.span
-                        key="saved"
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        transition={{ duration: 0.15 }}
-                        className="flex items-center gap-2"
-                      >
-                        <Check className="w-4 h-4" />
-                        Saved!
-                      </motion.span>
-                    ) : (
-                      <motion.span
-                        key="save"
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        transition={{ duration: 0.15 }}
-                        className="flex items-center gap-2"
-                      >
-                        <ChefHat className="w-4 h-4" />
-                        Save Recipe
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
+                  <RotateCw className="w-3.5 h-3.5" />
+                  Remix
+                </Button>
+                <Button
+                  onClick={async () => {
+                    const { tooLong } = await copyShareUrl();
+                    addToast({
+                      message: tooLong
+                        ? "Share link copied! (URL is long — may not work in all browsers)"
+                        : "Share link copied to clipboard!",
+                      type: tooLong ? "info" : "success",
+                    });
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 text-xs hover:text-text-1 hover:border-accent/40"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                  Share
+                </Button>
               </div>
-
-              {/* Generate Image button */}
-              <motion.button
-                onClick={() => setGenerateOpen(true)}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.97 }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium bg-bg-3 text-text-2 border border-border hover:bg-surface hover:text-accent hover:border-accent/40 transition-all duration-200"
-              >
-                <ImageIcon className="w-4 h-4" />
-                Generate Image
-              </motion.button>
-
-              {/* Share button */}
-              <motion.button
-                onClick={async () => {
-                  const { tooLong } = await copyShareUrl();
-                  addToast({
-                    message: tooLong
-                      ? "Share link copied! (URL is long — may not work in all browsers)"
-                      : "Share link copied to clipboard!",
-                    type: tooLong ? "info" : "success",
-                  });
-                }}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.97 }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium bg-bg-3 text-text-2 border border-border hover:bg-surface hover:text-text-1 hover:border-accent/40 transition-all duration-200"
-              >
-                <Share2 className="w-4 h-4" />
-                Share Prompt
-              </motion.button>
             </div>
+
+            {/* Template tip */}
+            {activeTemplateId && (
+              <div className="flex items-start gap-2 p-2.5 bg-accent/5 border border-accent/10">
+                <Lightbulb className="w-3.5 h-3.5 text-accent mt-0.5 shrink-0" />
+                <p className="text-[10px] text-text-3 leading-relaxed">
+                  Use <span className="text-accent font-medium">AI Polish</span> to optimize for{" "}
+                  {activeGen?.name ?? "your generator"}, or try{" "}
+                  <span className="text-accent font-medium">Variations</span> for creative alternatives.
+                </p>
+              </div>
+            )}
+
+            {/* AI Results panel */}
+            {variationsResult && variationsResult.length > 0 && (
+              <div>
+                <p className="text-[9px] font-mono text-text-3 mb-1.5 uppercase tracking-[0.15em]">
+                  AI VARIATIONS
+                </p>
+                <div className="space-y-2">
+                  {variationsResult.map((v, i) => (
+                    <div key={i} className="bg-bg-input border border-accent/8 p-2.5">
+                      <pre className="text-[11px] text-text-2 leading-relaxed whitespace-pre-wrap font-mono break-words">
+                        {v}
+                      </pre>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 text-[10px] mt-1.5 text-text-3 hover:text-accent"
+                        onClick={async () => {
+                          await navigator.clipboard.writeText(v);
+                          addToast({ message: `Variation ${i + 1} copied!`, type: "success" });
+                        }}
+                      >
+                        <Copy className="w-3 h-3 mr-1" />
+                        Copy
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -536,6 +825,6 @@ export function PromptOutput() {
         onClose={() => setGenerateOpen(false)}
         initialPrompt={currentDisplayPrompt ?? ""}
       />
-    </div>
+    </Card>
   );
 }

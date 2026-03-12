@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Home, Wand2, BookOpen, Settings } from "lucide-react";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { href: "/home", label: "Home", icon: Home },
@@ -17,10 +17,10 @@ export function BottomNav() {
 
   return (
     <nav
-      className={clsx(
+      className={cn(
         "md:hidden fixed bottom-0 left-0 right-0 z-40",
         "flex items-center justify-around",
-        "h-16 bg-bg-1/95 backdrop-blur-xl",
+        "h-14 bg-bg-1/95 backdrop-blur-xl",
         "border-t border-border",
         "safe-area-bottom",
       )}
@@ -32,19 +32,17 @@ export function BottomNav() {
           <Link
             key={href}
             href={href}
-            className={clsx(
-              "flex flex-col items-center justify-center gap-1 flex-1 py-2",
-              "transition-colors duration-200",
+            className={cn(
+              "flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5",
+              "transition-colors duration-150 relative",
               isActive ? "text-accent" : "text-text-3",
             )}
           >
-            <Icon className={clsx("w-5 h-5", isActive && "text-accent")} />
-            <span className="text-[10px] font-medium">{label}</span>
-
-            {/* Active dot */}
             {isActive && (
               <span className="absolute top-0 w-8 h-[2px] bg-accent rounded-b-full" />
             )}
+            <Icon className={cn("w-[18px] h-[18px]", isActive && "text-accent")} />
+            <span className="text-[10px] font-medium">{label}</span>
           </Link>
         );
       })}

@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { Save, Shuffle, Eraser, X, ChefHat, GitBranch } from "lucide-react";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 import { useBuilderStore, useUIStore } from "@/lib/store";
 import { getPresetsForField, getTemplateById } from "@/lib/data";
 import { buildPrompt } from "@/lib/prompt-engine";
 import type { Template } from "@/types";
 import * as promptService from "@/lib/services/prompt-service";
 import * as recipeService from "@/lib/services/recipe-service";
+import { Button } from "@/components/ui/button";
 
 interface BuilderActionsProps {
   template: Template;
@@ -174,83 +175,83 @@ export function BuilderActions({ template, onRecipe }: BuilderActionsProps) {
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
-      <button
-        onClick={handleSave}
-        disabled={!hasFields}
-        className={clsx(
-          "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium",
-          "border transition-all duration-150",
-          hasFields
-            ? "bg-accent/10 text-accent border-accent/30 hover:bg-accent/20"
-            : "bg-surface text-text-3 border-transparent cursor-not-allowed opacity-50",
-        )}
-      >
-        <Save className="w-3.5 h-3.5" />
-        Save
-      </button>
-
-      <button
-        onClick={onRecipe ?? handleSaveRecipe}
-        disabled={!hasFields}
-        className={clsx(
-          "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium",
-          "border transition-all duration-150",
-          hasFields
-            ? "bg-surface text-text-2 border-transparent hover:bg-bg-3 hover:text-text-1"
-            : "bg-surface text-text-3 border-transparent cursor-not-allowed opacity-50",
-        )}
-      >
-        <ChefHat className="w-3.5 h-3.5" />
-        Recipe
-      </button>
-
-      {lastSaved && (
-        <button
-          onClick={handleIterate}
+    <div className="space-y-2">
+      {/* Primary actions */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          onClick={handleSave}
           disabled={!hasFields}
-          className={clsx(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium",
-            "border transition-all duration-150",
-            hasFields
-              ? "bg-surface text-text-2 border-transparent hover:bg-bg-3 hover:text-text-1"
-              : "bg-surface text-text-3 border-transparent cursor-not-allowed opacity-50",
+          variant="outline"
+          size="sm"
+          className={cn(
+            "h-7 text-xs",
+            hasFields && "bg-accent/10 text-accent border-accent/30 hover:bg-accent/20",
           )}
         >
-          <GitBranch className="w-3.5 h-3.5" />
-          Iterate (v{lastSaved.version + 1})
-        </button>
-      )}
+          <Save className="w-3.5 h-3.5" />
+          Save
+        </Button>
 
-      <button
-        onClick={handleRandomFill}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface text-text-2 border border-transparent hover:bg-bg-3 hover:text-text-1 transition-all duration-150"
-      >
-        <Shuffle className="w-3.5 h-3.5" />
-        Random Fill
-      </button>
+        <Button
+          onClick={onRecipe ?? handleSaveRecipe}
+          disabled={!hasFields}
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs"
+        >
+          <ChefHat className="w-3.5 h-3.5" />
+          Recipe
+        </Button>
 
-      <button
-        onClick={handleClearFields}
-        className={clsx(
-          "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium",
-          "border transition-all duration-150",
-          showClearConfirm
-            ? "bg-red-500/10 text-red-400 border-red-400/30 hover:bg-red-500/20"
-            : "bg-surface text-text-3 border-transparent hover:text-text-2 hover:bg-bg-3",
+        {lastSaved && (
+          <Button
+            onClick={handleIterate}
+            disabled={!hasFields}
+            variant="ghost"
+            size="sm"
+            className="h-7 text-xs"
+          >
+            <GitBranch className="w-3.5 h-3.5" />
+            Iterate (v{lastSaved.version + 1})
+          </Button>
         )}
-      >
-        <Eraser className="w-3.5 h-3.5" />
-        {showClearConfirm ? "Confirm Clear?" : "Clear Fields"}
-      </button>
+      </div>
 
-      <button
-        onClick={handleClearStyles}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface text-text-3 border border-transparent hover:text-text-2 hover:bg-bg-3 transition-all duration-150"
-      >
-        <X className="w-3.5 h-3.5" />
-        Clear Styles
-      </button>
+      {/* Secondary actions */}
+      <div className="flex flex-wrap gap-2">
+        <Button
+          onClick={handleRandomFill}
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs"
+        >
+          <Shuffle className="w-3.5 h-3.5" />
+          Random Fill
+        </Button>
+
+        <Button
+          onClick={handleClearFields}
+          variant="ghost"
+          size="sm"
+          className={cn(
+            "h-7 text-xs",
+            showClearConfirm && "bg-red-500/10 text-red-400 border-red-400/30 hover:bg-red-500/20",
+          )}
+        >
+          <Eraser className="w-3.5 h-3.5" />
+          {showClearConfirm ? "Confirm Clear?" : "Clear Fields"}
+        </Button>
+
+        <Button
+          onClick={handleClearStyles}
+          variant="ghost"
+          size="sm"
+          className="h-7 text-xs text-text-3"
+        >
+          <X className="w-3.5 h-3.5" />
+          Clear Styles
+        </Button>
+      </div>
     </div>
   );
 }

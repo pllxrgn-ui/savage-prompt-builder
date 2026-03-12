@@ -20,9 +20,9 @@ export function PalettePanel() {
   }, [query, activeTag]);
 
   return (
-    <div className="rounded-xl border border-border bg-bg-2 overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-        <h3 className="text-sm font-semibold text-text-1">Color Palettes</h3>
+    <div className="border border-accent/8 bg-bg-2 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-accent/8">
+        <h3 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">Color Palettes</h3>
         {selectedPalette && (
           <button
             onClick={() => setPalette(null)}
@@ -43,10 +43,10 @@ export function PalettePanel() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search palettes..."
             className={clsx(
-              "w-full pl-8 pr-8 py-2 rounded-lg text-xs",
-              "bg-bg-input border border-border",
+              "w-full pl-8 pr-8 py-2 text-xs font-mono",
+              "bg-bg-input border border-accent/8",
               "text-text-1 placeholder:text-text-3",
-              "focus:outline-none focus:border-accent/50 focus:ring-1 focus:ring-accent/20",
+              "focus:outline-none focus:border-accent/40",
               "transition-all duration-150",
             )}
           />
@@ -94,7 +94,7 @@ export function PalettePanel() {
               key={palette.id}
               onClick={() => setPalette(isSelected ? null : palette.name)}
               className={clsx(
-                "w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-150",
+                "w-full flex items-center gap-3 px-3 py-2 transition-all duration-150",
                 "border cursor-pointer text-left",
                 isSelected
                   ? "bg-accent/10 border-accent/30"
@@ -112,7 +112,7 @@ export function PalettePanel() {
               </div>
               <span
                 className={clsx(
-                  "text-xs font-medium truncate",
+                  "text-xs font-mono font-medium truncate",
                   isSelected ? "text-accent" : "text-text-2",
                 )}
               >

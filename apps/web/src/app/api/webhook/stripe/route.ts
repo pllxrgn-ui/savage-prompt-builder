@@ -4,6 +4,11 @@ import { db } from '@/db/index';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
+// Simple in-memory idempotency guard against webhook replays.
+// In production, use a database table or Redis for persistence across deploys.
+const processedEvents = new Set<string>();
+const MAX_PROCESSED_EVENTS = 1000;
+
 export async function POST(req: Request) {
     try {
         const rawBody = await req.text();
@@ -23,7 +28,18 @@ export async function POST(req: Request) {
             event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
         } catch (err: any) {
             console.error(`[Webhook Signature Verification Failed]`, err.message);
-            return NextResponse.json({ error: `Webhook signature verification failed: ${err.message}` }, { status: 400 });
+            return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 });
+        }
+
+        // Idempotency check — skip already-processed events
+        if (processedEvents.has(event.id)) {
+            return NextResponse.json({ received: true, duplicate: true });
+        }
+        processedEvents.add(event.id);
+        // Prevent unbounded memory growth
+        if (processedEvents.size > MAX_PROCESSED_EVENTS) {
+            const first = processedEvents.values().next().value;
+            if (first) processedEvents.delete(first);
         }
 
         // Handle different Webhook Events
@@ -45,6 +61,7 @@ export async function POST(req: Request) {
             }
 
             case 'customer.subscription.deleted':
+            // @ts-expect-error -- Stripe SDK removed this event type but Stripe still sends it
             case 'customer.subscription.canceled': {
                 const subscription = event.data.object as Stripe.Subscription;
                 const customerId = subscription.customer as string;

@@ -1,11 +1,13 @@
 "use client";
 
-import { Sidebar } from "@/components/layout/Sidebar";
-import { BottomNav } from "@/components/layout/BottomNav";
+import { Sidebar, MobileNav } from "@/components/layout/Sidebar";
+import { TopBar } from "@/components/layout/TopBar";
 import { ToastProvider } from "@/components/ui/ToastProvider";
+import { GridPattern } from "@/components/ui/grid-pattern";
+import { CircuitTraces } from "@/components/ui/circuit-traces";
 import { useUIStore } from "@/lib/store";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const collapsed = useUIStore((s) => s.sidebarCollapsed);
@@ -14,16 +16,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Sidebar />
-      <main
-        className={clsx(
-          "min-h-screen transition-all duration-300 ease-out",
-          "pb-20 md:pb-0",
-          collapsed ? "md:ml-[68px]" : "md:ml-[240px]",
+      <MobileNav />
+      <div
+        className={cn(
+          "min-h-screen flex flex-col transition-all duration-300 ease-out",
+          collapsed ? "md:ml-[60px]" : "md:ml-[200px]",
         )}
       >
-        {children}
-      </main>
-      <BottomNav />
+        <TopBar />
+        <main className="flex-1 relative">
+          <GridPattern className="opacity-[0.03] fixed" size={32} />
+          <CircuitTraces />
+          {children}
+        </main>
+      </div>
       <ToastProvider />
     </>
   );

@@ -2,9 +2,13 @@ import { generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { NextResponse } from 'next/server';
 import { AI_SYSTEM_PROMPTS } from '@/lib/ai/prompts';
+import { requireAuth } from '@/lib/require-auth';
 
 export async function POST(req: Request) {
     try {
+        const auth = await requireAuth();
+        if (auth.error) return auth.error;
+
         const { prompt, feedback } = await req.json();
 
         const { text } = await generateText({

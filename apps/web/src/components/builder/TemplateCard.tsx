@@ -2,10 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 import { LucideIcon } from "@/components/ui/LucideIcon";
 import { useBuilderStore } from "@/lib/store";
 import type { Template } from "@/types";
+import { Badge } from "@/components/ui/badge";
 
 interface TemplateCardProps {
   template: Template;
@@ -23,36 +24,36 @@ export function TemplateCard({ template }: TemplateCardProps) {
   return (
     <motion.button
       onClick={handleClick}
-      whileHover={{ scale: 1.03, y: -3 }}
+      whileHover={{ scale: 1.02, y: -2 }}
       whileTap={{ scale: 0.97 }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      className={clsx(
-        "group flex flex-col items-start gap-3 p-4 rounded-xl text-left",
-        "bg-bg-2 border border-border",
-        "hover:border-accent/30 hover:bg-bg-3",
+      className={cn(
+        "group flex flex-col items-start gap-3 p-4 text-left",
+        "bg-bg-2 border border-accent/8",
+        "hover:border-accent/30 hover:bg-surface",
         "transition-[border-color,background-color] duration-200 cursor-pointer",
       )}
     >
       <div
-        className={clsx(
-          "flex items-center justify-center w-10 h-10 rounded-lg",
-          "bg-accent/10 group-hover:bg-accent/20 transition-colors",
+        className={cn(
+          "flex items-center justify-center w-9 h-9",
+          "border border-accent/20 group-hover:border-accent/40 transition-colors",
         )}
       >
-        <LucideIcon name={template.icon} className="w-5 h-5 text-accent" />
+        <LucideIcon name={template.icon} className="w-4 h-4 text-accent" />
       </div>
       <div>
-        <h3 className="font-semibold text-sm text-text-1 group-hover:text-accent transition-colors">
+        <h3 className="font-mono font-semibold text-[11px] uppercase tracking-wide text-text-1 group-hover:text-accent transition-colors">
           {template.name}
         </h3>
-        <p className="text-xs text-text-3 mt-0.5 line-clamp-2">
+        <p className="font-mono text-[10px] text-text-3 mt-1 line-clamp-2 leading-relaxed">
           {template.description}
         </p>
       </div>
       <div className="flex items-center gap-1.5 mt-auto">
-        <span className="text-[10px] text-text-3 bg-surface px-2 py-0.5 rounded-full">
+        <Badge variant="outline" className="font-mono text-[9px] text-text-3 border-accent/10 uppercase tracking-wider">
           {template.fields.length} fields
-        </span>
+        </Badge>
       </div>
     </motion.button>
   );

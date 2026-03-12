@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
-import { DM_Sans } from "next/font/google";
+import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -20,8 +26,8 @@ const accentScript = `
       var st = (s.state || {});
       var a = st.accent;
       var t = st.theme;
-      var colors = {rose:'#FF4D6D',violet:'#A78BFA',blue:'#3B82F6',cyan:'#22D3EE',emerald:'#34D399',amber:'#F59E0B',orange:'#F97316',pink:'#EC4899'};
-      document.documentElement.style.setProperty('--accent', colors[a] || '#FF4D6D');
+      var colors = {orange:'#FF6B00',rose:'#FF4D6D',violet:'#A78BFA',blue:'#3B82F6',cyan:'#22D3EE',emerald:'#34D399',amber:'#F59E0B',pink:'#EC4899'};
+      document.documentElement.style.setProperty('--accent', colors[a] || '#FF6B00');
       if (t) document.documentElement.setAttribute('data-theme', t);
     } catch(e) {}
   })();
@@ -39,7 +45,11 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: accentScript }} />
       </head>
-      <body className={`${dmSans.variable} antialiased`}>
+      <body className={`${jetbrainsMono.variable} ${spaceGrotesk.variable} antialiased`}>
+        {/* CRT background effects — global */}
+        <div className="crt-glow" aria-hidden="true" />
+        <div className="noise-grain" aria-hidden="true" />
+        <div className="crt-scanlines" aria-hidden="true" />
         <AuthProvider>
           {children}
         </AuthProvider>

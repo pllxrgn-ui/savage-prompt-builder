@@ -2,13 +2,26 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, FileText, Star, BarChart3, ChefHat } from "lucide-react";
+import {
+  Sparkles,
+  ArrowRight,
+  FileText,
+  Star,
+  BarChart3,
+  ChefHat,
+  Zap,
+  Wand2,
+  Send,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 import { LucideIcon } from "@/components/ui/LucideIcon";
 import { TemplateCard } from "@/components/builder/TemplateCard";
 import { PageTransition, StaggerContainer, FadeUpItem } from "@/components/ui/AnimatedLayout";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { TEMPLATE_GROUPS, getTemplatesByGroup, getTemplateById } from "@/lib/data";
 import { useHistoryStore } from "@/lib/store";
 import { useBuilderStore } from "@/lib/store";
@@ -22,7 +35,6 @@ function useStats() {
     const favorites = prompts.filter((p) => p.starred).length;
     const totalRecipes = recipes.length;
 
-    // Most-used template
     const templateCounts: Record<string, number> = {};
     for (const p of prompts) {
       templateCounts[p.templateId] = (templateCounts[p.templateId] ?? 0) + 1;
@@ -38,6 +50,13 @@ function useStats() {
   }, [prompts, recipes]);
 }
 
+const STATS_CONFIG = [
+  { key: "totalPrompts", label: "TOTAL PROMPTS", icon: FileText, color: "text-accent" },
+  { key: "favorites", label: "FAVORITES", icon: Star, color: "text-accent" },
+  { key: "totalRecipes", label: "RECIPES", icon: ChefHat, color: "text-accent" },
+  { key: "topTemplate", label: "TOP TEMPLATE", icon: BarChart3, color: "text-accent" },
+] as const;
+
 export default function HomePage() {
   const [activeGroup, setActiveGroup] = useState<string | null>(null);
   const [quickInput, setQuickInput] = useState("");
@@ -51,7 +70,6 @@ export default function HomePage() {
   function handleQuickGo() {
     const value = quickInput.trim();
     if (!value) return;
-    // Set freestyle template with subject field
     const store = useBuilderStore.getState();
     store.setTemplate("freestyle");
     store.setField("subject", value);
@@ -59,170 +77,222 @@ export default function HomePage() {
   }
 
   return (
-    <PageTransition className="p-6 md:p-8 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="mb-10">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent/15">
-            <Sparkles className="w-5 h-5 text-accent" />
-          </div>
-          <h1 className="text-2xl font-heading font-bold text-text-1">
-            Welcome Back
-          </h1>
-        </div>
-        <p className="text-text-2 text-sm">
-          Build precise, beautiful AI image prompts with templates.
-        </p>
-      </div>
-
-      {/* Stats Bar */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-10">
-        {[
-          { label: "Total Prompts", value: stats.totalPrompts, icon: FileText, color: "text-accent" },
-          { label: "Favorites", value: stats.favorites, icon: Star, color: "text-yellow-400" },
-          { label: "Recipes", value: stats.totalRecipes, icon: ChefHat, color: "text-emerald-400" },
-          { label: "Top Template", value: stats.topTemplate, icon: BarChart3, color: "text-purple-400" },
-        ].map((stat) => (
-          <motion.div
-            key={stat.label}
-            whileHover={{ y: -2 }}
-            className="flex items-center gap-3 p-4 rounded-xl bg-bg-2 border border-border"
-          >
-            <div className={clsx("flex items-center justify-center w-9 h-9 rounded-lg bg-surface", stat.color)}>
-              <stat.icon className="w-4 h-4" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-lg font-bold text-text-1 truncate">
-                {typeof stat.value === "number" ? stat.value : stat.value}
+    <PageTransition className="p-5 md:p-8 max-w-6xl mx-auto space-y-8">
+      {/* Hero Card — terminal style */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="relative border border-accent/10 overflow-hidden"
+      >
+        {/* Solid accent top bar */}
+        <div className="h-1 bg-accent" />
+        <div className="relative bg-bg-2 p-6 md:p-8 overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--accent)_0%,transparent_60%)] opacity-[0.04]" />
+          <div className="relative flex flex-col md:flex-row md:items-center gap-6">
+            <div className="flex-1 min-w-0">
+              <span className="inline-flex items-center gap-1.5 text-[9px] font-mono text-accent uppercase tracking-[0.2em] mb-3">
+                <Sparkles className="w-3 h-3" />
+                PROMPT BUILDER [v1.0]
+              </span>
+              <h1 className="text-xl md:text-2xl font-mono font-bold text-text-1 uppercase tracking-wide mb-2">
+                Welcome Back
+              </h1>
+              <p className="text-text-3 text-xs font-mono leading-relaxed max-w-lg">
+                Build precise, beautiful AI image prompts with templates, styles, and one-click generation.
               </p>
-              <p className="text-[11px] text-text-3">{stat.label}</p>
+
+              {/* Onboarding steps */}
+              <div className="flex items-center gap-3 mt-5">
+                {[
+                  { icon: Wand2, label: "TEMPLATE" },
+                  { icon: Zap, label: "BUILD" },
+                  { icon: Sparkles, label: "GENERATE" },
+                ].map((step, i) => (
+                  <div key={step.label} className="flex items-center gap-1.5 text-[9px] font-mono text-text-3 uppercase tracking-wider">
+                    {i > 0 && <ArrowRight className="w-3 h-3 text-accent/30" />}
+                    <step.icon className="w-3 h-3 text-accent/70" />
+                    <span>{step.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </motion.div>
-        ))}
+
+            <Button asChild size="lg" className="shrink-0 px-6 font-mono uppercase tracking-wider shadow-[0_0_20px_rgba(255,107,0,0.25)] hover:shadow-[0_0_30px_rgba(255,107,0,0.35)] transition-shadow">
+              <Link href="/builder">
+                Start Building
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Stats Row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {STATS_CONFIG.map((stat, i) => {
+          const value = stats[stat.key];
+          return (
+            <motion.div
+              key={stat.key}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.05, duration: 0.3 }}
+              whileHover={{ y: -2 }}
+            >
+              <div className="border border-accent/8 bg-bg-2 hover:border-accent/20 transition-colors">
+                <div className="flex items-center gap-3 p-4">
+                  <div className="flex items-center justify-center w-8 h-8 border border-accent/20">
+                    <stat.icon className="w-3.5 h-3.5 text-accent" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-lg font-mono font-bold text-text-1 tabular-nums truncate">
+                      {value}
+                    </p>
+                    <p className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">{stat.label}</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-        {/* Quick prompt input */}
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-bg-2 border border-border col-span-1 sm:col-span-2">
-          <Sparkles className="w-4 h-4 text-accent shrink-0" />
+      {/* Quick Prompt Bar */}
+      <div className="border border-accent/8 bg-bg-2 overflow-hidden">
+        <div className="flex items-center gap-2 px-3 py-1.5 border-b border-accent/8">
+          <span className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">QUICK PROMPT</span>
+        </div>
+        <div
+          className={cn(
+            "flex items-center gap-3 p-3",
+            "focus-within:shadow-[0_0_12px_rgba(255,107,0,0.08)]",
+            "transition-all duration-200",
+          )}
+        >
+          <span className="text-accent font-mono text-sm shrink-0 ml-1">&gt;_</span>
           <input
             type="text"
             value={quickInput}
             onChange={(e) => setQuickInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") handleQuickGo(); }}
-            placeholder="Describe anything — jump straight to builder..."
-            className="flex-1 bg-transparent text-sm text-text-1 placeholder:text-text-3 outline-none"
+            placeholder="describe anything — jump straight to builder..."
+            className="flex-1 bg-transparent text-sm font-mono text-text-1 placeholder:text-text-3 placeholder:font-mono outline-none"
           />
-          <button
+          <Button
             onClick={handleQuickGo}
             disabled={!quickInput.trim()}
-            className={clsx(
-              "px-4 py-1.5 rounded-lg text-xs font-semibold transition-all",
-              quickInput.trim()
-                ? "bg-accent text-white hover:bg-accent/90"
-                : "bg-surface text-text-3 cursor-not-allowed",
-            )}
+            size="sm"
+            className="shrink-0 font-mono uppercase tracking-wider text-xs"
           >
-            Go
-          </button>
+            Build
+            <Send className="w-3 h-3 ml-1" />
+          </Button>
         </div>
+      </div>
 
-        <Link
-          href="/builder"
-          className="group flex items-center gap-4 p-5 rounded-xl bg-bg-2 border border-border hover:border-accent/30 hover:bg-bg-3 transition-all duration-200"
-        >
-          <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-accent/10 group-hover:bg-accent/20 transition-colors">
-            <Sparkles className="w-5 h-5 text-accent" />
+      {/* Quick Action Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Link href="/builder" className="group">
+          <div className="flex items-center gap-4 p-4 border border-accent/8 bg-bg-2 hover:border-accent/25 transition-colors">
+            <div className="flex items-center justify-center w-9 h-9 border border-accent/20 group-hover:border-accent/40 transition-colors">
+              <Sparkles className="w-4 h-4 text-accent" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-mono font-semibold text-text-1 text-[11px] uppercase tracking-wide">New Prompt</h3>
+              <p className="text-text-3 font-mono text-[10px] mt-0.5">Start from a template</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-text-3/40 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
           </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-text-1 text-sm">New Prompt</h3>
-            <p className="text-text-3 text-xs mt-0.5">Start from a template</p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-text-3 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
         </Link>
 
-        <Link
-          href="/library"
-          className="group flex items-center gap-4 p-5 rounded-xl bg-bg-2 border border-border hover:border-accent/30 hover:bg-bg-3 transition-all duration-200"
-        >
-          <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors">
-            <FileText className="w-5 h-5 text-purple-400" />
+        <Link href="/library" className="group">
+          <div className="flex items-center gap-4 p-4 border border-accent/8 bg-bg-2 hover:border-accent/25 transition-colors">
+            <div className="flex items-center justify-center w-9 h-9 border border-accent/20 group-hover:border-accent/40 transition-colors">
+              <FileText className="w-4 h-4 text-accent" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-mono font-semibold text-text-1 text-[11px] uppercase tracking-wide">Library</h3>
+              <p className="text-text-3 font-mono text-[10px] mt-0.5">View saved prompts &amp; recipes</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-text-3/40 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
           </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-text-1 text-sm">Library</h3>
-            <p className="text-text-3 text-xs mt-0.5">View saved prompts &amp; recipes</p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-text-3 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all" />
         </Link>
       </div>
 
-      {/* Group Filter Tabs */}
-      <div className="mb-6">
-        <h2 className="text-lg font-heading font-semibold text-text-1 mb-4">
-          Templates
-        </h2>
-        <div className="flex flex-wrap gap-2">
+      {/* Templates Section */}
+      <div>
+        <div className="flex items-center gap-3 mb-4">
+          <span className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">TEMPLATES</span>
+          <div className="flex-1 h-px bg-accent/8" />
+          <span className="text-[9px] font-mono text-text-3/40 uppercase tracking-[0.15em]">
+            [{TEMPLATE_GROUPS.reduce((n, g) => n + getTemplatesByGroup(g.id).length, 0)}]
+          </span>
+        </div>
+
+        {/* Filter Pills */}
+        <div className="flex flex-wrap gap-1.5 mb-6">
           <button
-            onClick={() => setActiveGroup(null)}
-            className={clsx(
-              "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200",
+            className={cn(
+              "h-7 px-3 font-mono text-[10px] uppercase tracking-wider border transition-colors",
               activeGroup === null
-                ? "bg-accent/15 text-accent border border-accent/30"
-                : "bg-surface text-text-2 border border-transparent hover:text-text-1 hover:bg-bg-3",
+                ? "bg-accent text-black border-accent"
+                : "bg-transparent text-text-3 border-accent/10 hover:border-accent/30",
             )}
+            onClick={() => setActiveGroup(null)}
           >
-            All
+            ALL
           </button>
           {TEMPLATE_GROUPS.map((group) => (
             <button
               key={group.id}
+              className={cn(
+                "h-7 px-3 font-mono text-[10px] uppercase tracking-wider border transition-colors flex items-center gap-1.5",
+                activeGroup === group.id
+                  ? "bg-accent text-black border-accent"
+                  : "bg-transparent text-text-3 border-accent/10 hover:border-accent/30",
+              )}
               onClick={() =>
                 setActiveGroup(activeGroup === group.id ? null : group.id)
               }
-              className={clsx(
-                "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200",
-                activeGroup === group.id
-                  ? "bg-accent/15 text-accent border border-accent/30"
-                  : "bg-surface text-text-2 border border-transparent hover:text-text-1 hover:bg-bg-3",
-              )}
             >
-              <LucideIcon name={group.icon} className="w-3.5 h-3.5" />
+              <LucideIcon name={group.icon} className="w-3 h-3" />
               {group.label}
             </button>
           ))}
         </div>
-      </div>
 
-      {/* Template Groups + Cards */}
-      <StaggerContainer className="space-y-8">
-        {displayedGroups.map((group) => {
-          const templates = getTemplatesByGroup(group.id);
-          return (
-            <FadeUpItem key={group.id}>
-              <section>
-                <div className="flex items-center gap-2 mb-4">
-                  <LucideIcon
-                    name={group.icon}
-                    className="w-4 h-4 text-text-3"
-                  />
-                  <h3 className="text-sm font-semibold text-text-2">
-                    {group.label}
-                  </h3>
-                  <span className="text-xs text-text-3">
-                    {templates.length} templates
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {templates.map((template) => (
-                    <TemplateCard key={template.id} template={template} />
-                  ))}
-                </div>
-              </section>
-            </FadeUpItem>
-          );
-        })}
-      </StaggerContainer>
+        {/* Template Groups + Cards */}
+        <StaggerContainer className="space-y-8">
+          {displayedGroups.map((group) => {
+            const templates = getTemplatesByGroup(group.id);
+            return (
+              <FadeUpItem key={group.id}>
+                <section>
+                  <div className="flex items-center gap-3 mb-3">
+                    <LucideIcon
+                      name={group.icon}
+                      className="w-3.5 h-3.5 text-accent/60"
+                    />
+                    <h3 className="text-[10px] font-mono font-semibold text-text-3 uppercase tracking-[0.15em]">
+                      {group.label}
+                    </h3>
+                    <div className="flex-1 h-px bg-accent/8" />
+                    <span className="text-[9px] font-mono text-text-3/40">
+                      [{templates.length}]
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {templates.map((template) => (
+                      <TemplateCard key={template.id} template={template} />
+                    ))}
+                  </div>
+                </section>
+              </FadeUpItem>
+            );
+          })}
+        </StaggerContainer>
+      </div>
     </PageTransition>
   );
 }

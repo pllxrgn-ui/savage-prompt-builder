@@ -3,7 +3,7 @@
 import { Suspense, useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Wand2, ArrowLeft, Paintbrush, Palette, Tags, Ban, Layers } from "lucide-react";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 import { useBuilderStore } from "@/lib/store";
 import {
   getTemplateById,
@@ -14,6 +14,9 @@ import {
 import { LucideIcon } from "@/components/ui/LucideIcon";
 import { StaggerContainer, FadeUpItem, PageTransition } from "@/components/ui/AnimatedLayout";
 import { TemplateCard } from "@/components/builder/TemplateCard";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { FieldInput } from "@/components/builder/FieldInput";
 import { StylesDrawer } from "@/components/builder/StylesDrawer";
 import { AIStyleGenerator } from "@/components/builder/AIStyleGenerator";
@@ -36,11 +39,11 @@ import { useSearchParams } from "next/navigation";
 type BuilderTab = "styles" | "palettes" | "keywords" | "negative" | "mockup";
 
 const BUILDER_TABS: { id: BuilderTab; label: string; icon: React.ReactNode }[] = [
-  { id: "styles", label: "Styles", icon: <Paintbrush className="w-3.5 h-3.5" /> },
-  { id: "palettes", label: "Palettes", icon: <Palette className="w-3.5 h-3.5" /> },
-  { id: "keywords", label: "Keywords", icon: <Tags className="w-3.5 h-3.5" /> },
-  { id: "negative", label: "Negative", icon: <Ban className="w-3.5 h-3.5" /> },
-  { id: "mockup", label: "Mockup", icon: <Layers className="w-3.5 h-3.5" /> },
+  { id: "styles", label: "STYLES", icon: <Paintbrush className="w-3.5 h-3.5" /> },
+  { id: "palettes", label: "PALETTES", icon: <Palette className="w-3.5 h-3.5" /> },
+  { id: "keywords", label: "KEYWORDS", icon: <Tags className="w-3.5 h-3.5" /> },
+  { id: "negative", label: "NEGATIVE", icon: <Ban className="w-3.5 h-3.5" /> },
+  { id: "mockup", label: "MOCKUP", icon: <Layers className="w-3.5 h-3.5" /> },
 ];
 
 export default function BuilderPage() {
@@ -90,28 +93,29 @@ function BuilderPageInner() {
   // Template picker view (no template selected)
   if (!template) {
     return (
-      <PageTransition className="p-6 md:p-8 max-w-6xl mx-auto">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent/15">
-            <Wand2 className="w-5 h-5 text-accent" />
+      <PageTransition className="p-5 md:p-8 max-w-6xl mx-auto">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center justify-center w-9 h-9 border border-accent/30">
+            <Wand2 className="w-4 h-4 text-accent" />
           </div>
           <div>
-            <h1 className="text-2xl font-heading font-bold text-text-1">Builder</h1>
-            <p className="text-text-2 text-sm">Select a template to start building your prompt.</p>
+            <h1 className="text-lg font-heading font-bold text-text-1 uppercase tracking-wide">Builder</h1>
+            <p className="text-text-3 text-[11px] font-mono tracking-wider">SELECT A TEMPLATE TO BEGIN</p>
           </div>
         </div>
 
-        <StaggerContainer className="space-y-8">
+        <StaggerContainer className="space-y-10">
           {TEMPLATE_GROUPS.map((group) => {
             const templates = getTemplatesByGroup(group.id);
             return (
               <FadeUpItem key={group.id}>
                 <section>
                   <div className="flex items-center gap-2 mb-4">
-                    <LucideIcon name={group.icon} className="w-4 h-4 text-text-3" />
-                    <h3 className="text-sm font-semibold text-text-2">{group.label}</h3>
+                    <LucideIcon name={group.icon} className="w-3.5 h-3.5 text-accent/60" />
+                    <h3 className="text-[10px] font-mono font-semibold text-text-3 uppercase tracking-[0.15em]">{group.label}</h3>
+                    <div className="flex-1 h-px bg-accent/8" />
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {templates.map((t) => (
                       <TemplateCard key={t.id} template={t} />
                     ))}
@@ -129,21 +133,23 @@ function BuilderPageInner() {
   return (
     <PageTransition className="p-4 md:p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
-        <button
+      <div className="flex items-center gap-3 mb-5">
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={resetBuilder}
           aria-label="Back to templates"
-          className="flex items-center justify-center w-8 h-8 rounded-lg bg-surface hover:bg-bg-3 transition-colors"
+          className="h-7 w-7 text-text-3 hover:text-accent hover:bg-accent/8 border border-accent/10"
         >
-          <ArrowLeft className="w-4 h-4 text-text-2" />
-        </button>
+          <ArrowLeft className="w-3.5 h-3.5" />
+        </Button>
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-accent/10">
-            <LucideIcon name={template.icon} className="w-4.5 h-4.5 text-accent" />
+          <div className="flex items-center justify-center w-8 h-8 border border-accent/20">
+            <LucideIcon name={template.icon} className="w-4 h-4 text-accent" />
           </div>
           <div>
-            <h1 className="text-lg font-heading font-bold text-text-1">{template.name}</h1>
-            <p className="text-text-3 text-xs">{template.description}</p>
+            <h1 className="text-sm font-heading font-bold text-text-1 uppercase tracking-wide">{template.name}</h1>
+            <p className="text-text-3 text-[10px] font-mono tracking-wider">{template.description?.toUpperCase()}</p>
           </div>
         </div>
         <UndoRedo />
@@ -155,12 +161,13 @@ function BuilderPageInner() {
       </div>
 
       {/* Two-column layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5">
         {/* Left — Fields + Panels */}
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Template fields */}
-          <div className="rounded-xl border border-border bg-bg-2 p-4 space-y-4">
-            <h3 className="text-sm font-semibold text-text-1">Fields</h3>
+          <Card className="border-accent/8 bg-bg-1">
+            <CardContent className="p-4 space-y-4">
+            <h3 className="text-[10px] font-mono font-semibold uppercase tracking-[0.15em] text-text-3">FIELDS</h3>
             {template.fields.map((field) => {
               if (template.id === "social" && field.id === "subject") {
                 return <PlatformDropdown key={field.id} />;
@@ -173,7 +180,8 @@ function BuilderPageInner() {
                 />
               );
             })}
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Garment selector — only for clothing/collection */}
           {(template.id === "clothing" || template.id === "collection") && (
@@ -190,21 +198,22 @@ function BuilderPageInner() {
           <VariablesPanel />
 
           {/* Panel tabs */}
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-1">
             {BUILDER_TABS.map((tab) => (
-              <button
+              <Button
                 key={tab.id}
+                variant={activeTab === tab.id ? "default" : "ghost"}
+                size="sm"
                 onClick={() => setActiveTab(tab.id)}
-                className={clsx(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200",
-                  activeTab === tab.id
-                    ? "bg-accent/15 text-accent border border-accent/30"
-                    : "bg-surface text-text-2 border border-transparent hover:text-text-1 hover:bg-bg-3",
+                className={cn(
+                  "h-7 text-[10px] font-mono tracking-wider uppercase",
+                  activeTab === tab.id && "shadow-none bg-accent text-black",
+                  activeTab !== tab.id && "text-text-3 hover:text-accent hover:bg-accent/8",
                 )}
               >
                 {tab.icon}
                 {tab.label}
-              </button>
+              </Button>
             ))}
           </div>
 

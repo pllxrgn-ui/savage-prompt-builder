@@ -23,8 +23,8 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
 
   if (!config) {
     return (
-      <div className="rounded-xl border border-border bg-bg-2 p-6 text-center">
-        <p className="text-xs text-text-3">
+      <div className="border border-accent/8 bg-bg-2 p-6 text-center">
+        <p className="text-xs font-mono text-text-3">
           Mockup settings are not available for this template type.
         </p>
       </div>
@@ -53,26 +53,26 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
   }
 
   const selectClass = clsx(
-    "w-full px-3 py-2 rounded-lg text-xs",
-    "bg-surface border border-border text-text-1",
-    "outline-none focus:border-accent/50 transition-colors",
+    "w-full px-3 py-2 text-xs font-mono",
+    "bg-surface border border-accent/8 text-text-1",
+    "outline-none focus:border-accent/40 transition-colors",
   );
 
   return (
-    <div className="rounded-xl border border-border bg-bg-2 overflow-hidden">
-      <div className="px-4 py-3 border-b border-border flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-text-1">{config.label}</h3>
+    <div className="border border-accent/8 bg-bg-2 overflow-hidden">
+      <div className="px-4 py-3 border-b border-accent/8 flex items-center justify-between">
+        <h3 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">{config.label}</h3>
         <button
           onClick={toggleEnabled}
           aria-label="Toggle mockup"
           className={clsx(
-            "relative w-10 h-[22px] rounded-full transition-colors duration-200 cursor-pointer",
+            "relative w-10 h-[22px] transition-colors duration-200 cursor-pointer",
             enabled ? "bg-accent" : "bg-border",
           )}
         >
           <div
             className={clsx(
-              "absolute top-0.5 w-[18px] h-[18px] rounded-full bg-white transition-[left] duration-200",
+              "absolute top-0.5 w-[18px] h-[18px] bg-white transition-[left] duration-200",
               enabled ? "left-5" : "left-0.5",
             )}
           />
@@ -83,7 +83,7 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
         <div className="p-4 space-y-3">
           {config.items.length > 0 && (
             <div>
-              <p className="text-[10px] text-text-3 mb-1.5 uppercase tracking-wider font-medium">
+              <p className="text-[10px] font-mono text-text-3 mb-1.5 uppercase tracking-[0.15em]">
                 Item
               </p>
               <select
@@ -104,7 +104,7 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
 
           {config.colors.length > 0 && (
             <div>
-              <p className="text-[10px] text-text-3 mb-1.5 uppercase tracking-wider font-medium">
+              <p className="text-[10px] font-mono text-text-3 mb-1.5 uppercase tracking-[0.15em]">
                 Color
               </p>
               <select
@@ -125,7 +125,7 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
 
           {config.displays.length > 0 && (
             <div>
-              <p className="text-[10px] text-text-3 mb-1.5 uppercase tracking-wider font-medium">
+              <p className="text-[10px] font-mono text-text-3 mb-1.5 uppercase tracking-[0.15em]">
                 Display
               </p>
               <select
