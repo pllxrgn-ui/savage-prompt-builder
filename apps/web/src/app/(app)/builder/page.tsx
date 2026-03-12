@@ -165,7 +165,7 @@ function BuilderPageInner() {
 
   if (!template) {
     return (
-      <div className="flex flex-col md:flex-row h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)] overflow-hidden">
+      <div className="flex flex-col md:flex-row h-[calc(100dvh-64px)] overflow-hidden">
 
         {/* ── Mobile: Horizontal category chips ── */}
         <div className="md:hidden shrink-0 border-b border-glass-border bg-bg-1 px-4 py-3">
@@ -303,7 +303,7 @@ function BuilderPageInner() {
   return (
     <>
       {/* Full-height three-panel workspace */}
-      <div className="flex flex-col h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)]">
+      <div className="flex flex-col h-[calc(100dvh-64px)]">
 
         {/* Top bar */}
         <div className="flex items-center gap-3 px-4 md:px-6 py-3 border-b border-glass-border bg-bg-1/80 backdrop-blur-sm shrink-0">
