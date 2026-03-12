@@ -15,13 +15,13 @@ import {
   Zap,
   WandSparkles,
   Check,
+  Palette,
 } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { IMAGE_GEN_MODELS } from "@/lib/data";
 import { generateImages, type GeneratedImage } from "@/lib/services/generate-service";
 import { useUIStore } from "@/lib/store";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 /* ── Constants ── */
@@ -35,7 +35,7 @@ const ASPECT_RATIOS = [
   { id: "9:16", label: "9:16", w: 9,  h: 16, hint: "Story",    tileClass: "w-4 h-7"       },
 ] as const;
 
-const COUNT_OPTIONS = [1, 2, 4] as const;
+const COUNT_OPTIONS = [1, 2, 3, 4] as const;
 
 const RATIO_CLASS: Record<string, string> = {
   "1:1":  "aspect-square",
@@ -60,7 +60,8 @@ function AspectRatioTile({
     <button
       onClick={onClick}
       className={cn(
-        "flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl border transition-all duration-150 text-center cursor-pointer",
+        "flex flex-col items-center justify-center gap-1 py-2 rounded-[var(--radius-md)] border transition-all duration-150 text-center cursor-pointer",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
         selected
           ? "bg-accent/10 border-accent/50 text-text-1"
           : "bg-transparent border-glass-border text-text-2 hover:border-glass-border-strong hover:text-text-1",
@@ -73,8 +74,8 @@ function AspectRatioTile({
           selected ? "border-accent bg-accent/20" : "border-text-3/40 bg-text-3/5",
         )}
       />
-      <span className="text-[11px] font-medium">{ratio.label}</span>
-      <span className="text-[10px] text-text-3">{ratio.hint}</span>
+      <span className="text-[11px] font-medium leading-tight">{ratio.label}</span>
+      <span className="text-[9px] text-text-3 leading-tight">{ratio.hint}</span>
     </button>
   );
 }
@@ -105,8 +106,8 @@ function ImageResultCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.08, duration: 0.4, ease: "easeOut" }}
       className="relative rounded-2xl overflow-hidden border border-glass-border group"
       onMouseEnter={() => setHovered(true)}
@@ -138,7 +139,7 @@ function ImageResultCard({
             <div className="flex gap-2">
               <button
                 onClick={handleCopy}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium cursor-pointer
                   bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors backdrop-blur-sm"
               >
                 {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -146,8 +147,8 @@ function ImageResultCard({
               </button>
               <button
                 onClick={onDownload}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium
-                  bg-accent text-white border border-accent/30 transition-colors cursor-pointer"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-medium cursor-pointer
+                  bg-accent text-white hover:bg-accent-hover border border-accent/30 transition-colors"
               >
                 <Download className="w-3 h-3" />
                 Save
@@ -253,71 +254,74 @@ function GeneratePageInner() {
   }
 
   const canGenerate = prompt.trim().length > 0 && !loading;
+  const isMac = typeof navigator !== "undefined" && /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
+  const shortcutLabel = isMac ? "⌘ Enter" : "Ctrl Enter";
 
   return (
-    <div className="max-w-6xl mx-auto px-6 md:px-10 py-10">
+    <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-10 py-6 md:py-10 pb-20 md:pb-10">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="mb-8"
+        className="flex items-center gap-3 mb-8"
       >
-        <div className="flex items-center gap-3 mb-2">
-          <h1 className="font-heading font-bold text-2xl md:text-3xl text-text-1 tracking-tight">
-            Generate
-          </h1>
-          <Badge className="rounded-full text-[10px] px-2 py-0.5 bg-accent-gold/15 text-accent-gold border border-accent-gold/25 font-medium">
-            <Sparkles className="w-2.5 h-2.5 mr-1 inline" />
-            Imagen 4
-          </Badge>
+        <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent/10 border border-accent/20">
+          <ImageIcon className="w-5 h-5 text-accent" />
         </div>
-        <p className="text-text-2 text-sm">
-          Turn your prompt into stunning images with Imagen 4 or Nanobanana 2.
-        </p>
+        <div>
+          <h1 className="text-xl font-heading font-bold text-text-1">Generate</h1>
+          <p className="text-text-2 text-sm">
+            Turn your prompt into stunning images — powered by Imagen 4 &amp; Nanobanana 2.
+          </p>
+        </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6 lg:gap-8 items-start">
 
         {/* ── Left: Controls ── */}
         <motion.div
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="space-y-5 lg:sticky lg:top-20"
+          className="rounded-[var(--radius-lg)] bg-bg-2 border border-glass-border p-5 space-y-5 lg:sticky lg:top-20"
         >
           {/* Prompt */}
-          <div className="rounded-2xl bg-bg-2 border border-glass-border overflow-hidden
-            focus-within:border-accent/40 transition-colors">
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleGenerate();
-              }}
-              placeholder="Describe the image you want to create…"
-              rows={5}
-              className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-sm p-4 resize-none outline-none"
-            />
-            <div className="flex items-center justify-between px-4 pb-3">
-              <span className="text-[10px] text-text-3">{prompt.length}/2000</span>
-              <kbd className="hidden sm:block text-[10px] text-text-3 border border-glass-border rounded px-1.5 py-0.5">
-                ⌘ Enter
-              </kbd>
+          <div>
+            <p className="label-section mb-2.5">Prompt</p>
+            <div className="rounded-[var(--radius-md)] bg-bg-input border border-glass-border overflow-hidden
+              focus-within:border-accent/40 focus-within:ring-1 focus-within:ring-accent/20 transition-all">
+              <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleGenerate();
+                }}
+                placeholder="Describe the image you want to create…"
+                rows={4}
+                className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-sm p-4 resize-none outline-none"
+              />
+              <div className="flex items-center justify-between px-4 pb-2.5">
+                <span className="text-[10px] text-text-3">{prompt.length}/2000</span>
+                <kbd className="hidden sm:block text-[10px] text-text-3 border border-glass-border rounded px-1.5 py-0.5">
+                  {shortcutLabel}
+                </kbd>
+              </div>
             </div>
           </div>
 
           {/* Model selector */}
           <div>
-            <p className="text-xs font-medium text-text-2 mb-2">Model</p>
+            <p className="label-section mb-2.5">Model</p>
             <div className="relative">
               <button
                 onClick={() => setModelOpen((o) => !o)}
-                className="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl
-                  bg-bg-2 border border-glass-border hover:border-glass-border-strong text-sm text-text-1 transition-colors"
+                className="w-full flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-[var(--radius-md)] cursor-pointer
+                  bg-bg-input border border-glass-border hover:border-glass-border-strong text-sm text-text-1 transition-colors
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
               >
                 <div className="flex items-center gap-2">
-                  <WandSparkles className="w-3.5 h-3.5 text-accent-gold" />
+                  <WandSparkles className="w-3.5 h-3.5 text-accent2" />
                   <span>{selectedModel?.name}</span>
                 </div>
                 <ChevronDown className={cn("w-3.5 h-3.5 text-text-3 transition-transform", modelOpen && "rotate-180")} />
@@ -329,14 +333,14 @@ function GeneratePageInner() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full mt-1 left-0 right-0 z-20 rounded-xl bg-bg-2 border border-glass-border shadow-xl overflow-hidden"
+                    className="absolute top-full mt-1 left-0 right-0 z-20 rounded-[var(--radius-md)] bg-bg-2 border border-glass-border shadow-xl overflow-hidden"
                   >
                     {GOOGLE_MODELS.map((m) => (
                       <button
                         key={m.id}
                         onClick={() => { setModelId(m.id); setModelOpen(false); }}
                         className={cn(
-                          "w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-left transition-colors",
+                          "w-full flex items-center gap-2.5 px-3.5 py-2.5 text-sm text-left transition-colors cursor-pointer",
                           modelId === m.id
                             ? "bg-accent/10 text-accent"
                             : "text-text-2 hover:bg-glass hover:text-text-1",
@@ -346,10 +350,10 @@ function GeneratePageInner() {
                         <div>
                           <p className="font-medium">{m.name}</p>
                           <p className="text-[10px] text-text-3">
-                            {m.id.includes("fast") ? "Faster • Lower latency" : "Higher quality • Slower"}
+                            {m.id.includes("fast") ? "Faster • Lower latency" : m.id.includes("ultra") ? "Highest quality • Slowest" : "Balanced quality"}
                           </p>
                         </div>
-                        {modelId === m.id && <Check className="w-3.5 h-3.5 ml-auto" />}
+                        {modelId === m.id && <Check className="w-3.5 h-3.5 ml-auto text-accent" />}
                       </button>
                     ))}
                   </motion.div>
@@ -360,8 +364,8 @@ function GeneratePageInner() {
 
           {/* Aspect ratio */}
           <div>
-            <p className="text-xs font-medium text-text-2 mb-2">Aspect Ratio</p>
-            <div className="flex flex-wrap gap-2">
+            <p className="label-section mb-2.5">Aspect Ratio</p>
+            <div className="grid grid-cols-5 gap-1.5">
               {ASPECT_RATIOS.map((r) => (
                 <AspectRatioTile
                   key={r.id}
@@ -375,14 +379,15 @@ function GeneratePageInner() {
 
           {/* Count */}
           <div>
-            <p className="text-xs font-medium text-text-2 mb-2">Images</p>
-            <div className="flex gap-2">
+            <p className="label-section mb-2.5">Images</p>
+            <div className="flex gap-1.5">
               {COUNT_OPTIONS.map((n) => (
                 <button
                   key={n}
                   onClick={() => setCount(n)}
                   className={cn(
-                    "w-10 h-10 rounded-xl text-sm font-medium border transition-colors cursor-pointer",
+                    "w-10 h-10 rounded-[var(--radius-md)] text-sm font-medium border transition-colors cursor-pointer",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
                     count === n
                       ? "bg-accent/10 border-accent/50 text-accent"
                       : "bg-transparent border-glass-border text-text-2 hover:border-glass-border-strong hover:text-text-1",
@@ -398,7 +403,7 @@ function GeneratePageInner() {
           <div>
             <button
               onClick={() => setShowNegative((s) => !s)}
-              className="flex items-center gap-1.5 text-xs text-text-3 hover:text-text-2 transition-colors"
+              className="flex items-center gap-1.5 text-xs text-text-3 hover:text-text-2 transition-colors cursor-pointer"
             >
               {showNegative ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               Negative prompt
@@ -417,8 +422,8 @@ function GeneratePageInner() {
                     onChange={(e) => setNegativePrompt(e.target.value)}
                     placeholder="What to avoid: blurry, low quality, text, watermark…"
                     rows={3}
-                    className="mt-2 w-full bg-bg-2 border border-glass-border rounded-xl text-xs text-text-1
-                      placeholder:text-text-3 p-3 resize-none outline-none focus:border-accent/30 transition-colors"
+                    className="mt-2 w-full bg-bg-input border border-glass-border rounded-[var(--radius-md)] text-xs text-text-1
+                      placeholder:text-text-3 p-3 resize-none outline-none focus:border-accent/30 focus:ring-1 focus:ring-accent/20 transition-colors"
                   />
                 </motion.div>
               )}
@@ -430,7 +435,7 @@ function GeneratePageInner() {
             onClick={handleGenerate}
             disabled={!canGenerate}
             className={cn(
-              "w-full h-12 rounded-2xl font-bold text-sm font-display tracking-wide transition-all duration-200 cursor-pointer",
+              "w-full h-12 rounded-full font-bold text-sm font-display tracking-wide transition-all duration-200 cursor-pointer",
               "bg-accent text-white hover:bg-accent-hover",
               "disabled:opacity-40 disabled:cursor-not-allowed",
               loading && "opacity-70",
@@ -452,7 +457,7 @@ function GeneratePageInner() {
           {images.length > 0 && (
             <button
               onClick={() => { setImages([]); setHasGenerated(false); }}
-              className="w-full flex items-center justify-center gap-1.5 text-xs text-text-3 hover:text-text-2 transition-colors py-1"
+              className="w-full flex items-center justify-center gap-1.5 text-xs text-text-3 hover:text-text-2 transition-colors py-1 cursor-pointer"
             >
               <RotateCcw className="w-3 h-3" />
               Clear results
@@ -465,16 +470,35 @@ function GeneratePageInner() {
           initial={{ opacity: 0, x: 12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
+          className="min-h-[300px] lg:min-h-[500px]"
         >
           {!hasGenerated && !loading ? (
             /* Empty state */
-            <div className="flex flex-col items-center justify-center py-24 rounded-2xl border border-dashed border-glass-border text-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-accent/5 border border-glass-border flex items-center justify-center">
-                <ImageIcon className="w-7 h-7 text-text-3" />
+            <div className="flex flex-col items-center justify-center h-full min-h-[300px] lg:min-h-[500px] rounded-[var(--radius-lg)] bg-bg-2/50 border border-dashed border-glass-border text-center gap-5 p-8">
+              <div className="relative">
+                <div className="w-20 h-20 rounded-2xl bg-accent/5 border border-glass-border flex items-center justify-center">
+                  <ImageIcon className="w-8 h-8 text-text-3/60" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-6 h-6 rounded-lg bg-accent2/10 border border-accent2/20 flex items-center justify-center">
+                  <Sparkles className="w-3 h-3 text-accent2" />
+                </div>
               </div>
-              <div>
-                <p className="text-text-2 font-medium text-sm">Your images will appear here</p>
-                <p className="text-text-3 text-xs mt-1">Write a prompt and hit Generate</p>
+              <div className="space-y-1.5">
+                <p className="text-text-1 font-medium">Your images will appear here</p>
+                <p className="text-text-3 text-sm max-w-xs mx-auto">Write a prompt and hit Generate to bring your vision to life</p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2 mt-2">
+                {["Product photo", "Character design", "Abstract art"].map((hint) => (
+                  <button
+                    key={hint}
+                    onClick={() => setPrompt(hint.toLowerCase() + ", ")}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs text-text-3
+                      bg-glass border border-glass-border hover:bg-glass-hover hover:text-text-2 transition-colors cursor-pointer"
+                  >
+                    <Palette className="w-3 h-3" />
+                    {hint}
+                  </button>
+                ))}
               </div>
             </div>
           ) : loading ? (
@@ -483,7 +507,7 @@ function GeneratePageInner() {
             <div
               className={cn(
                 "grid gap-4",
-                images.length === 1 ? "grid-cols-1 max-w-lg" : "grid-cols-2",
+                images.length === 1 ? "grid-cols-1 max-w-lg" : "grid-cols-1 sm:grid-cols-2",
               )}
             >
               {images.map((img, i) => (
