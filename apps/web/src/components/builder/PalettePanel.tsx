@@ -20,9 +20,9 @@ export function PalettePanel() {
   }, [query, activeTag]);
 
   return (
-    <div className="border border-accent/8 bg-bg-2 overflow-hidden">
+    <div className="border border-accent/8 bg-bg-2 overflow-hidden rounded-[var(--radius-lg)]">
       <div className="flex items-center justify-between px-4 py-3 border-b border-accent/8">
-        <h3 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Color Palettes</h3>
+        <h3 className="text-[11px] font-medium text-text-2 uppercase tracking-wider">Color Palettes</h3>
         {selectedPalette && (
           <button
             onClick={() => setPalette(null)}
@@ -43,8 +43,8 @@ export function PalettePanel() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search palettes..."
             className={clsx(
-              "w-full pl-8 pr-8 py-2 text-xs font-mono",
-              "bg-bg-input border border-accent/8",
+              "w-full pl-8 pr-8 py-2 text-xs",
+              "bg-bg-input border border-accent/8 rounded-[var(--radius-md)]",
               "text-text-1 placeholder:text-text-2",
               "focus:outline-none focus:border-accent/40",
               "transition-all duration-150",
@@ -95,7 +95,7 @@ export function PalettePanel() {
               onClick={() => setPalette(isSelected ? null : palette.name)}
               className={clsx(
                 "w-full flex items-center gap-3 px-3 py-2 transition-all duration-150",
-                "border cursor-pointer text-left",
+                "border cursor-pointer text-left rounded-[var(--radius-md)]",
                 isSelected
                   ? "bg-accent/10 border-accent/30"
                   : "bg-transparent border-transparent hover:bg-surface",
@@ -112,7 +112,7 @@ export function PalettePanel() {
               </div>
               <span
                 className={clsx(
-                  "text-xs font-mono font-medium truncate",
+                  "text-xs font-medium truncate",
                   isSelected ? "text-accent" : "text-text-2",
                 )}
               >

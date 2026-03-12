@@ -36,7 +36,7 @@ export const useSettingsStore = create<SettingsStore>()(
     (set) => ({
       accent: "orange",
       theme: "dark",
-      defaultGenerator: "midjourney",
+      defaultGenerator: "nanobanana",
       installedStylePacks: [],
       customPhrases: [],
 
@@ -93,6 +93,11 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: "spb-settings",
+      version: 1,
+      migrate: (persisted) => ({
+        ...(persisted as object),
+        defaultGenerator: "nanobanana",
+      }),
     },
   ),
 );

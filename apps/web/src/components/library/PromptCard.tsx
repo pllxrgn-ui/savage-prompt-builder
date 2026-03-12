@@ -62,7 +62,7 @@ export function PromptCard({ prompt, onSelectDiff, isDiffSelected }: PromptCardP
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       className={cn(
-        "group bg-bg-2 border p-4 transition-colors",
+        "group bg-bg-2 border p-4 transition-colors rounded-[var(--radius-lg)]",
         isDiffSelected
           ? "border-accent ring-2 ring-accent/20"
           : "border-accent/8 hover:border-accent/30",
@@ -71,16 +71,16 @@ export function PromptCard({ prompt, onSelectDiff, isDiffSelected }: PromptCardP
       {/* Header row */}
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="p-1.5 border border-accent/20 shrink-0">
+          <div className="p-1.5 border border-accent/20 shrink-0 rounded-[var(--radius-sm)]">
             {generator && (
               <LucideIcon name={generator.icon} className="w-4 h-4 text-accent" />
             )}
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm font-mono font-semibold text-text-1 truncate">
+            <h3 className="text-sm font-semibold text-text-1 truncate">
               {prompt.title || "Untitled Prompt"}
             </h3>
-            <div className="flex items-center gap-2 text-[10px] font-mono text-text-2">
+            <div className="flex items-center gap-2 text-[10px] text-text-2">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
                 {new Date(prompt.createdAt).toLocaleDateString()}
@@ -108,7 +108,7 @@ export function PromptCard({ prompt, onSelectDiff, isDiffSelected }: PromptCardP
       {/* Version badge */}
       {prompt.version > 1 && (
         <div className="flex items-center gap-1 mb-2">
-          <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 bg-accent/10 text-accent border border-accent/20">
+          <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 bg-accent/10 text-accent border border-accent/20 rounded-full">
             <GitBranch className="w-3 h-3" />
             v{prompt.version}
           </span>
@@ -119,7 +119,7 @@ export function PromptCard({ prompt, onSelectDiff, isDiffSelected }: PromptCardP
       <button
         type="button"
         className={cn(
-          "w-full text-left bg-bg-input p-3 mb-2 relative transition-all",
+          "w-full text-left bg-bg-input p-3 mb-2 relative transition-all rounded-[var(--radius-md)]",
           expanded ? "" : "h-20 overflow-hidden",
         )}
         onClick={() => setExpanded(!expanded)}
@@ -173,13 +173,13 @@ export function PromptCard({ prompt, onSelectDiff, isDiffSelected }: PromptCardP
         {prompt.styles.slice(0, 2).map((style) => (
           <span
             key={style}
-            className="px-2 py-0.5 bg-accent/5 border border-accent/10 text-[10px] font-mono text-accent/80"
+            className="px-2 py-0.5 bg-accent/5 border border-accent/10 text-[10px] text-accent/80 rounded-full"
           >
             {style}
           </span>
         ))}
         {prompt.styles.length > 2 && (
-          <span className="px-2 py-0.5 bg-surface border border-accent/8 text-[10px] font-mono text-text-2">
+          <span className="px-2 py-0.5 bg-surface border border-accent/8 text-[10px] text-text-2 rounded-full">
             +{prompt.styles.length - 2}
           </span>
         )}

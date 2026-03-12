@@ -2,19 +2,105 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { requireAuth } from '@/lib/require-auth';
 
-const ALLOWED_MODELS = ['nanobanana-pro', 'nanobanana-turbo', 'flux-pro', 'flux-dev'] as const;
-const ALLOWED_RATIOS = ['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3'] as const;
+/** Models available on this Google AI key */
+const IMAGEN_MODELS = [
+    'imagen-4.0-generate-001',
+    'imagen-4.0-fast-generate-001',
+    'imagen-4.0-ultra-generate-001',
+] as const;
+
+const NANOBANANA_MODELS = [
+    'gemini-3.1-flash-image-preview',  // Nanobanana 2
+    'gemini-3-pro-image-preview',      // Nanobanana Pro
+    'gemini-2.5-flash-image',          // Nano Banana
+] as const;
+
+type ImagenModel = typeof IMAGEN_MODELS[number];
+type NanobananaModel = typeof NANOBANANA_MODELS[number];
+
+const ALL_MODELS = [...IMAGEN_MODELS, ...NANOBANANA_MODELS] as const;
+
+const ALLOWED_RATIOS = ['1:1', '16:9', '9:16', '4:3', '3:4'] as const;
 
 const generateSchema = z.object({
-  prompt: z.string().min(1).max(2000),
-  model: z.enum(ALLOWED_MODELS).optional().default('nanobanana-pro'),
-  count: z.number().int().min(1).max(4).optional().default(1),
-  aspectRatio: z.enum(ALLOWED_RATIOS).optional().default('1:1'),
-  negativePrompt: z.string().max(1000).optional(),
+    prompt: z.string().min(1).max(2000),
+    model: z.string().optional().default('imagen-4.0-generate-001'),
+    count: z.number().int().min(1).max(4).optional().default(1),
+    aspectRatio: z.enum(ALLOWED_RATIOS).optional().default('1:1'),
+    negativePrompt: z.string().max(1000).optional(),
 });
 
-// Placeholder URL for NanoBanana Pro API or similar image generation service
-const IMAGE_GEN_API_URL = process.env.NANOBANANA_API_URL || 'https://api.nanobanana.com/v1/generate';
+/** Call Imagen 4 via the predict endpoint */
+async function callImagen(
+    apiKey: string,
+    model: ImagenModel,
+    prompt: string,
+    count: number,
+    aspectRatio: string,
+    negativePrompt?: string,
+): Promise<string[]> {
+    const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${apiKey}`,
+        {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                instances: [{ prompt, ...(negativePrompt ? { negativePrompt } : {}) }],
+                parameters: {
+                    sampleCount: count,
+                    aspectRatio,
+                    includeRaiReason: false,
+                    outputMimeType: 'image/jpeg',
+                },
+            }),
+        },
+    );
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err?.error?.message ?? `Imagen API error ${res.status}`);
+    }
+    const data = await res.json();
+    return (data.predictions as Array<{ bytesBase64Encoded: string; mimeType: string }>)
+        .map((p) => `data:${p.mimeType ?? 'image/jpeg'};base64,${p.bytesBase64Encoded}`);
+}
+
+/** Call Nanobanana (Gemini image generation) via generateContent */
+async function callNanobanana(
+    apiKey: string,
+    model: NanobananaModel,
+    prompt: string,
+    count: number,
+): Promise<string[]> {
+    const images: string[] = [];
+    // Gemini image generation is one image per call
+    await Promise.all(
+        Array.from({ length: count }, async () => {
+            const res = await fetch(
+                `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: { responseModalities: ['IMAGE', 'TEXT'] },
+                    }),
+                },
+            );
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err?.error?.message ?? `Nanobanana API error ${res.status}`);
+            }
+            const data = await res.json();
+            const parts: Array<{ inlineData?: { data: string; mimeType: string } }> =
+                data?.candidates?.[0]?.content?.parts ?? [];
+            const img = parts.find((p) => p.inlineData);
+            if (img?.inlineData) {
+                images.push(`data:${img.inlineData.mimeType};base64,${img.inlineData.data}`);
+            }
+        }),
+    );
+    return images;
+}
 
 export async function POST(req: Request) {
     try {
@@ -29,50 +115,29 @@ export async function POST(req: Request) {
                 { status: 400 },
             );
         }
+
         const { prompt, model, count, aspectRatio, negativePrompt } = parsed.data;
 
-        const apiKey = process.env.NANOBANANA_API_KEY;
+        const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
         if (!apiKey) {
-            return NextResponse.json(
-                { error: 'Image generation API key is not configured' },
-                { status: 500 }
-            );
+            return NextResponse.json({ error: 'Google AI API key is not configured' }, { status: 500 });
         }
 
-        // Proxy the request to the upstream image generation API
-        const response = await fetch(IMAGE_GEN_API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-                prompt,
-                negative_prompt: negativePrompt,
-                model,
-                n: count,
-                aspect_ratio: aspectRatio,
-            }),
-        });
+        let images: string[];
 
-        if (!response.ok) {
-            return NextResponse.json(
-                { error: 'Image generation failed upstream' },
-                { status: response.status }
-            );
+        if (NANOBANANA_MODELS.includes(model as NanobananaModel)) {
+            images = await callNanobanana(apiKey, model as NanobananaModel, prompt, count);
+        } else {
+            const imagenModel: ImagenModel = IMAGEN_MODELS.includes(model as ImagenModel)
+                ? (model as ImagenModel)
+                : 'imagen-4.0-generate-001';
+            images = await callImagen(apiKey, imagenModel, prompt, count, aspectRatio, negativePrompt);
         }
-
-        const data = await response.json();
-
-        // Standardize the response format: { images: ["url1", "url2"] }
-        const images = data.images || data.urls || (data.output ? [data.output] : []);
 
         return NextResponse.json({ success: true, images });
-    } catch (error: any) {
-        console.error('[Image Generation Proxy Error]', error);
-        return NextResponse.json(
-            { error: 'Failed to process image generation request' },
-            { status: 500 }
-        );
+    } catch (error: unknown) {
+        console.error('[Image Generate Error]', error);
+        const message = error instanceof Error ? error.message : 'Image generation failed';
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }

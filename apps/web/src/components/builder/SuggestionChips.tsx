@@ -31,8 +31,8 @@ export function SuggestionChips({ templateId, fieldId }: SuggestionChipsProps) {
             whileTap={{ scale: 0.95 }}
             onClick={() => setField(fieldId, isActive ? "" : preset)}
             className={cn(
-              "px-2.5 py-1 font-mono text-[10px] font-medium transition-[background-color,color,border-color] duration-150",
-              "border cursor-pointer",
+              "px-2.5 py-1 text-[10px] font-medium transition-[background-color,color,border-color] duration-150",
+              "border cursor-pointer rounded-full",
               isActive
                 ? "bg-accent text-black border-accent"
                 : "bg-surface text-text-3 border-accent/10 hover:text-text-2 hover:border-accent/30",

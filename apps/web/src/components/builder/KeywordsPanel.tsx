@@ -11,12 +11,12 @@ export function KeywordsPanel() {
   const toggleKeyword = useBuilderStore((s) => s.toggleKeyword);
 
   return (
-    <div className="border border-accent/8 bg-bg-2 overflow-hidden">
+    <div className="border border-accent/8 bg-bg-2 overflow-hidden rounded-[var(--radius-lg)]">
       <div className="flex items-center justify-between px-4 py-3 border-b border-accent/8">
-        <h3 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Keywords</h3>
+        <h3 className="text-[11px] font-medium text-text-2 uppercase tracking-wider">Keywords</h3>
         {selectedKeywords.length > 0 && (
-          <span className="text-[10px] text-accent font-mono px-2 py-0.5 border border-accent/20">
-            [{selectedKeywords.length}] selected
+          <span className="text-[10px] text-accent font-medium px-2 py-0.5 border border-accent/20 rounded-full">
+            {selectedKeywords.length} selected
           </span>
         )}
       </div>
@@ -35,8 +35,8 @@ export function KeywordsPanel() {
                   key={keyword}
                   onClick={() => toggleKeyword(keyword)}
                   className={clsx(
-                    "px-2.5 py-1 text-[11px] font-mono font-medium transition-all duration-150",
-                    "border cursor-pointer",
+                    "px-2.5 py-1 text-[11px] font-medium transition-all duration-150",
+                    "border cursor-pointer rounded-full",
                     isSelected
                       ? "bg-accent/15 text-accent border-accent/30"
                       : "bg-surface text-text-3 border-transparent hover:text-text-2 hover:bg-bg-3",

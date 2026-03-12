@@ -11,11 +11,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-const PAGE_META: Record<string, { title: string; code?: string }> = {
-  "/home": { title: "HOME", code: "01" },
-  "/builder": { title: "BUILDER", code: "02" },
-  "/library": { title: "LIBRARY", code: "03" },
-  "/settings": { title: "SETTINGS", code: "04" },
+const PAGE_META: Record<string, { title: string; subtitle?: string }> = {
+  "/home": { title: "Home", subtitle: "Dashboard" },
+  "/builder": { title: "Builder", subtitle: "Create prompts" },
+  "/library": { title: "Library", subtitle: "Saved work" },
+  "/settings": { title: "Settings", subtitle: "Preferences" },
 };
 
 export function TopBar() {
@@ -23,46 +23,41 @@ export function TopBar() {
   const theme = useSettingsStore((s) => s.theme);
   const toggleTheme = useSettingsStore((s) => s.toggleTheme);
 
-  const meta = PAGE_META[pathname ?? ""] ?? { title: "SPB", code: "00" };
+  const meta = PAGE_META[pathname ?? ""] ?? { title: "Savage Prompt Builder" };
 
   return (
-    <header className="flex items-center justify-between h-10 px-4 md:px-6 border-b border-accent/8 bg-bg-1/80 backdrop-blur-sm sticky top-0 z-30">
-      {/* Terminal breadcrumb */}
-      <nav className="flex items-center gap-2 font-mono text-[11px] tracking-wider" aria-label="Breadcrumb">
-        <span className="text-accent/40 hidden sm:inline">SAVAGE.PROMPT</span>
-        <span className="text-accent/20 hidden sm:inline">//</span>
-        <span className="text-text-1 font-semibold uppercase">{meta.title}</span>
-        {meta.code && (
-          <span className="text-text-3 text-[9px]">[{meta.code}]</span>
+    <header className="flex items-center justify-between h-14 px-6 md:px-8 border-b border-border bg-bg-1/80 backdrop-blur-md sticky top-0 z-30">
+      {/* Page title */}
+      <div className="flex items-center gap-3">
+        <h1 className="text-base font-heading font-semibold text-text-1">{meta.title}</h1>
+        {meta.subtitle && (
+          <>
+            <span className="text-text-3">/</span>
+            <span className="text-sm text-text-3">{meta.subtitle}</span>
+          </>
         )}
-      </nav>
+      </div>
 
       {/* Actions */}
       <div className="flex items-center gap-2">
-        {/* Status indicator */}
-        <span className="text-[10px] font-mono text-text-3 tracking-wider hidden md:inline">
-          READY
-        </span>
-        <div className="w-1.5 h-1.5 rounded-full bg-green-500/60 hidden md:block" />
-
         <TooltipProvider delayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-text-3 hover:text-accent hover:bg-accent/8"
+                className="h-9 w-9 text-text-3 hover:text-text-1 hover:bg-surface rounded-lg"
                 onClick={toggleTheme}
                 aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
               >
                 {theme === "dark" ? (
-                  <Moon className="w-3.5 h-3.5" />
+                  <Moon className="w-[18px] h-[18px]" />
                 ) : (
-                  <Sun className="w-3.5 h-3.5" />
+                  <Sun className="w-[18px] h-[18px]" />
                 )}
               </Button>
             </TooltipTrigger>
-            <TooltipContent className="font-mono text-[10px] uppercase tracking-wider">
+            <TooltipContent className="text-sm">
               {theme === "dark" ? "Light mode" : "Dark mode"}
             </TooltipContent>
           </Tooltip>

@@ -29,6 +29,7 @@ interface BuilderState {
   selectedPhrases: string[];
   mockup: MockupState;
   garmentMode: GarmentMode;
+  mood: string;
   referenceImageUrl: string | null;
   variables: Record<string, string>;
   variations: Record<string, string>[];
@@ -59,6 +60,7 @@ interface BuilderActions {
     generatorId: GeneratorId;
     phrases?: string[];
     garmentMode?: "dark" | "light" | null;
+    mood?: string;
     referenceImageUrl?: string | null;
     variables?: Record<string, string>;
     variations?: Record<string, string>[];
@@ -66,6 +68,7 @@ interface BuilderActions {
   }) => void;
   setMockup: (mockup: MockupState) => void;
   setGarmentMode: (mode: GarmentMode) => void;
+  setMood: (value: string) => void;
   setReferenceImageUrl: (url: string | null) => void;
   setVariable: (key: string, value: string) => void;
   removeVariable: (key: string) => void;
@@ -96,10 +99,11 @@ const INITIAL_STATE: BuilderState = {
   selectedPalette: null,
   selectedKeywords: [],
   negativePrompt: "",
-  selectedGenerator: "midjourney",
+  selectedGenerator: "nanobanana",
   selectedPhrases: [],
   mockup: INITIAL_MOCKUP,
   garmentMode: null,
+  mood: "",
   referenceImageUrl: null,
   variables: {},
   variations: [{}],
@@ -126,6 +130,7 @@ export const useBuilderStore = create<BuilderStore>()(
           negativePrompt: "",
           selectedPhrases: [],
           garmentMode: null,
+          mood: "",
           referenceImageUrl: null,
           variables: {},
           variations: [{}],
@@ -187,6 +192,7 @@ export const useBuilderStore = create<BuilderStore>()(
           selectedGenerator: recipe.generatorId,
           selectedPhrases: recipe.phrases ?? [],
           garmentMode: recipe.garmentMode ?? null,
+          mood: recipe.mood ?? "",
           referenceImageUrl: recipe.referenceImageUrl ?? null,
           variables: recipe.variables ?? {},
           variations: recipe.variations?.length ? recipe.variations : [recipe.fieldData],
@@ -199,6 +205,8 @@ export const useBuilderStore = create<BuilderStore>()(
       setMockup: (mockup) => set({ mockup }),
 
       setGarmentMode: (mode) => set({ garmentMode: mode }),
+
+      setMood: (value) => set({ mood: value }),
 
       setReferenceImageUrl: (url) => set({ referenceImageUrl: url }),
 
@@ -310,6 +318,12 @@ export const useBuilderStore = create<BuilderStore>()(
     }),
     {
       name: "spb-builder",
+      version: 2,
+      migrate: (persisted) => ({
+        ...(persisted as object),
+        selectedGenerator: "nanobanana",
+        negativePrompt: "",
+      }),
       partialize: (state) => ({
         activeTemplateId: state.activeTemplateId,
         templateFields: state.templateFields,
@@ -320,6 +334,7 @@ export const useBuilderStore = create<BuilderStore>()(
         selectedGenerator: state.selectedGenerator,
         selectedPhrases: state.selectedPhrases,
         garmentMode: state.garmentMode,
+        mood: state.mood,
         referenceImageUrl: state.referenceImageUrl,
         variables: state.variables,
         variations: state.variations,

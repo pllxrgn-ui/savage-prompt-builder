@@ -14,9 +14,9 @@ export function GarmentSelector() {
   const setGarmentMode = useBuilderStore((s) => s.setGarmentMode);
 
   return (
-    <div className="border border-accent/8 bg-bg-2 p-4">
+    <div className="border border-accent/8 bg-bg-2 p-4 rounded-[var(--radius-lg)]">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Garment Type</h3>
+        <h3 className="text-[11px] font-medium text-text-2 uppercase tracking-wider">Garment Type</h3>
         {garmentMode && (
           <button
             onClick={() => setGarmentMode(null)}
@@ -34,8 +34,8 @@ export function GarmentSelector() {
               key={value}
               onClick={() => setGarmentMode(isActive ? null : value)}
               className={clsx(
-                "flex-1 flex flex-col items-center gap-1.5 px-3 py-3 text-xs font-mono font-medium",
-                "border transition-all duration-150 cursor-pointer",
+                "flex-1 flex flex-col items-center gap-1.5 px-3 py-3 text-xs font-medium",
+                "border transition-all duration-150 cursor-pointer rounded-[var(--radius-md)]",
                 isActive
                   ? "bg-accent/10 border-accent/30 text-accent"
                   : "bg-surface border-transparent text-text-2 hover:bg-bg-3 hover:text-text-1",

@@ -28,6 +28,7 @@ export interface PromptInput {
   mockup?: { item: string; color: string; display: string };
   garmentMode?: "dark" | "light" | null;
   referenceImageUrl?: string | null;
+  mood?: string;
 }
 
 export interface BuiltPrompt {
@@ -54,8 +55,13 @@ function assemblePositive(
   phrases: string[],
   mockup?: { item: string; color: string; display: string },
   garmentMode?: "dark" | "light" | null,
+  mood?: string,
 ): string {
   const parts: string[] = [templatePrompt];
+
+  if (mood && mood.trim()) {
+    parts.push(mood.trim());
+  }
 
   if (garmentMode === "dark") {
     parts.push("light and neon colors on dark fabric");
@@ -114,6 +120,7 @@ export function buildPrompt(input: PromptInput): BuiltPrompt {
     input.phrases,
     input.mockup,
     input.garmentMode,
+    input.mood,
   );
 
   // Step 3: Negative prompt (as-is)

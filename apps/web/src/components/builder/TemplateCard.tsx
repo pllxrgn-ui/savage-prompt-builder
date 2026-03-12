@@ -1,18 +1,34 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "@/components/ui/LucideIcon";
 import { useBuilderStore } from "@/lib/store";
 import type { Template } from "@/types";
 import { Badge } from "@/components/ui/badge";
 
-interface TemplateCardProps {
-  template: Template;
+interface CardAccent {
+  text: string;
+  bg: string;
+  bgHover: string;
+  border: string;
+  titleHover: string;
 }
 
-export function TemplateCard({ template }: TemplateCardProps) {
+interface TemplateCardProps {
+  template: Template;
+  accent?: CardAccent;
+}
+
+const defaultAccent: CardAccent = {
+  text: "text-accent",
+  bg: "bg-accent/10",
+  bgHover: "group-hover:bg-accent/15",
+  border: "hover:border-accent/30",
+  titleHover: "group-hover:text-accent",
+};
+
+export function TemplateCard({ template, accent = defaultAccent }: TemplateCardProps) {
   const router = useRouter();
   const setTemplate = useBuilderStore((s) => s.setTemplate);
 
@@ -22,39 +38,36 @@ export function TemplateCard({ template }: TemplateCardProps) {
   }
 
   return (
-    <motion.button
+    <button
       onClick={handleClick}
-      whileHover={{ scale: 1.02, y: -2 }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
       className={cn(
-        "group flex flex-col items-start gap-3 p-4 text-left",
-        "bg-bg-2 border border-accent/8",
-        "hover:border-accent/30 hover:bg-surface",
-        "transition-[border-color,background-color] duration-200 cursor-pointer",
+        "group flex flex-col items-start gap-3 p-6 text-left rounded-[var(--radius-xl)] w-full",
+        "bg-bg-2 border border-glass-border",
+        accent.border, "hover:bg-glass-hover",
+        "transition-colors duration-150 cursor-pointer",
       )}
     >
       <div
         className={cn(
-          "flex items-center justify-center w-9 h-9",
-          "border border-accent/20 group-hover:border-accent/40 transition-colors",
+          "flex items-center justify-center w-10 h-10 rounded-lg transition-colors",
+          accent.bg, accent.bgHover,
         )}
       >
-        <LucideIcon name={template.icon} className="w-4 h-4 text-accent" />
+        <LucideIcon name={template.icon} className={cn("w-4.5 h-4.5", accent.text)} />
       </div>
       <div>
-        <h3 className="font-mono font-semibold text-[11px] uppercase tracking-wide text-text-1 group-hover:text-accent transition-colors">
+        <h3 className={cn("font-heading font-semibold text-sm text-text-1 transition-colors", accent.titleHover)}>
           {template.name}
         </h3>
-        <p className="font-mono text-[11px] text-text-2 mt-1 line-clamp-2 leading-relaxed">
+        <p className="text-xs text-text-2 mt-1 line-clamp-2 leading-relaxed">
           {template.description}
         </p>
       </div>
       <div className="flex items-center gap-1.5 mt-auto">
-        <Badge variant="outline" className="font-mono text-[10px] text-text-2 border-accent/10 uppercase tracking-wider">
+        <Badge variant="outline" className="text-[11px] text-text-2 border-white/[0.08] rounded-full">
           {template.fields.length} fields
         </Badge>
       </div>
-    </motion.button>
+    </button>
   );
 }

@@ -89,7 +89,7 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
           onKeyDown={(e) => e.key === "Escape" && onClose()}
         >
           <motion.div
-            className="bg-bg-1 border border-accent/8 shadow-2xl w-full max-w-3xl mx-4 max-h-[80vh] flex flex-col"
+            className="bg-bg-1 border border-accent/8 shadow-2xl w-full max-w-3xl mx-4 max-h-[80vh] flex flex-col rounded-[var(--radius-xl)]"
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
@@ -99,19 +99,19 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
             <div className="flex items-center justify-between p-5 border-b border-accent/8">
               <div className="flex items-center gap-2">
                 <Columns2 className="w-5 h-5 text-accent" />
-                <h2 className="text-lg font-mono font-semibold text-text-1 uppercase tracking-wide">Compare Prompts</h2>
+                <h2 className="text-lg font-semibold text-text-1 uppercase tracking-wide">Compare Prompts</h2>
               </div>
               <button
                 onClick={onClose}
                 aria-label="Close diff modal"
-                className="p-1.5 hover:bg-surface text-text-3 hover:text-text-1 transition-colors"
+                className="p-1.5 hover:bg-surface text-text-3 hover:text-text-1 transition-colors rounded-[var(--radius-md)]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Stats bar */}
-            <div className="flex items-center gap-4 px-5 py-3 border-b border-accent/8 text-xs font-mono text-text-2">
+            <div className="flex items-center gap-4 px-5 py-3 border-b border-accent/8 text-xs text-text-2">
               <span>
                 A: <strong className="text-text-1">{stats.wordsA}</strong> words
               </span>
@@ -126,18 +126,18 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
             {/* Side-by-side headers */}
             <div className="grid grid-cols-2 gap-4 px-5 pt-4 pb-2">
               <div>
-                <p className="text-xs font-mono font-medium text-text-2 truncate">
+                <p className="text-xs font-medium text-text-2 truncate">
                   A: {promptA.title}
                 </p>
-                <p className="text-[10px] font-mono text-text-2">
+                <p className="text-[10px] text-text-2">
                   {new Date(promptA.createdAt).toLocaleDateString()}
                 </p>
               </div>
               <div>
-                <p className="text-xs font-mono font-medium text-text-2 truncate">
+                <p className="text-xs font-medium text-text-2 truncate">
                   B: {promptB.title}
                 </p>
-                <p className="text-[10px] font-mono text-text-2">
+                <p className="text-[10px] text-text-2">
                   {new Date(promptB.createdAt).toLocaleDateString()}
                 </p>
               </div>
@@ -145,7 +145,7 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
 
             {/* Diff view */}
             <div className="flex-1 overflow-auto px-5 pb-5">
-              <div className="bg-bg-input p-4 border border-accent/8">
+              <div className="bg-bg-input p-4 border border-accent/8 rounded-[var(--radius-md)]">
                 <p className="text-sm font-mono leading-relaxed">
                   {diff.map((word, idx) => (
                     <span

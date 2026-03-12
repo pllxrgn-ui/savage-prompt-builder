@@ -2,6 +2,38 @@ import type { ImageGenModel } from "@/types";
 
 export const IMAGE_GEN_MODELS: ImageGenModel[] = [
   {
+    id: "imagen-4.0-generate-001",
+    name: "Imagen 4",
+    provider: "google",
+    maxWidth: 2048,
+    maxHeight: 2048,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16"],
+  },
+  {
+    id: "imagen-4.0-fast-generate-001",
+    name: "Imagen 4 Fast",
+    provider: "google",
+    maxWidth: 2048,
+    maxHeight: 2048,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16"],
+  },
+  {
+    id: "imagen-4.0-ultra-generate-001",
+    name: "Imagen 4 Ultra",
+    provider: "google",
+    maxWidth: 2048,
+    maxHeight: 2048,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16"],
+  },
+  {
+    id: "gemini-3.1-flash-image-preview",
+    name: "Nanobanana 2",
+    provider: "google",
+    maxWidth: 2048,
+    maxHeight: 2048,
+    supportedRatios: ["1:1", "4:3", "3:4", "16:9", "9:16"],
+  },
+  {
     id: "midjourney-v6",
     name: "Midjourney v6.1",
     provider: "midjourney",

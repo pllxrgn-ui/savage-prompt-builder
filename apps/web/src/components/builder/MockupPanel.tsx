@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { clsx } from "clsx";
 import { getMockupConfig } from "@/lib/data";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { LucideIcon } from "@/components/ui/LucideIcon";
 
 interface MockupPanelProps {
   templateId: string;
@@ -23,16 +31,15 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
 
   if (!config) {
     return (
-      <div className="border border-accent/8 bg-bg-2 p-6 text-center">
-        <p className="text-xs font-mono text-text-2">
+      <div className="border border-glass-border bg-bg-2 p-6 text-center rounded-[var(--radius-lg)]">
+        <p className="text-xs text-text-2">
           Mockup settings are not available for this template type.
         </p>
       </div>
     );
   }
 
-  function toggleEnabled() {
-    const next = !enabled;
+  function toggleEnabled(next: boolean) {
     setEnabled(next);
     onMockupChange({ enabled: next, item, color, display });
   }
@@ -52,95 +59,100 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
     onMockupChange({ enabled, item, color, display: value });
   }
 
-  const selectClass = clsx(
-    "w-full px-3 py-2 text-xs font-mono",
-    "bg-surface border border-accent/8 text-text-1",
-    "outline-none focus:border-accent/40 transition-colors",
-  );
-
   return (
-    <div className="border border-accent/8 bg-bg-2 overflow-hidden">
-      <div className="px-4 py-3 border-b border-accent/8 flex items-center justify-between">
-        <h3 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">{config.label}</h3>
-        <button
-          onClick={toggleEnabled}
+    <div className="border border-glass-border bg-bg-2 overflow-hidden rounded-[var(--radius-lg)]">
+      <div className="px-4 py-3 border-b border-glass-border flex items-center justify-between">
+        <h3 className="label-section">{config.label}</h3>
+        <Switch
+          checked={enabled}
+          onCheckedChange={toggleEnabled}
           aria-label="Toggle mockup"
-          className={clsx(
-            "relative w-10 h-[22px] transition-colors duration-200 cursor-pointer",
-            enabled ? "bg-accent" : "bg-border",
-          )}
-        >
-          <div
-            className={clsx(
-              "absolute top-0.5 w-[18px] h-[18px] bg-white transition-[left] duration-200",
-              enabled ? "left-5" : "left-0.5",
-            )}
-          />
-        </button>
+        />
       </div>
 
       {enabled && (
-        <div className="p-4 space-y-3">
+        <div className="p-4 space-y-4">
           {config.items.length > 0 && (
             <div>
-              <p className="text-[10px] font-mono text-text-2 mb-1.5 uppercase tracking-[0.15em]">
-                Item
-              </p>
-              <select
-                value={item}
-                onChange={(e) => handleItem(e.target.value)}
-                aria-label="Mockup item"
-                className={selectClass}
-              >
-                <option value="">Select item...</option>
-                {config.items.map((it) => (
-                  <option key={it.id} value={it.prompt}>
-                    {it.label}
-                  </option>
-                ))}
-              </select>
+              <p className="label-section mb-1.5">Item</p>
+              <Select value={item} onValueChange={handleItem}>
+                <SelectTrigger className="cursor-pointer">
+                  <SelectValue placeholder="Select item..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {config.items.map((it) => (
+                    <SelectItem
+                      key={it.id}
+                      value={it.prompt}
+                      className="cursor-pointer"
+                    >
+                      <span className="flex items-center gap-2">
+                        {it.icon && (
+                          <LucideIcon name={it.icon} className="w-3.5 h-3.5 text-text-3 shrink-0" />
+                        )}
+                        {it.label}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
 
           {config.colors.length > 0 && (
             <div>
-              <p className="text-[10px] font-mono text-text-2 mb-1.5 uppercase tracking-[0.15em]">
-                Color
-              </p>
-              <select
-                value={color}
-                onChange={(e) => handleColor(e.target.value)}
-                aria-label="Mockup color"
-                className={selectClass}
-              >
-                <option value="">Color...</option>
-                {config.colors.map((c) => (
-                  <option key={c.id} value={c.value}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
+              <p className="label-section mb-1.5">Color</p>
+              <Select value={color} onValueChange={handleColor}>
+                <SelectTrigger className="cursor-pointer">
+                  <SelectValue placeholder="Color..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {config.colors.map((c) => (
+                    <SelectItem
+                      key={c.id}
+                      value={c.value}
+                      className="cursor-pointer"
+                    >
+                      <span className="flex items-center gap-2">
+                        {c.hex && (
+                          <span
+                            className="w-3.5 h-3.5 rounded-full border border-glass-border shrink-0"
+                            style={{ backgroundColor: c.hex }}
+                          />
+                        )}
+                        {c.label}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
 
           {config.displays.length > 0 && (
             <div>
-              <p className="text-[10px] font-mono text-text-2 mb-1.5 uppercase tracking-[0.15em]">
-                Display
-              </p>
-              <select
-                value={display}
-                onChange={(e) => handleDisplay(e.target.value)}
-                aria-label="Mockup display"
-                className={selectClass}
-              >
-                <option value="">Display...</option>
-                {config.displays.map((d) => (
-                  <option key={d.id} value={d.value}>
-                    {d.label}
-                  </option>
-                ))}
-              </select>
+              <p className="label-section mb-1.5">Display</p>
+              <Select value={display} onValueChange={handleDisplay}>
+                <SelectTrigger className="cursor-pointer">
+                  <SelectValue placeholder="Display..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {config.displays.map((d) => (
+                    <SelectItem
+                      key={d.id}
+                      value={d.value}
+                      className="cursor-pointer"
+                    >
+                      <span className="flex items-center gap-2">
+                        {d.icon && (
+                          <LucideIcon name={d.icon} className="w-3.5 h-3.5 text-text-3 shrink-0" />
+                        )}
+                        {d.label}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
         </div>

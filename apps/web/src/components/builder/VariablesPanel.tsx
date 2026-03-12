@@ -54,7 +54,7 @@ export function VariablesPanel() {
             <div className="space-y-1.5">
               {entries.map(([key, value]) => (
                 <div key={key} className="flex items-center gap-2 group">
-                  <span className="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded shrink-0">
+                  <span className="text-xs font-mono text-accent bg-accent/10 px-2 py-1 rounded-full shrink-0">
                     {`{${key}}`}
                   </span>
                   <span className="text-xs text-text-3">=</span>

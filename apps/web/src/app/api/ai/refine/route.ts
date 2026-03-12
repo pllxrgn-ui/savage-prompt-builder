@@ -1,5 +1,5 @@
 import { generateText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 import { NextResponse } from 'next/server';
 import { AI_SYSTEM_PROMPTS } from '@/lib/ai/prompts';
 import { requireAuth } from '@/lib/require-auth';
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
         const { prompt, feedback } = await req.json();
 
         const { text } = await generateText({
-            model: openai('gpt-4o-mini'),
+            model: google('gemini-2.0-flash'),
             system: AI_SYSTEM_PROMPTS.refine,
             prompt: `Current Prompt: ${prompt}\nFeedback / Wanted Changes: ${feedback}`,
         });

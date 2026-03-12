@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import { DM_Sans, Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -45,11 +54,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: accentScript }} />
       </head>
-      <body className={`${jetbrainsMono.variable} ${spaceGrotesk.variable} antialiased`}>
-        {/* CRT background effects — global */}
-        <div className="crt-glow" aria-hidden="true" />
-        <div className="noise-grain" aria-hidden="true" />
-        <div className="crt-scanlines" aria-hidden="true" />
+      <body className={`${dmSans.variable} ${plusJakarta.variable} ${spaceGrotesk.variable} antialiased`}>
         <AuthProvider>
           {children}
         </AuthProvider>

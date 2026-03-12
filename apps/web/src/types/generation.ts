@@ -112,18 +112,21 @@ export interface MockupItem {
   id: string;
   label: string;
   prompt: string;
+  icon?: string;
 }
 
 export interface MockupColor {
   id: string;
   label: string;
   value: string;
+  hex?: string;
 }
 
 export interface MockupDisplay {
   id: string;
   label: string;
   value: string;
+  icon?: string;
 }
 
 export interface MockupConfig {

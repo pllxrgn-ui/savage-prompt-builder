@@ -15,10 +15,10 @@ export function FieldInput({ field, templateId }: FieldInputProps) {
   const setField = useBuilderStore((s) => s.setField);
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1.5">
       <label
         htmlFor={`field-${field.id}`}
-        className="flex items-center gap-1.5 text-[11px] font-mono font-medium text-text-2 uppercase tracking-[0.15em]"
+        className="flex items-center gap-1.5 text-xs font-medium text-text-2"
       >
         {field.label}
         {field.required && <span className="text-accent">*</span>}
@@ -30,10 +30,10 @@ export function FieldInput({ field, templateId }: FieldInputProps) {
         onChange={(e) => setField(field.id, e.target.value)}
         placeholder={field.placeholder}
         className={cn(
-          "w-full px-3 py-2.5 text-sm font-mono",
-          "bg-bg-input border border-accent/8",
-          "text-text-1 placeholder:text-text-2 placeholder:font-mono",
-          "focus:outline-none focus:border-accent/40",
+          "w-full px-3.5 py-2.5 text-sm rounded-[var(--radius-md)]",
+          "bg-bg-input border border-white/[0.06]",
+          "text-text-1 placeholder:text-text-3",
+          "focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/20",
           "transition-all duration-150",
         )}
       />

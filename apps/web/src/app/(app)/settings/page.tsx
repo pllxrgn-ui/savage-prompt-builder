@@ -25,6 +25,7 @@ import type { HistoryStore, UIStore, SettingsStore, GeneratorId } from "@/types"
 import { useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { cn } from "@/lib/utils";
+import { BlurFade } from "@/components/ui/blur-fade";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -186,22 +187,24 @@ export default function SettingsPage() {
 
   return (
     <div className="p-5 md:p-8 max-w-2xl mx-auto pb-20">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="flex items-center justify-center w-9 h-9 border border-accent/20">
-          <SettingsIcon className="w-4 h-4 text-accent" />
+      <BlurFade delay={0.05}>
+        <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center justify-center w-9 h-9 rounded-[var(--radius-md)] bg-accent/10 border border-accent/20">
+            <SettingsIcon className="w-4 h-4 text-accent" />
+          </div>
+          <div>
+            <h1 className="text-xl font-heading font-bold text-text-1">Settings</h1>
+            <p className="text-text-2 text-sm">Customize and manage your experience.</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-lg font-mono font-bold text-text-1 uppercase tracking-wide">Settings</h1>
-          <p className="text-text-2 font-mono text-[11px]">Customize and manage your experience.</p>
-        </div>
-      </div>
+      </BlurFade>
 
       <div className="space-y-10">
         {/* ──────── Account ──────── */}
         {isAuthenticated && user && (
           <section className="space-y-4">
-            <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Account</h2>
-            <div className="p-5 bg-bg-2 border border-accent/8 space-y-4">
+            <p className="label-section">Account</p>
+            <div className="p-5 bg-bg-2 border border-glass-border rounded-[var(--radius-md)] space-y-4">
               <div className="flex items-center gap-4">
                 {user.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -211,7 +214,7 @@ export default function SettingsPage() {
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="flex items-center justify-center w-12 h-12 border border-accent/20 text-accent text-[10px] font-mono font-bold">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full border border-accent/20 bg-accent/10 text-accent text-[10px] font-semibold">
                     {user.name
                       .split(" ")
                       .map((n) => n[0])
@@ -252,25 +255,25 @@ export default function SettingsPage() {
 
         {/* ──────── Appearance ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Appearance</h2>
+          <p className="label-section">Appearance</p>
 
           <Card className="flex items-center gap-4 p-5">
             <div className="flex-1">
-              <p className="text-sm font-mono text-text-1 font-medium">Theme</p>
-              <p className="text-[11px] font-mono text-text-2 mt-0.5">Switch between dark and light modes</p>
+              <p className="text-sm font-medium text-text-1">Theme</p>
+              <p className="text-xs text-text-2 mt-0.5">Switch between dark and light modes</p>
             </div>
             <ThemeToggle />
           </Card>
 
           <Card className="p-5">
-            <p className="text-sm font-mono text-text-1 font-medium mb-4">Accent Color</p>
+            <p className="text-sm font-medium text-text-1 mb-4">Accent Color</p>
             <AccentPicker />
           </Card>
         </section>
 
         {/* ──────── Default Generator (D1) ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Default Generator</h2>
+          <p className="label-section">Default Generator</p>
           <Card className="p-5">
             <p className="text-xs text-text-2 mb-4">
               New prompts will start with this generator selected.
@@ -299,10 +302,10 @@ export default function SettingsPage() {
 
         {/* ──────── Style Packs (D3) ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">
-            <Package className="w-3.5 h-3.5 inline-block mr-1.5 -mt-0.5" />
-            Style Packs
-          </h2>
+          <div className="flex items-center gap-1.5">
+            <Package className="w-3.5 h-3.5 text-text-3" />
+            <p className="label-section">Style Packs</p>
+          </div>
           <p className="text-xs text-text-2 -mt-2">
             Install curated style packs to use in the builder.
           </p>
@@ -357,19 +360,19 @@ export default function SettingsPage() {
 
         {/* ──────── Phrase Library (D4) ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">
-            <BookOpen className="w-3.5 h-3.5 inline-block mr-1.5 -mt-0.5" />
-            Phrase Library
-          </h2>
+          <div className="flex items-center gap-1.5">
+            <BookOpen className="w-3.5 h-3.5 text-text-3" />
+            <p className="label-section">Phrase Library</p>
+          </div>
 
           {/* Built-in phrases */}
           <div className="space-y-2">
-            <p className="text-[10px] font-mono text-text-2 uppercase tracking-[0.15em]">Built-in</p>
+            <p className="label-section">Built-in</p>
             <div className="grid grid-cols-1 gap-2">
               {PHRASES.map((phrase) => (
                 <div
                   key={phrase.id}
-                  className="flex items-center gap-3 p-3 bg-bg-2 border border-accent/8"
+                  className="flex items-center gap-3 p-3 bg-bg-2 border border-glass-border rounded-[var(--radius-md)]"
                 >
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-text-1">{phrase.label}</p>
@@ -394,7 +397,7 @@ export default function SettingsPage() {
           {/* Custom phrases */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-mono text-text-2 uppercase tracking-[0.15em]">Custom</p>
+              <p className="label-section">Custom</p>
               {!phraseForm && (
                 <Button
                   onClick={() => setPhraseForm({ name: "", content: "" })}
@@ -409,20 +412,20 @@ export default function SettingsPage() {
 
             {/* Add form */}
             {phraseForm && (
-              <div className="p-4 bg-bg-2 border border-accent/30 space-y-3">
+              <div className="p-4 bg-bg-2 border border-accent/30 rounded-[var(--radius-md)] space-y-3">
                 <input
                   type="text"
                   placeholder="Phrase name…"
                   value={phraseForm.name}
                   onChange={(e) => setPhraseForm({ ...phraseForm, name: e.target.value })}
-                  className="w-full px-3 py-2 bg-bg-input border border-accent/8 text-sm font-mono text-text-1 placeholder:text-text-2 focus:outline-none focus:border-accent/40"
+                  className="w-full px-3 py-2 bg-bg-input border border-glass-border rounded-[var(--radius-md)] text-sm text-text-1 placeholder:text-text-3 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus-visible:border-accent"
                 />
                 <textarea
                   placeholder="Phrase content…"
                   value={phraseForm.content}
                   onChange={(e) => setPhraseForm({ ...phraseForm, content: e.target.value })}
                   rows={2}
-                  className="w-full px-3 py-2 bg-bg-input border border-accent/8 text-sm font-mono text-text-1 placeholder:text-text-2 focus:outline-none focus:border-accent/40 resize-none"
+                  className="w-full px-3 py-2 bg-bg-input border border-glass-border rounded-[var(--radius-md)] text-sm text-text-1 placeholder:text-text-3 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus-visible:border-accent resize-none"
                 />
                 <div className="flex gap-2 justify-end">
                   <Button
@@ -461,7 +464,7 @@ export default function SettingsPage() {
             {customPhrases.map((phrase) => (
               <div
                 key={phrase.id}
-                className="p-3 bg-bg-2 border border-accent/8"
+                className="p-3 bg-bg-2 border border-glass-border rounded-[var(--radius-md)]"
               >
                 {editingPhraseId === phrase.id ? (
                   <div className="space-y-2">
@@ -470,14 +473,14 @@ export default function SettingsPage() {
                       value={editingPhrase.name}
                       onChange={(e) => setEditingPhrase({ ...editingPhrase, name: e.target.value })}
                       aria-label="Phrase name"
-                      className="w-full px-3 py-1.5 bg-bg-input border border-accent/8 text-sm font-mono text-text-1 focus:outline-none focus:border-accent/40"
+                      className="w-full px-3 py-1.5 bg-bg-input border border-glass-border rounded-[var(--radius-md)] text-sm text-text-1 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus-visible:border-accent"
                     />
                     <textarea
                       value={editingPhrase.content}
                       onChange={(e) => setEditingPhrase({ ...editingPhrase, content: e.target.value })}
                       rows={2}
                       aria-label="Phrase content"
-                      className="w-full px-3 py-1.5 bg-bg-input border border-accent/8 text-sm font-mono text-text-1 focus:outline-none focus:border-accent/40 resize-none"
+                      className="w-full px-3 py-1.5 bg-bg-input border border-glass-border rounded-[var(--radius-md)] text-sm text-text-1 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus-visible:border-accent resize-none"
                     />
                     <div className="flex gap-2 justify-end">
                       <Button
@@ -554,13 +557,13 @@ export default function SettingsPage() {
 
         {/* ──────── Data Management (D5 enhanced) ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Data Management</h2>
+          <p className="label-section">Data Management</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               onClick={handleExport}
-              className="group flex flex-col items-start p-5 bg-bg-2 border border-accent/8 hover:border-accent/30 hover:bg-surface/5 transition-all text-left"
+              className="group flex flex-col items-start p-5 bg-bg-2 border border-glass-border rounded-[var(--radius-md)] hover:border-border-strong hover:bg-glass-hover transition-colors duration-150 text-left cursor-pointer"
             >
-              <div className="p-2 border border-accent/20 mb-3">
+              <div className="p-2 rounded-[var(--radius-sm)] border border-accent/20 bg-accent/5 mb-3">
                 <Download className="w-5 h-5 text-accent" />
               </div>
               <p className="text-sm font-semibold text-text-1">Export Data</p>
@@ -571,9 +574,9 @@ export default function SettingsPage() {
 
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="group flex flex-col items-start p-5 bg-bg-2 border border-accent/8 hover:border-accent/30 hover:bg-surface/5 transition-all text-left"
+              className="group flex flex-col items-start p-5 bg-bg-2 border border-glass-border rounded-[var(--radius-md)] hover:border-border-strong hover:bg-glass-hover transition-colors duration-150 text-left cursor-pointer"
             >
-              <div className="p-2 border border-accent/20 mb-3">
+              <div className="p-2 rounded-[var(--radius-sm)] border border-accent/20 bg-accent/5 mb-3">
                 <Upload className="w-5 h-5 text-accent" />
               </div>
               <p className="text-sm font-semibold text-text-1">Import Data</p>
@@ -652,25 +655,25 @@ export default function SettingsPage() {
 
         {/* ──────── About ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">About</h2>
+          <p className="label-section">About</p>
           <Card className="p-5 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 border border-accent/20">
+              <div className="p-2 rounded-[var(--radius-sm)] border border-accent/20 bg-accent/5">
                 <Database className="w-4 h-4 text-accent" />
               </div>
               <div>
-                <p className="text-sm font-mono font-semibold text-text-1">Free Tier / Offline Mode</p>
-                <p className="text-[11px] font-mono text-text-2 mt-0.5">All data is stored locally in your browser.</p>
+                <p className="text-sm font-medium text-text-1">Free Tier / Offline Mode</p>
+                <p className="text-xs text-text-2 mt-0.5">All data is stored locally in your browser.</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="p-2 border border-accent/20">
+              <div className="p-2 rounded-[var(--radius-sm)] border border-accent/20 bg-accent/5">
                 <HardDrive className="w-4 h-4 text-accent" />
               </div>
               <div>
-                <p className="text-sm font-mono font-semibold text-text-1">Storage Status</p>
-                <p className="text-[11px] font-mono text-text-2 mt-0.5">Using Browser LocalStorage (persist enabled)</p>
+                <p className="text-sm font-medium text-text-1">Storage Status</p>
+                <p className="text-xs text-text-2 mt-0.5">Using Browser LocalStorage (persist enabled)</p>
               </div>
             </div>
           </Card>
@@ -679,3 +682,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

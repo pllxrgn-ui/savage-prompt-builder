@@ -97,6 +97,7 @@ function handleCopyPrompt() {
         }
       : undefined,
     garmentMode: state.garmentMode,
+    mood: state.mood,
   });
 
   navigator.clipboard.writeText(result.full);
@@ -126,6 +127,7 @@ function handleSave() {
         }
       : undefined,
     garmentMode: state.garmentMode,
+    mood: state.mood,
   });
 
   const tmpl = getTemplateById(state.activeTemplateId);

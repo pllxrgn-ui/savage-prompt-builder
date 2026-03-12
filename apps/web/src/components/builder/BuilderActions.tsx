@@ -35,6 +35,7 @@ export function BuilderActions({ template, onRecipe }: BuilderActionsProps) {
     referenceImageUrl,
     variables,
     variations,
+    mood,
     setField,
     setStyles,
   } = useBuilderStore();
@@ -63,6 +64,7 @@ export function BuilderActions({ template, onRecipe }: BuilderActionsProps) {
         ? { item: mockup.item, color: mockup.color, display: mockup.display }
         : undefined,
       garmentMode,
+      mood,
     });
 
     promptService.savePrompt({
@@ -126,6 +128,7 @@ export function BuilderActions({ template, onRecipe }: BuilderActionsProps) {
         ? { item: mockup.item, color: mockup.color, display: mockup.display }
         : undefined,
       garmentMode,
+      mood,
     });
 
     promptService.iteratePrompt(lastSaved.id, {

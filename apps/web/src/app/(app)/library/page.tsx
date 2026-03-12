@@ -13,6 +13,7 @@ import {
   Star,
   Columns2,
 } from "lucide-react";
+import { BlurFade } from "@/components/ui/blur-fade";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useHistoryStore } from "@/lib/store";
@@ -98,14 +99,15 @@ export default function LibraryPage() {
   return (
     <div className="p-5 md:p-8 max-w-7xl mx-auto min-h-screen">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <BlurFade>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 border border-accent/20">
-            <BookOpen className="w-4 h-4 text-accent" />
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-accent/10 border border-accent/20">
+            <BookOpen className="w-5 h-5 text-accent" />
           </div>
           <div>
-            <h1 className="text-lg font-mono font-bold text-text-1 uppercase tracking-wide">Library</h1>
-            <p className="text-text-2 font-mono text-[11px]">Organize your creative workflow and history.</p>
+            <h1 className="text-xl font-heading font-bold text-text-1">Library</h1>
+            <p className="text-text-3 text-sm">Your saved prompts, recipes, and generated media.</p>
           </div>
         </div>
 
@@ -140,21 +142,24 @@ export default function LibraryPage() {
           </Button>
         </div>
       </div>
+      </BlurFade>
 
       {/* Toolbar */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-3 mb-6">
+        {/* Search */}
         <div className="relative flex-1">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-3" />
           <Input
             type="text"
-            placeholder={`Search ${activeTab}...`}
+            placeholder={`Search ${activeTab}…`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10"
+            className="w-full pl-10 bg-bg-input border-glass-border"
           />
         </div>
 
-        <div className="flex items-center gap-2 bg-bg-2 p-1 border border-accent/8">
+        {/* Tab pills */}
+        <div className="flex items-center gap-1.5 p-1 bg-bg-2 rounded-full border border-glass-border">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -163,20 +168,20 @@ export default function LibraryPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-colors",
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-150 cursor-pointer",
                   isActive
-                    ? "bg-accent text-black"
-                    : "text-text-2 hover:text-text-1",
+                    ? "bg-accent/15 text-accent border border-accent/20"
+                    : "text-text-3 hover:text-text-1 hover:bg-glass",
                 )}
               >
                 <Icon className="w-3.5 h-3.5" />
                 {tab.label}
                 {tab.count > 0 && (
                   <span className={cn(
-                    "text-[9px] ml-1",
-                    isActive ? "text-black/60" : "text-text-2",
+                    "text-[10px] tabular-nums",
+                    isActive ? "text-accent/70" : "text-text-3",
                   )}>
-                    [{tab.count}]
+                    {tab.count}
                   </span>
                 )}
               </button>
@@ -184,26 +189,27 @@ export default function LibraryPage() {
           })}
         </div>
 
-        <div className="hidden md:flex items-center gap-1 bg-bg-2 p-1 border border-accent/8">
+        {/* View mode toggle */}
+        <div className="hidden md:flex items-center gap-0.5 p-1 bg-bg-2 rounded-xl border border-glass-border">
           <button
             onClick={() => setViewMode("grid")}
             aria-label="Grid view"
             className={cn(
-              "p-1.5 transition-colors",
-              viewMode === "grid" ? "bg-accent/15 text-accent" : "text-text-2 hover:text-text-1",
+              "p-2 rounded-lg transition-all duration-150 cursor-pointer",
+              viewMode === "grid" ? "bg-bg-3 text-text-1" : "text-text-3 hover:text-text-1",
             )}
           >
-            <LayoutGrid className="w-4 h-4" />
+            <LayoutGrid className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setViewMode("list")}
             aria-label="List view"
             className={cn(
-              "p-1.5 transition-colors",
-              viewMode === "list" ? "bg-accent/15 text-accent" : "text-text-2 hover:text-text-1",
+              "p-2 rounded-lg transition-all duration-150 cursor-pointer",
+              viewMode === "list" ? "bg-bg-3 text-text-1" : "text-text-3 hover:text-text-1",
             )}
           >
-            <List className="w-4 h-4" />
+            <List className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
@@ -217,10 +223,10 @@ export default function LibraryPage() {
               key={proj.id}
               onClick={() => setProjectFilter(projectFilter === proj.id ? "" : proj.id)}
               className={cn(
-                "px-3 py-1 font-mono text-[10px] uppercase tracking-wider border transition-colors",
+                "px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150 cursor-pointer",
                 projectFilter === proj.id
-                  ? "bg-accent/10 text-accent border-accent/30"
-                  : "bg-bg-2 text-text-2 border-accent/8 hover:border-accent/20",
+                  ? "bg-accent/15 text-accent border-accent/20"
+                  : "bg-bg-2 text-text-2 border-glass-border hover:border-border-strong hover:text-text-1",
               )}
             >
               {proj.name}
@@ -233,7 +239,7 @@ export default function LibraryPage() {
               value={templateFilter}
               onChange={(e) => setTemplateFilter(e.target.value)}
               aria-label="Filter by template"
-              className="px-3 py-1 font-mono text-[10px] uppercase bg-bg-2 text-text-2 border border-accent/8 focus:outline-none focus:border-accent/30"
+              className="px-3 py-1.5 text-xs rounded-full bg-bg-2 text-text-2 border border-glass-border focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus-visible:border-accent cursor-pointer"
             >
               <option value="">All templates</option>
               {usedTemplateIds.map((tid) => {
@@ -248,20 +254,18 @@ export default function LibraryPage() {
           )}
 
           {/* Star filter */}
-          <Button
+          <button
             onClick={() => setStarFilter(!starFilter)}
-            variant="outline"
-            size="sm"
             className={cn(
-              "h-7 text-[10px] font-mono uppercase tracking-wider",
+              "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150 cursor-pointer",
               starFilter
-                ? "bg-amber-400/10 text-amber-400 border-amber-400/30"
-                : "text-text-2 border-accent/8",
+                ? "bg-amber-400/10 text-amber-400 border-amber-400/20"
+                : "bg-bg-2 text-text-2 border-glass-border hover:text-text-1 hover:border-border-strong",
             )}
           >
             <Star className="w-3 h-3" fill={starFilter ? "currentColor" : "none"} />
-            Favs Only
-          </Button>
+            Starred
+          </button>
         </div>
       )}
 
@@ -277,14 +281,14 @@ export default function LibraryPage() {
             >
               {filteredPrompts.length === 0 ? (
                 <div className="py-20 flex flex-col items-center justify-center text-center">
-                  <div className="w-14 h-14 border border-accent/15 flex items-center justify-center mb-4">
+                  <div className="w-14 h-14 rounded-2xl bg-bg-2 border border-glass-border flex items-center justify-center mb-4">
                     <History className="w-6 h-6 text-text-3" />
                   </div>
-                  <h3 className="text-sm font-mono font-semibold text-text-1 uppercase tracking-wide mb-1">&gt;_ No prompts found</h3>
-                  <p className="text-text-2 font-mono text-[11px] max-w-[280px]">
+                  <h3 className="text-sm font-heading font-semibold text-text-1 mb-1">No prompts found</h3>
+                  <p className="text-text-3 text-xs max-w-[280px]">
                     {searchQuery
                       ? "Try adjusting your search terms."
-                      : "Build and copy a prompt to see it here in your history."}
+                      : "Build and save a prompt in the Builder to see it here."}
                   </p>
                 </div>
               ) : (
@@ -318,12 +322,12 @@ export default function LibraryPage() {
             >
               {filteredRecipes.length === 0 ? (
                 <div className="py-20 flex flex-col items-center justify-center text-center">
-                  <div className="w-14 h-14 border border-accent/15 flex items-center justify-center mb-4">
+                  <div className="w-14 h-14 rounded-2xl bg-bg-2 border border-glass-border flex items-center justify-center mb-4">
                     <ChefHat className="w-6 h-6 text-text-3" />
                   </div>
-                  <h3 className="text-sm font-mono font-semibold text-text-1 uppercase tracking-wide mb-1">&gt;_ No recipes yet</h3>
-                  <p className="text-text-2 font-mono text-[11px] max-w-[280px]">
-                    Save one from the Builder to see it here!
+                  <h3 className="text-sm font-heading font-semibold text-text-1 mb-1">No recipes yet</h3>
+                  <p className="text-text-3 text-xs max-w-[280px]">
+                    Save a prompt as a recipe from the Builder.
                   </p>
                 </div>
               ) : (
@@ -351,12 +355,12 @@ export default function LibraryPage() {
               exit={{ opacity: 0, y: -10 }}
               className="py-20 flex flex-col items-center justify-center text-center"
             >
-              <div className="w-14 h-14 border border-accent/15 flex items-center justify-center mb-4">
+              <div className="w-14 h-14 rounded-2xl bg-bg-2 border border-glass-border flex items-center justify-center mb-4">
                 <ImageIcon className="w-6 h-6 text-text-3" />
               </div>
-              <h3 className="text-sm font-mono font-semibold text-text-1 uppercase tracking-wide mb-1">&gt;_ Gallery coming soon</h3>
-              <p className="text-text-2 font-mono text-[11px] max-w-[280px]">
-                Generated images will appear here once Phase 5 is complete.
+              <h3 className="text-sm font-heading font-semibold text-text-1 mb-1">Gallery coming soon</h3>
+              <p className="text-text-3 text-xs max-w-[280px]">
+                Generated images from the Generate page will be saved here.
               </p>
             </motion.div>
           )}

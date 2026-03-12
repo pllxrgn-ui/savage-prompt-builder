@@ -1,5 +1,5 @@
 import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 import { z } from 'zod';
 import { NextResponse } from 'next/server';
 import { AI_SYSTEM_PROMPTS } from '@/lib/ai/prompts';
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         const { vibe } = await req.json();
 
         const { object } = await generateObject({
-            model: openai('gpt-4o-mini'),
+            model: google('gemini-2.0-flash'),
             system: AI_SYSTEM_PROMPTS.styles,
             schema: z.object({
                 styles: z.array(z.object({

@@ -13,7 +13,6 @@ import {
   Flame,
   Crown,
   Menu,
-  Terminal,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/lib/store";
@@ -34,18 +33,17 @@ import {
 import { useState } from "react";
 
 const NAV_ITEMS = [
-  { href: "/home", label: "HOME", icon: Home, shortcut: "01" },
-  { href: "/builder", label: "BUILDER", icon: Wand2, shortcut: "02" },
-  { href: "/library", label: "LIBRARY", icon: BookOpen, shortcut: "03" },
-  { href: "/settings", label: "SETTINGS", icon: Settings, shortcut: "04" },
+  { href: "/home", label: "Home", icon: Home },
+  { href: "/builder", label: "Builder", icon: Wand2 },
+  { href: "/library", label: "Library", icon: BookOpen },
+  { href: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
-/* ── Terminal-style nav link ── */
+/* ── Elegant nav link ── */
 function NavLink({
   href,
   label,
   icon: Icon,
-  shortcut,
   isActive,
   collapsed,
   onClick,
@@ -53,7 +51,6 @@ function NavLink({
   href: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
-  shortcut: string;
   isActive: boolean;
   collapsed?: boolean;
   onClick?: () => void;
@@ -63,48 +60,40 @@ function NavLink({
       href={href}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-3 px-3 py-2 transition-all duration-150 group relative",
-        "text-[11px] font-medium tracking-[0.08em] uppercase",
+        "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group relative mx-2",
+        "text-sm font-medium",
         isActive
-          ? "text-accent bg-accent/8 border-l-2 border-accent"
-          : "text-text-3 hover:text-text-1 hover:bg-white/[0.02] border-l-2 border-transparent",
+          ? "text-accent bg-accent/10"
+          : "text-text-2 hover:text-text-1 hover:bg-surface",
       )}
     >
       <Icon
         className={cn(
-          "w-4 h-4 shrink-0 transition-colors",
-          isActive ? "text-accent" : "text-text-3 group-hover:text-accent/60",
+          "w-[18px] h-[18px] shrink-0 transition-colors",
+          isActive ? "text-accent" : "text-text-3 group-hover:text-text-1",
         )}
       />
       {!collapsed && (
-        <>
-          <span className="flex-1 font-mono">{label}</span>
-          <span className={cn(
-            "text-[9px] font-mono",
-            isActive ? "text-accent/60" : "text-text-3",
-          )}>
-            [{shortcut}]
-          </span>
-        </>
+        <span className="flex-1">{label}</span>
       )}
     </Link>
   );
 }
 
-/* ── Logo block — terminal style ── */
+/* ── Logo block ── */
 function Logo({ collapsed }: { collapsed?: boolean }) {
   return (
-    <Link href="/home" className="flex items-center gap-2 group">
-      <div className="relative flex items-center justify-center w-8 h-8 border border-accent/30 group-hover:border-accent/60 transition-colors">
-        <Flame className="w-4 h-4 text-accent relative z-10" />
+    <Link href="/home" className="flex items-center gap-2.5 group">
+      <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-accent/10 group-hover:bg-accent/15 transition-colors">
+        <Flame className="w-5 h-5 text-accent relative z-10" />
       </div>
       {!collapsed && (
         <div className="flex flex-col">
-          <span className="font-heading font-bold text-[13px] text-accent tracking-tight whitespace-nowrap uppercase">
-            SAVAGE
+          <span className="font-heading font-bold text-[15px] text-text-1 tracking-tight">
+            Savage
           </span>
-          <span className="text-[10px] text-text-2 tracking-[0.15em] font-mono uppercase">
-            PROMPT BUILDER
+          <span className="text-[11px] text-text-3 font-medium -mt-0.5">
+            Prompt Builder
           </span>
         </div>
       )}
@@ -112,7 +101,7 @@ function Logo({ collapsed }: { collapsed?: boolean }) {
   );
 }
 
-/* ── User section — terminal ── */
+/* ── User section ── */
 function UserSection({
   collapsed,
 }: {
@@ -137,9 +126,9 @@ function UserSection({
           asChild
           variant="outline"
           size="sm"
-          className="w-full text-[10px] uppercase tracking-widest text-accent border-accent/30 hover:border-accent hover:bg-accent/10 font-mono"
+          className="w-full text-sm text-text-2 border-border hover:border-accent hover:text-accent"
         >
-          <Link href="/login">&gt;_ SIGN IN</Link>
+          <Link href="/login">Sign In</Link>
         </Button>
       </div>
     );
@@ -147,18 +136,18 @@ function UserSection({
 
   return (
     <div className={cn(
-      "flex items-center gap-2 px-3 py-2 hover:bg-white/[0.02] transition-colors",
-      collapsed && "justify-center px-0",
+      "flex items-center gap-2.5 px-3 py-2.5 mx-2 rounded-lg hover:bg-surface transition-colors",
+      collapsed && "justify-center px-0 mx-0",
     )}>
       {user.avatarUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={user.avatarUrl}
           alt={user.name}
-          className="w-6 h-6 object-cover shrink-0 border border-accent/20"
+          className="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-border"
         />
       ) : (
-        <div className="flex items-center justify-center w-6 h-6 bg-accent/10 text-accent text-[9px] font-bold font-mono shrink-0 border border-accent/20">
+        <div className="flex items-center justify-center w-7 h-7 rounded-full bg-accent/10 text-accent text-xs font-semibold shrink-0">
           {initials}
         </div>
       )}
@@ -166,27 +155,27 @@ function UserSection({
       {!collapsed && (
         <>
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-mono font-medium text-text-2 truncate leading-tight uppercase tracking-wider">
+            <p className="text-sm font-medium text-text-1 truncate leading-tight">
               {user.name}
             </p>
             <div className="flex items-center gap-1 mt-0.5">
-              {isPro && <Crown className="w-2.5 h-2.5 text-accent" />}
+              {isPro && <Crown className="w-3 h-3 text-accent" />}
               <span className={cn(
-                "text-[9px] font-mono tracking-widest",
+                "text-xs",
                 isPro ? "text-accent" : "text-text-3",
               )}>
-                {isPro ? "[PRO]" : "[FREE]"}
+                {isPro ? "Pro" : "Free"}
               </span>
             </div>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="h-5 w-5 text-text-3 hover:text-red-400 hover:bg-red-400/10 shrink-0"
+            className="h-7 w-7 text-text-3 hover:text-red-400 hover:bg-red-400/10 shrink-0 rounded-lg"
             onClick={logout}
             aria-label="Log out"
           >
-            <LogOut className="w-3 h-3" />
+            <LogOut className="w-3.5 h-3.5" />
           </Button>
         </>
       )}
@@ -194,7 +183,7 @@ function UserSection({
   );
 }
 
-/* ── Desktop Sidebar — Blaster Terminal ── */
+/* ── Desktop Sidebar ── */
 export function Sidebar() {
   const pathname = usePathname();
   const collapsed = useUIStore((s) => s.sidebarCollapsed);
@@ -205,40 +194,31 @@ export function Sidebar() {
       <aside
         className={cn(
           "hidden md:flex flex-col h-screen fixed left-0 top-0 z-40",
-          "bg-bg-1 border-r border-accent/10 transition-all duration-300 ease-out",
-          collapsed ? "w-[60px]" : "w-[200px]",
+          "bg-bg-1 border-r border-border transition-all duration-300 ease-out",
+          collapsed ? "w-[68px]" : "w-[220px]",
         )}
       >
         {/* Logo + Collapse */}
-        <div className="flex items-center justify-between px-3 h-12">
+        <div className="flex items-center justify-between px-3 h-14">
           <Logo collapsed={collapsed} />
           {!collapsed && (
             <Button
               variant="ghost"
               size="icon"
-              className="h-5 w-5 text-text-3 hover:text-accent"
+              className="h-7 w-7 text-text-3 hover:text-text-1 rounded-lg"
               onClick={toggleSidebar}
               aria-label="Collapse sidebar"
             >
-              <ChevronLeft className="w-3 h-3" />
+              <ChevronLeft className="w-4 h-4" />
             </Button>
           )}
         </div>
 
-        {/* Orange divider */}
-        <div className="mx-3 h-px bg-accent/10" />
-
-        {/* Section label */}
-        {!collapsed && (
-          <div className="px-3 pt-4 pb-1">
-            <span className="text-[8px] font-mono text-text-3 tracking-[0.2em] uppercase">
-              NAVIGATION
-            </span>
-          </div>
-        )}
+        {/* Divider */}
+        <div className="mx-3 h-px bg-border" />
 
         {/* Navigation */}
-        <nav className="flex-1 py-1 space-y-0.5">
+        <nav className="flex-1 py-3 space-y-1">
           {NAV_ITEMS.map((item) => {
             const isActive =
               pathname === item.href || pathname?.startsWith(item.href + "/");
@@ -253,10 +233,9 @@ export function Sidebar() {
                   </TooltipTrigger>
                   <TooltipContent
                     side="right"
-                    className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider"
+                    className="text-sm font-medium"
                   >
                     {item.label}
-                    <span className="text-accent/50">[{item.shortcut}]</span>
                   </TooltipContent>
                 </Tooltip>
               );
@@ -270,39 +249,32 @@ export function Sidebar() {
 
         {/* Expand button when collapsed */}
         {collapsed && (
-          <div className="px-2 pb-2">
+          <div className="px-2 pb-3">
             <Button
               variant="ghost"
               size="sm"
-              className="w-full text-text-3 hover:text-accent"
+              className="w-full text-text-3 hover:text-text-1 rounded-lg"
               onClick={toggleSidebar}
               aria-label="Expand sidebar"
             >
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         )}
 
         {/* Footer divider */}
-        <div className="mx-3 h-px bg-accent/10" />
-
-        {/* Version tag */}
-        {!collapsed && (
-          <div className="px-3 py-1.5">
-            <span className="text-[10px] font-mono text-text-3 tracking-[0.15em]">
-              SPB [2026] v1.0
-            </span>
-          </div>
-        )}
+        <div className="mx-3 h-px bg-border" />
 
         {/* User */}
-        <UserSection collapsed={collapsed} />
+        <div className="py-2">
+          <UserSection collapsed={collapsed} />
+        </div>
       </aside>
     </TooltipProvider>
   );
 }
 
-/* ── Mobile Sheet Nav — Terminal Style ── */
+/* ── Mobile Sheet Nav ── */
 export function MobileNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -314,33 +286,26 @@ export function MobileNav() {
           <Button
             variant="ghost"
             size="icon"
-            className="fixed top-3 left-3 z-50 h-9 w-9 bg-bg-1/95 backdrop-blur-md border border-accent/20 shadow-lg hover:bg-bg-2 hover:border-accent/40"
+            className="fixed top-3 left-3 z-50 h-10 w-10 bg-bg-1/95 backdrop-blur-md border border-border rounded-xl shadow-lg hover:bg-bg-2"
           >
-            <Terminal className="w-4 h-4 text-accent" />
+            <Menu className="w-5 h-5 text-text-1" />
           </Button>
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="flex flex-col p-0 w-[240px] bg-bg-1 border-r border-accent/10"
+          className="flex flex-col p-0 w-[260px] bg-bg-1 border-r border-border"
         >
           <SheetTitle className="sr-only">Navigation</SheetTitle>
 
           {/* Logo */}
-          <div className="flex items-center px-3 h-12">
+          <div className="flex items-center px-4 h-14">
             <Logo />
           </div>
 
-          <div className="h-px bg-accent/10" />
-
-          {/* Section label */}
-          <div className="px-3 pt-4 pb-1">
-            <span className="text-[10px] font-mono text-text-2 tracking-[0.2em] uppercase">
-              NAVIGATION
-            </span>
-          </div>
+          <div className="h-px bg-border" />
 
           {/* Nav items */}
-          <nav className="flex-1 py-1 space-y-0.5">
+          <nav className="flex-1 py-3 space-y-1">
             {NAV_ITEMS.map((item) => {
               const isActive =
                 pathname === item.href || pathname?.startsWith(item.href + "/");
@@ -357,7 +322,7 @@ export function MobileNav() {
           </nav>
 
           {/* User */}
-          <div className="h-px bg-accent/10" />
+          <div className="h-px bg-border" />
           <div className="py-2">
             <UserSection />
           </div>
