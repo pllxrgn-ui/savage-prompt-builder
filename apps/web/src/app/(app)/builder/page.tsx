@@ -165,10 +165,41 @@ function BuilderPageInner() {
 
   if (!template) {
     return (
-      <div className="flex h-[calc(100dvh-64px)] overflow-hidden">
+      <div className="flex flex-col md:flex-row h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)] overflow-hidden">
 
-        {/* ── Left: Category rail ── */}
-        <aside className="flex flex-col w-64 shrink-0 border-r border-glass-border bg-bg-1 py-8 px-5 gap-1.5 overflow-y-auto">
+        {/* ── Mobile: Horizontal category chips ── */}
+        <div className="md:hidden shrink-0 border-b border-glass-border bg-bg-1 px-4 py-3">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+              <Wand2 className="w-3 h-3 text-accent" />
+            </div>
+            <h1 className="text-sm font-heading font-bold text-text-1">Choose Canvas</h1>
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+            {TEMPLATE_GROUPS.map((group) => {
+              const isActive = group.id === activeGroupId;
+              const accentClass = GROUP_ACCENTS[group.id] ?? GROUP_ACCENTS["other"];
+              return (
+                <button
+                  key={group.id}
+                  onClick={() => setActiveGroupId(group.id)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium whitespace-nowrap transition-all duration-150 cursor-pointer shrink-0",
+                    isActive
+                      ? accentClass
+                      : "border-glass-border text-text-3 hover:text-text-1 hover:bg-glass",
+                  )}
+                >
+                  <LucideIcon name={group.icon} className="w-3 h-3" />
+                  {group.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── Desktop: Category rail sidebar ── */}
+        <aside className="hidden md:flex flex-col w-64 shrink-0 border-r border-glass-border bg-bg-1 py-8 px-5 gap-1.5 overflow-y-auto">
           {/* Heading */}
           <div className="mb-6">
             <div className="flex items-center gap-2.5 mb-1">
@@ -226,10 +257,10 @@ function BuilderPageInner() {
           </div>
         </aside>
 
-        {/* ── Right: Template grid ── */}
+        {/* ── Template grid ── */}
         <main className="flex-1 overflow-y-auto relative bg-bg-base">
-          {/* Category header */}
-          <div className="sticky top-0 z-10 px-8 py-4 border-b border-glass-border bg-bg-base/90 backdrop-blur-sm flex items-center gap-3">
+          {/* Category header (desktop only — mobile uses chip strip above) */}
+          <div className="hidden md:flex sticky top-0 z-10 px-8 py-4 border-b border-glass-border bg-bg-base/90 backdrop-blur-sm items-center gap-3">
             <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center border", GROUP_ACCENTS[activeGroupId] ?? GROUP_ACCENTS["other"])}>
               <LucideIcon name={activeGroup.icon} className="w-3.5 h-3.5" />
             </div>
@@ -240,7 +271,7 @@ function BuilderPageInner() {
           </div>
 
           {/* Animated template grid */}
-          <div className="p-8">
+          <div className="p-4 md:p-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeGroupId}
@@ -248,7 +279,7 @@ function BuilderPageInner() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
               >
                 {visibleTemplates.map((t, i) => (
                   <motion.div
@@ -272,7 +303,7 @@ function BuilderPageInner() {
   return (
     <>
       {/* Full-height three-panel workspace */}
-      <div className="flex flex-col h-[calc(100dvh-64px)]">
+      <div className="flex flex-col h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)]">
 
         {/* Top bar */}
         <div className="flex items-center gap-3 px-4 md:px-6 py-3 border-b border-glass-border bg-bg-1/80 backdrop-blur-sm shrink-0">
@@ -421,6 +452,11 @@ function BuilderPageInner() {
                   </motion.div>
                 </AnimatePresence>
               </div>
+
+              {/* Mobile: inline prompt output (inside scroll area) */}
+              <div className="lg:hidden border-t border-glass-border">
+                <PromptOutput />
+              </div>
             </div>
 
             {/* Step navigation footer */}
@@ -457,11 +493,6 @@ function BuilderPageInner() {
               >
                 Next<ChevronRight className="w-3.5 h-3.5" />
               </Button>
-            </div>
-
-            {/* Mobile: inline prompt output */}
-            <div className="lg:hidden border-t border-glass-border">
-              <PromptOutput />
             </div>
           </main>
 
