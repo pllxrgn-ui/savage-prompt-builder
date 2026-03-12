@@ -18,7 +18,7 @@ export function FieldInput({ field, templateId }: FieldInputProps) {
     <div className="space-y-1">
       <label
         htmlFor={`field-${field.id}`}
-        className="flex items-center gap-1.5 text-[10px] font-mono font-medium text-text-3 uppercase tracking-[0.15em]"
+        className="flex items-center gap-1.5 text-[11px] font-mono font-medium text-text-2 uppercase tracking-[0.15em]"
       >
         {field.label}
         {field.required && <span className="text-accent">*</span>}
@@ -32,7 +32,7 @@ export function FieldInput({ field, templateId }: FieldInputProps) {
         className={cn(
           "w-full px-3 py-2.5 text-sm font-mono",
           "bg-bg-input border border-accent/8",
-          "text-text-1 placeholder:text-text-3 placeholder:font-mono",
+          "text-text-1 placeholder:text-text-2 placeholder:font-mono",
           "focus:outline-none focus:border-accent/40",
           "transition-all duration-150",
         )}

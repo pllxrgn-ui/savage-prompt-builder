@@ -13,7 +13,7 @@ export function KeywordsPanel() {
   return (
     <div className="border border-accent/8 bg-bg-2 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-accent/8">
-        <h3 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">Keywords</h3>
+        <h3 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Keywords</h3>
         {selectedKeywords.length > 0 && (
           <span className="text-[10px] text-accent font-mono px-2 py-0.5 border border-accent/20">
             [{selectedKeywords.length}] selected

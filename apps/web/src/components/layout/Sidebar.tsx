@@ -81,7 +81,7 @@ function NavLink({
           <span className="flex-1 font-mono">{label}</span>
           <span className={cn(
             "text-[9px] font-mono",
-            isActive ? "text-accent/60" : "text-text-3/30",
+            isActive ? "text-accent/60" : "text-text-3",
           )}>
             [{shortcut}]
           </span>
@@ -103,7 +103,7 @@ function Logo({ collapsed }: { collapsed?: boolean }) {
           <span className="font-heading font-bold text-[13px] text-accent tracking-tight whitespace-nowrap uppercase">
             SAVAGE
           </span>
-          <span className="text-[8px] text-text-3 tracking-[0.15em] font-mono uppercase">
+          <span className="text-[10px] text-text-2 tracking-[0.15em] font-mono uppercase">
             PROMPT BUILDER
           </span>
         </div>
@@ -289,7 +289,7 @@ export function Sidebar() {
         {/* Version tag */}
         {!collapsed && (
           <div className="px-3 py-1.5">
-            <span className="text-[8px] font-mono text-text-3/30 tracking-[0.15em]">
+            <span className="text-[10px] font-mono text-text-3 tracking-[0.15em]">
               SPB [2026] v1.0
             </span>
           </div>
@@ -334,7 +334,7 @@ export function MobileNav() {
 
           {/* Section label */}
           <div className="px-3 pt-4 pb-1">
-            <span className="text-[8px] font-mono text-text-3 tracking-[0.2em] uppercase">
+            <span className="text-[10px] font-mono text-text-2 tracking-[0.2em] uppercase">
               NAVIGATION
             </span>
           </div>

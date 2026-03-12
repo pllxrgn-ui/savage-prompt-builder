@@ -82,7 +82,7 @@ export default function LoginPage() {
           </div>
           <div className="text-center">
             <h1 className="text-lg font-mono font-bold text-text-1 uppercase tracking-wider">Savage Prompt Builder</h1>
-            <p className="text-[10px] font-mono text-text-3 mt-1">Build precise, beautiful AI image prompts</p>
+            <p className="text-[11px] font-mono text-text-2 mt-1">Build precise, beautiful AI image prompts</p>
           </div>
         </div>
 
@@ -139,14 +139,14 @@ export default function LoginPage() {
             {/* Divider */}
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-border" />
-              <span className="text-[10px] font-mono text-text-3 uppercase tracking-wider">or</span>
+              <span className="text-[10px] font-mono text-text-2 uppercase tracking-wider">or</span>
               <div className="flex-1 h-px bg-accent/8" />
             </div>
 
             {/* Magic link */}
             <form onSubmit={handleMagicLink} className="flex gap-2">
               <div className="relative flex-1">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-3" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-2" />
                 <Input
                   type="email"
                   value={email}
@@ -170,7 +170,7 @@ export default function LoginPage() {
             {/* Divider */}
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-accent/8" />
-              <span className="text-[10px] font-mono text-text-3 uppercase tracking-wider">explore</span>
+              <span className="text-[10px] font-mono text-text-2 uppercase tracking-wider">explore</span>
               <div className="flex-1 h-px bg-accent/8" />
             </div>
 
@@ -191,7 +191,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <p className="text-center text-[10px] font-mono text-text-3">
+        <p className="text-center text-[11px] font-mono text-text-2">
           Secure authentication powered by Supabase
         </p>
       </div>

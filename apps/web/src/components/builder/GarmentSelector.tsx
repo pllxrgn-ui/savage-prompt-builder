@@ -16,7 +16,7 @@ export function GarmentSelector() {
   return (
     <div className="border border-accent/8 bg-bg-2 p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">Garment Type</h3>
+        <h3 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Garment Type</h3>
         {garmentMode && (
           <button
             onClick={() => setGarmentMode(null)}

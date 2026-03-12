@@ -71,7 +71,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
             <h3 className="text-sm font-mono font-semibold text-text-1 truncate">
               {recipe.title}
             </h3>
-            <div className="flex items-center gap-2 text-[10px] font-mono text-text-3">
+            <div className="flex items-center gap-2 text-[10px] font-mono text-text-2">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
                 {new Date(recipe.createdAt).toLocaleDateString()}
@@ -93,12 +93,12 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         <div className="bg-bg-input p-3 mb-3 space-y-1">
           {fieldEntries.slice(0, 3).map(([key, value]) => (
             <div key={key} className="flex items-baseline gap-2 text-[11px] font-mono">
-              <span className="text-text-3 capitalize shrink-0">{key}:</span>
+              <span className="text-text-2 capitalize shrink-0">{key}:</span>
               <span className="text-text-2 truncate">{value}</span>
             </div>
           ))}
           {fieldEntries.length > 3 && (
-            <p className="text-[10px] text-text-3">+{fieldEntries.length - 3} more fields</p>
+            <p className="text-[10px] text-text-2">+{fieldEntries.length - 3} more fields</p>
           )}
         </div>
       )}

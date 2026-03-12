@@ -14,8 +14,8 @@
   --bg-input: #050505;
 
   --text-1: #ffffff;
-  --text-2: #a0a0a0;
-  --text-3: #666666;
+  --text-2: #b0b0b0;
+  --text-3: #8a8a8a;
 
   --border: rgba(255, 107, 0, 0.08);
   --border-strong: rgba(255, 107, 0, 0.20);
@@ -54,7 +54,7 @@
 
   --text-1: #111111;
   --text-2: #52525b;
-  --text-3: #a1a1aa;
+  --text-3: #71717a;
 
   --border: rgba(0, 0, 0, 0.08);
   --border-strong: rgba(0, 0, 0, 0.15);

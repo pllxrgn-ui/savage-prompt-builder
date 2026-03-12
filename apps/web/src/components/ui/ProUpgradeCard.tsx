@@ -23,7 +23,7 @@ export function ProUpgradeCard({ feature, description, className }: ProUpgradeCa
       </div>
       <p className="text-sm font-semibold text-text-1 mb-1">{feature}</p>
       {description && (
-        <p className="text-xs text-text-3 mb-4 max-w-xs">{description}</p>
+        <p className="text-xs text-text-2 mb-4 max-w-xs">{description}</p>
       )}
       <button
         className="px-4 py-2 rounded-lg bg-accent text-white text-xs font-semibold hover:opacity-90 transition-opacity"

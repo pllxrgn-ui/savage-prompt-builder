@@ -105,7 +105,7 @@ export default function LibraryPage() {
           </div>
           <div>
             <h1 className="text-lg font-mono font-bold text-text-1 uppercase tracking-wide">Library</h1>
-            <p className="text-text-3 font-mono text-[10px]">Organize your creative workflow and history.</p>
+            <p className="text-text-2 font-mono text-[11px]">Organize your creative workflow and history.</p>
           </div>
         </div>
 
@@ -121,7 +121,7 @@ export default function LibraryPage() {
             </Button>
           )}
           {diffIds.length > 0 && diffIds.length < 2 && (
-            <span className="text-xs text-text-3 px-3 py-2">
+            <span className="text-xs text-text-2 px-3 py-2">
               Select 1 more to compare
             </span>
           )}
@@ -166,7 +166,7 @@ export default function LibraryPage() {
                   "flex items-center gap-1.5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-colors",
                   isActive
                     ? "bg-accent text-black"
-                    : "text-text-3 hover:text-text-1",
+                    : "text-text-2 hover:text-text-1",
                 )}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -174,7 +174,7 @@ export default function LibraryPage() {
                 {tab.count > 0 && (
                   <span className={cn(
                     "text-[9px] ml-1",
-                    isActive ? "text-black/60" : "text-text-3",
+                    isActive ? "text-black/60" : "text-text-2",
                   )}>
                     [{tab.count}]
                   </span>
@@ -190,7 +190,7 @@ export default function LibraryPage() {
             aria-label="Grid view"
             className={cn(
               "p-1.5 transition-colors",
-              viewMode === "grid" ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1",
+              viewMode === "grid" ? "bg-accent/15 text-accent" : "text-text-2 hover:text-text-1",
             )}
           >
             <LayoutGrid className="w-4 h-4" />
@@ -200,7 +200,7 @@ export default function LibraryPage() {
             aria-label="List view"
             className={cn(
               "p-1.5 transition-colors",
-              viewMode === "list" ? "bg-accent/15 text-accent" : "text-text-3 hover:text-text-1",
+              viewMode === "list" ? "bg-accent/15 text-accent" : "text-text-2 hover:text-text-1",
             )}
           >
             <List className="w-4 h-4" />
@@ -220,7 +220,7 @@ export default function LibraryPage() {
                 "px-3 py-1 font-mono text-[10px] uppercase tracking-wider border transition-colors",
                 projectFilter === proj.id
                   ? "bg-accent/10 text-accent border-accent/30"
-                  : "bg-bg-2 text-text-3 border-accent/8 hover:border-accent/20",
+                  : "bg-bg-2 text-text-2 border-accent/8 hover:border-accent/20",
               )}
             >
               {proj.name}
@@ -256,7 +256,7 @@ export default function LibraryPage() {
               "h-7 text-[10px] font-mono uppercase tracking-wider",
               starFilter
                 ? "bg-amber-400/10 text-amber-400 border-amber-400/30"
-                : "text-text-3 border-accent/8",
+                : "text-text-2 border-accent/8",
             )}
           >
             <Star className="w-3 h-3" fill={starFilter ? "currentColor" : "none"} />
@@ -281,7 +281,7 @@ export default function LibraryPage() {
                     <History className="w-6 h-6 text-text-3" />
                   </div>
                   <h3 className="text-sm font-mono font-semibold text-text-1 uppercase tracking-wide mb-1">&gt;_ No prompts found</h3>
-                  <p className="text-text-3 font-mono text-[10px] max-w-[280px]">
+                  <p className="text-text-2 font-mono text-[11px] max-w-[280px]">
                     {searchQuery
                       ? "Try adjusting your search terms."
                       : "Build and copy a prompt to see it here in your history."}
@@ -322,7 +322,7 @@ export default function LibraryPage() {
                     <ChefHat className="w-6 h-6 text-text-3" />
                   </div>
                   <h3 className="text-sm font-mono font-semibold text-text-1 uppercase tracking-wide mb-1">&gt;_ No recipes yet</h3>
-                  <p className="text-text-3 font-mono text-[10px] max-w-[280px]">
+                  <p className="text-text-2 font-mono text-[11px] max-w-[280px]">
                     Save one from the Builder to see it here!
                   </p>
                 </div>
@@ -355,7 +355,7 @@ export default function LibraryPage() {
                 <ImageIcon className="w-6 h-6 text-text-3" />
               </div>
               <h3 className="text-sm font-mono font-semibold text-text-1 uppercase tracking-wide mb-1">&gt;_ Gallery coming soon</h3>
-              <p className="text-text-3 font-mono text-[10px] max-w-[280px]">
+              <p className="text-text-2 font-mono text-[11px] max-w-[280px]">
                 Generated images will appear here once Phase 5 is complete.
               </p>
             </motion.div>

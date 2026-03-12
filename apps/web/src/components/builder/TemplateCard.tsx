@@ -46,12 +46,12 @@ export function TemplateCard({ template }: TemplateCardProps) {
         <h3 className="font-mono font-semibold text-[11px] uppercase tracking-wide text-text-1 group-hover:text-accent transition-colors">
           {template.name}
         </h3>
-        <p className="font-mono text-[10px] text-text-3 mt-1 line-clamp-2 leading-relaxed">
+        <p className="font-mono text-[11px] text-text-2 mt-1 line-clamp-2 leading-relaxed">
           {template.description}
         </p>
       </div>
       <div className="flex items-center gap-1.5 mt-auto">
-        <Badge variant="outline" className="font-mono text-[9px] text-text-3 border-accent/10 uppercase tracking-wider">
+        <Badge variant="outline" className="font-mono text-[10px] text-text-2 border-accent/10 uppercase tracking-wider">
           {template.fields.length} fields
         </Badge>
       </div>

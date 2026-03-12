@@ -98,7 +98,7 @@ export default function HomePage() {
               <h1 className="text-xl md:text-2xl font-mono font-bold text-text-1 uppercase tracking-wide mb-2">
                 Welcome Back
               </h1>
-              <p className="text-text-3 text-xs font-mono leading-relaxed max-w-lg">
+              <p className="text-text-2 text-xs font-mono leading-relaxed max-w-lg">
                 Build precise, beautiful AI image prompts with templates, styles, and one-click generation.
               </p>
 
@@ -109,7 +109,7 @@ export default function HomePage() {
                   { icon: Zap, label: "BUILD" },
                   { icon: Sparkles, label: "GENERATE" },
                 ].map((step, i) => (
-                  <div key={step.label} className="flex items-center gap-1.5 text-[9px] font-mono text-text-3 uppercase tracking-wider">
+                  <div key={step.label} className="flex items-center gap-1.5 text-[10px] font-mono text-text-2 uppercase tracking-wider">
                     {i > 0 && <ArrowRight className="w-3 h-3 text-accent/30" />}
                     <step.icon className="w-3 h-3 text-accent/70" />
                     <span>{step.label}</span>
@@ -149,7 +149,7 @@ export default function HomePage() {
                     <p className="text-lg font-mono font-bold text-text-1 tabular-nums truncate">
                       {value}
                     </p>
-                    <p className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">{stat.label}</p>
+                    <p className="text-[10px] font-mono text-text-2 uppercase tracking-[0.15em]">{stat.label}</p>
                   </div>
                 </div>
               </div>
@@ -161,7 +161,7 @@ export default function HomePage() {
       {/* Quick Prompt Bar */}
       <div className="border border-accent/8 bg-bg-2 overflow-hidden">
         <div className="flex items-center gap-2 px-3 py-1.5 border-b border-accent/8">
-          <span className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">QUICK PROMPT</span>
+          <span className="text-[10px] font-mono text-text-2 uppercase tracking-[0.15em]">QUICK PROMPT</span>
         </div>
         <div
           className={cn(
@@ -177,7 +177,7 @@ export default function HomePage() {
             onChange={(e) => setQuickInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") handleQuickGo(); }}
             placeholder="describe anything — jump straight to builder..."
-            className="flex-1 bg-transparent text-sm font-mono text-text-1 placeholder:text-text-3 placeholder:font-mono outline-none"
+            className="flex-1 bg-transparent text-sm font-mono text-text-1 placeholder:text-text-2 placeholder:font-mono outline-none"
           />
           <Button
             onClick={handleQuickGo}
@@ -200,7 +200,7 @@ export default function HomePage() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-mono font-semibold text-text-1 text-[11px] uppercase tracking-wide">New Prompt</h3>
-              <p className="text-text-3 font-mono text-[10px] mt-0.5">Start from a template</p>
+              <p className="text-text-2 font-mono text-[10px] mt-0.5">Start from a template</p>
             </div>
             <ArrowRight className="w-4 h-4 text-text-3/40 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
           </div>
@@ -213,7 +213,7 @@ export default function HomePage() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-mono font-semibold text-text-1 text-[11px] uppercase tracking-wide">Library</h3>
-              <p className="text-text-3 font-mono text-[10px] mt-0.5">View saved prompts &amp; recipes</p>
+              <p className="text-text-2 font-mono text-[10px] mt-0.5">View saved prompts &amp; recipes</p>
             </div>
             <ArrowRight className="w-4 h-4 text-text-3/40 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
           </div>
@@ -223,9 +223,9 @@ export default function HomePage() {
       {/* Templates Section */}
       <div>
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">TEMPLATES</span>
+          <span className="text-[10px] font-mono text-text-2 uppercase tracking-[0.15em]">TEMPLATES</span>
           <div className="flex-1 h-px bg-accent/8" />
-          <span className="text-[9px] font-mono text-text-3/40 uppercase tracking-[0.15em]">
+          <span className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">
             [{TEMPLATE_GROUPS.reduce((n, g) => n + getTemplatesByGroup(g.id).length, 0)}]
           </span>
         </div>
@@ -237,7 +237,7 @@ export default function HomePage() {
               "h-7 px-3 font-mono text-[10px] uppercase tracking-wider border transition-colors",
               activeGroup === null
                 ? "bg-accent text-black border-accent"
-                : "bg-transparent text-text-3 border-accent/10 hover:border-accent/30",
+                : "bg-transparent text-text-2 border-accent/10 hover:border-accent/30",
             )}
             onClick={() => setActiveGroup(null)}
           >
@@ -250,7 +250,7 @@ export default function HomePage() {
                 "h-7 px-3 font-mono text-[10px] uppercase tracking-wider border transition-colors flex items-center gap-1.5",
                 activeGroup === group.id
                   ? "bg-accent text-black border-accent"
-                  : "bg-transparent text-text-3 border-accent/10 hover:border-accent/30",
+                  : "bg-transparent text-text-2 border-accent/10 hover:border-accent/30",
               )}
               onClick={() =>
                 setActiveGroup(activeGroup === group.id ? null : group.id)
@@ -274,11 +274,11 @@ export default function HomePage() {
                       name={group.icon}
                       className="w-3.5 h-3.5 text-accent/60"
                     />
-                    <h3 className="text-[10px] font-mono font-semibold text-text-3 uppercase tracking-[0.15em]">
+                    <h3 className="text-[11px] font-mono font-semibold text-text-2 uppercase tracking-[0.15em]">
                       {group.label}
                     </h3>
                     <div className="flex-1 h-px bg-accent/8" />
-                    <span className="text-[9px] font-mono text-text-3/40">
+                    <span className="text-[10px] font-mono text-text-3">
                       [{templates.length}]
                     </span>
                   </div>

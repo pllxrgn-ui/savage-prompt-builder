@@ -33,14 +33,14 @@ export function TopBar() {
         <span className="text-accent/20 hidden sm:inline">//</span>
         <span className="text-text-1 font-semibold uppercase">{meta.title}</span>
         {meta.code && (
-          <span className="text-text-3/30 text-[9px]">[{meta.code}]</span>
+          <span className="text-text-3 text-[9px]">[{meta.code}]</span>
         )}
       </nav>
 
       {/* Actions */}
       <div className="flex items-center gap-2">
         {/* Status indicator */}
-        <span className="text-[9px] font-mono text-text-3/30 tracking-wider hidden md:inline">
+        <span className="text-[10px] font-mono text-text-3 tracking-wider hidden md:inline">
           READY
         </span>
         <div className="w-1.5 h-1.5 rounded-full bg-green-500/60 hidden md:block" />

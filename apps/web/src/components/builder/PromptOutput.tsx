@@ -402,7 +402,7 @@ export function PromptOutput() {
                   >
                     {gen.name}
                   </p>
-                  <p className="text-[10px] text-text-3 truncate">{gen.description}</p>
+                  <p className="text-[10px] text-text-2 truncate">{gen.description}</p>
                 </div>
               </DropdownMenuItem>
             ))}
@@ -448,7 +448,7 @@ export function PromptOutput() {
 
       {/* Phrases */}
       <div className="relative px-4 py-3 border-b border-accent/8">
-        <p className="text-[9px] font-mono text-text-3 mb-2 uppercase tracking-[0.15em]">
+        <p className="text-[10px] font-mono text-text-2 mb-2 uppercase tracking-[0.15em]">
           BOOST PHRASES
         </p>
         <div className="flex flex-wrap gap-1.5">
@@ -476,14 +476,14 @@ export function PromptOutput() {
       {/* Output preview */}
       <div className="relative p-4">
         {!result ? (
-          <p className="text-[11px] font-mono text-text-3 text-center py-8 tracking-wider">
+          <p className="text-[11px] font-mono text-text-2 text-center py-8 tracking-wider">
             &gt;_ FILL IN FIELDS TO GENERATE OUTPUT
           </p>
         ) : (
           <div className="space-y-3">
             {/* Positive */}
             <div>
-              <p className="text-[9px] font-mono text-text-3 mb-1 uppercase tracking-[0.15em]">
+              <p className="text-[10px] font-mono text-text-2 mb-1 uppercase tracking-[0.15em]">
                 POSITIVE
               </p>
               <div className="bg-bg-input border border-accent/8 p-3">
@@ -496,7 +496,7 @@ export function PromptOutput() {
             {/* Negative */}
             {result.negative && (
               <div>
-                <p className="text-[9px] font-mono text-text-3 mb-1 uppercase tracking-[0.15em]">
+                <p className="text-[10px] font-mono text-text-2 mb-1 uppercase tracking-[0.15em]">
                   NEGATIVE
                 </p>
                 <div className="bg-bg-input border border-accent/8 p-3">
@@ -510,7 +510,7 @@ export function PromptOutput() {
             {/* Full formatted output */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <p className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">
+                <p className="text-[10px] font-mono text-text-2 uppercase tracking-[0.15em]">
                   {polishedResult ? "AI POLISHED OUTPUT" : `FULL OUTPUT // ${activeGen?.name?.toUpperCase() ?? "GENERATOR"}`}
                 </p>
                 {polishedResult && (
@@ -538,8 +538,8 @@ export function PromptOutput() {
               <span className={cn("font-mono", wordCount > 75 ? "text-warn" : "text-text-3")}>
                 {wordCount} words
               </span>
-              <span className="text-text-3">•</span>
-              <span className="text-text-3 font-mono">{charCount} chars</span>
+              <span className="text-text-2">•</span>
+              <span className="text-text-2 font-mono">{charCount} chars</span>
               {wordCount > 75 && (
                 <span className="text-warn">⚠ Token limit warning</span>
               )}
@@ -547,7 +547,7 @@ export function PromptOutput() {
 
             {/* Score */}
             <div className="flex items-center gap-2">
-              <span className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">SCORE</span>
+              <span className="text-[10px] font-mono text-text-2 uppercase tracking-[0.15em]">SCORE</span>
               <div className="flex gap-0.5">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button

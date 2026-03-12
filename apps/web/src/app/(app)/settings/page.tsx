@@ -192,7 +192,7 @@ export default function SettingsPage() {
         </div>
         <div>
           <h1 className="text-lg font-mono font-bold text-text-1 uppercase tracking-wide">Settings</h1>
-          <p className="text-text-3 font-mono text-[10px]">Customize and manage your experience.</p>
+          <p className="text-text-2 font-mono text-[11px]">Customize and manage your experience.</p>
         </div>
       </div>
 
@@ -200,7 +200,7 @@ export default function SettingsPage() {
         {/* ──────── Account ──────── */}
         {isAuthenticated && user && (
           <section className="space-y-4">
-            <h2 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">Account</h2>
+            <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Account</h2>
             <div className="p-5 bg-bg-2 border border-accent/8 space-y-4">
               <div className="flex items-center gap-4">
                 {user.avatarUrl ? (
@@ -222,7 +222,7 @@ export default function SettingsPage() {
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-text-1">{user.name}</p>
-                  <p className="text-xs text-text-3">{user.email}</p>
+                  <p className="text-xs text-text-2">{user.email}</p>
                 </div>
                 {devMode && (
                   <Badge variant="outline" className="text-[10px] bg-amber-500/15 text-amber-500 border-amber-500/30">
@@ -236,7 +236,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between pt-2 border-t border-border">
                 <div>
                   <p className="text-sm text-text-1 font-medium">Subscription Tier</p>
-                  <p className="text-xs text-text-3 mt-0.5">
+                  <p className="text-xs text-text-2 mt-0.5">
                     {isPro ? "Pro — all features unlocked" : "Free — limited features"}
                   </p>
                 </div>
@@ -252,12 +252,12 @@ export default function SettingsPage() {
 
         {/* ──────── Appearance ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">Appearance</h2>
+          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Appearance</h2>
 
           <Card className="flex items-center gap-4 p-5">
             <div className="flex-1">
               <p className="text-sm font-mono text-text-1 font-medium">Theme</p>
-              <p className="text-[10px] font-mono text-text-3 mt-0.5">Switch between dark and light modes</p>
+              <p className="text-[11px] font-mono text-text-2 mt-0.5">Switch between dark and light modes</p>
             </div>
             <ThemeToggle />
           </Card>
@@ -270,9 +270,9 @@ export default function SettingsPage() {
 
         {/* ──────── Default Generator (D1) ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">Default Generator</h2>
+          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Default Generator</h2>
           <Card className="p-5">
-            <p className="text-xs text-text-3 mb-4">
+            <p className="text-xs text-text-2 mb-4">
               New prompts will start with this generator selected.
             </p>
             <div className="grid grid-cols-3 gap-2">
@@ -299,11 +299,11 @@ export default function SettingsPage() {
 
         {/* ──────── Style Packs (D3) ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">
+          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">
             <Package className="w-3.5 h-3.5 inline-block mr-1.5 -mt-0.5" />
             Style Packs
           </h2>
-          <p className="text-xs text-text-3 -mt-2">
+          <p className="text-xs text-text-2 -mt-2">
             Install curated style packs to use in the builder.
           </p>
           {/* BACKEND: Replace with API for community style packs */}
@@ -315,7 +315,7 @@ export default function SettingsPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-text-1">{pack.name}</p>
-                      <p className="text-xs text-text-3 mt-0.5">{pack.description}</p>
+                      <p className="text-xs text-text-2 mt-0.5">{pack.description}</p>
                     </div>
                     <Button
                       onClick={() =>
@@ -357,14 +357,14 @@ export default function SettingsPage() {
 
         {/* ──────── Phrase Library (D4) ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">
+          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">
             <BookOpen className="w-3.5 h-3.5 inline-block mr-1.5 -mt-0.5" />
             Phrase Library
           </h2>
 
           {/* Built-in phrases */}
           <div className="space-y-2">
-            <p className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">Built-in</p>
+            <p className="text-[10px] font-mono text-text-2 uppercase tracking-[0.15em]">Built-in</p>
             <div className="grid grid-cols-1 gap-2">
               {PHRASES.map((phrase) => (
                 <div
@@ -373,7 +373,7 @@ export default function SettingsPage() {
                 >
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-text-1">{phrase.label}</p>
-                    <p className="text-xs text-text-3 mt-0.5 truncate">{phrase.content}</p>
+                    <p className="text-xs text-text-2 mt-0.5 truncate">{phrase.content}</p>
                   </div>
                   <button
                     onClick={() => handleCopyPhrase(phrase.id, phrase.content)}
@@ -394,7 +394,7 @@ export default function SettingsPage() {
           {/* Custom phrases */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <p className="text-[9px] font-mono text-text-3 uppercase tracking-[0.15em]">Custom</p>
+              <p className="text-[10px] font-mono text-text-2 uppercase tracking-[0.15em]">Custom</p>
               {!phraseForm && (
                 <Button
                   onClick={() => setPhraseForm({ name: "", content: "" })}
@@ -415,14 +415,14 @@ export default function SettingsPage() {
                   placeholder="Phrase name…"
                   value={phraseForm.name}
                   onChange={(e) => setPhraseForm({ ...phraseForm, name: e.target.value })}
-                  className="w-full px-3 py-2 bg-bg-input border border-accent/8 text-sm font-mono text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/40"
+                  className="w-full px-3 py-2 bg-bg-input border border-accent/8 text-sm font-mono text-text-1 placeholder:text-text-2 focus:outline-none focus:border-accent/40"
                 />
                 <textarea
                   placeholder="Phrase content…"
                   value={phraseForm.content}
                   onChange={(e) => setPhraseForm({ ...phraseForm, content: e.target.value })}
                   rows={2}
-                  className="w-full px-3 py-2 bg-bg-input border border-accent/8 text-sm font-mono text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/40 resize-none"
+                  className="w-full px-3 py-2 bg-bg-input border border-accent/8 text-sm font-mono text-text-1 placeholder:text-text-2 focus:outline-none focus:border-accent/40 resize-none"
                 />
                 <div className="flex gap-2 justify-end">
                   <Button
@@ -456,7 +456,7 @@ export default function SettingsPage() {
 
             {/* Custom phrase list */}
             {customPhrases.length === 0 && !phraseForm && (
-              <p className="text-xs text-text-3 italic">No custom phrases yet.</p>
+              <p className="text-xs text-text-2 italic">No custom phrases yet.</p>
             )}
             {customPhrases.map((phrase) => (
               <div
@@ -509,7 +509,7 @@ export default function SettingsPage() {
                   <div className="flex items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-text-1">{phrase.name}</p>
-                      <p className="text-xs text-text-3 mt-0.5 truncate">{phrase.content}</p>
+                      <p className="text-xs text-text-2 mt-0.5 truncate">{phrase.content}</p>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
                       <button
@@ -554,7 +554,7 @@ export default function SettingsPage() {
 
         {/* ──────── Data Management (D5 enhanced) ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">Data Management</h2>
+          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Data Management</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
               onClick={handleExport}
@@ -564,7 +564,7 @@ export default function SettingsPage() {
                 <Download className="w-5 h-5 text-accent" />
               </div>
               <p className="text-sm font-semibold text-text-1">Export Data</p>
-              <p className="text-xs text-text-3 mt-1 leading-relaxed">
+              <p className="text-xs text-text-2 mt-1 leading-relaxed">
                 Download prompts, recipes, settings, and custom phrases as JSON.
               </p>
             </button>
@@ -577,7 +577,7 @@ export default function SettingsPage() {
                 <Upload className="w-5 h-5 text-accent" />
               </div>
               <p className="text-sm font-semibold text-text-1">Import Data</p>
-              <p className="text-xs text-text-3 mt-1 leading-relaxed">
+              <p className="text-xs text-text-2 mt-1 leading-relaxed">
                 Restore from a backup. Duplicates are skipped by ID.
               </p>
             </button>
@@ -596,7 +596,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-sm text-text-1 font-medium">Clear All Data</p>
-                <p className="text-xs text-text-3 mt-0.5">
+                <p className="text-xs text-text-2 mt-0.5">
                   Permanently delete all saved prompts, recipes, and custom data.
                 </p>
               </div>
@@ -652,7 +652,7 @@ export default function SettingsPage() {
 
         {/* ──────── About ──────── */}
         <section className="space-y-4">
-          <h2 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">About</h2>
+          <h2 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">About</h2>
           <Card className="p-5 space-y-4">
             <div className="flex items-center gap-3">
               <div className="p-2 border border-accent/20">
@@ -660,7 +660,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <p className="text-sm font-mono font-semibold text-text-1">Free Tier / Offline Mode</p>
-                <p className="text-[10px] font-mono text-text-3 mt-0.5">All data is stored locally in your browser.</p>
+                <p className="text-[11px] font-mono text-text-2 mt-0.5">All data is stored locally in your browser.</p>
               </div>
             </div>
 
@@ -670,7 +670,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <p className="text-sm font-mono font-semibold text-text-1">Storage Status</p>
-                <p className="text-[10px] font-mono text-text-3 mt-0.5">Using Browser LocalStorage (persist enabled)</p>
+                <p className="text-[11px] font-mono text-text-2 mt-0.5">Using Browser LocalStorage (persist enabled)</p>
               </div>
             </div>
           </Card>

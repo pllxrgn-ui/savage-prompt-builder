@@ -111,7 +111,7 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
             </div>
 
             {/* Stats bar */}
-            <div className="flex items-center gap-4 px-5 py-3 border-b border-accent/8 text-xs font-mono text-text-3">
+            <div className="flex items-center gap-4 px-5 py-3 border-b border-accent/8 text-xs font-mono text-text-2">
               <span>
                 A: <strong className="text-text-1">{stats.wordsA}</strong> words
               </span>
@@ -129,7 +129,7 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
                 <p className="text-xs font-mono font-medium text-text-2 truncate">
                   A: {promptA.title}
                 </p>
-                <p className="text-[10px] font-mono text-text-3">
+                <p className="text-[10px] font-mono text-text-2">
                   {new Date(promptA.createdAt).toLocaleDateString()}
                 </p>
               </div>
@@ -137,7 +137,7 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
                 <p className="text-xs font-mono font-medium text-text-2 truncate">
                   B: {promptB.title}
                 </p>
-                <p className="text-[10px] font-mono text-text-3">
+                <p className="text-[10px] font-mono text-text-2">
                   {new Date(promptB.createdAt).toLocaleDateString()}
                 </p>
               </div>

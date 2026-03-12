@@ -80,7 +80,7 @@ export function PromptCard({ prompt, onSelectDiff, isDiffSelected }: PromptCardP
             <h3 className="text-sm font-mono font-semibold text-text-1 truncate">
               {prompt.title || "Untitled Prompt"}
             </h3>
-            <div className="flex items-center gap-2 text-[10px] font-mono text-text-3">
+            <div className="flex items-center gap-2 text-[10px] font-mono text-text-2">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
                 {new Date(prompt.createdAt).toLocaleDateString()}
@@ -138,7 +138,7 @@ export function PromptCard({ prompt, onSelectDiff, isDiffSelected }: PromptCardP
       </button>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-1 text-[10px] text-text-3 hover:text-accent mb-2 transition-colors"
+        className="flex items-center gap-1 text-[10px] text-text-2 hover:text-accent mb-2 transition-colors"
       >
         {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
         {expanded ? "Collapse" : "Expand"}
@@ -146,7 +146,7 @@ export function PromptCard({ prompt, onSelectDiff, isDiffSelected }: PromptCardP
 
       {/* Note */}
       {prompt.note && (
-        <div className="flex items-start gap-1.5 mb-2 text-[10px] text-text-3">
+        <div className="flex items-start gap-1.5 mb-2 text-[10px] text-text-2">
           <StickyNote className="w-3 h-3 mt-0.5 shrink-0 text-amber-400" />
           <span className="line-clamp-2">{prompt.note}</span>
         </div>
@@ -179,7 +179,7 @@ export function PromptCard({ prompt, onSelectDiff, isDiffSelected }: PromptCardP
           </span>
         ))}
         {prompt.styles.length > 2 && (
-          <span className="px-2 py-0.5 bg-surface border border-accent/8 text-[10px] font-mono text-text-3">
+          <span className="px-2 py-0.5 bg-surface border border-accent/8 text-[10px] font-mono text-text-2">
             +{prompt.styles.length - 2}
           </span>
         )}

@@ -148,7 +148,7 @@ export function GenerateModal({
                         </label>
                         <button
                           onClick={handleReset}
-                          className="flex items-center gap-1 text-[10px] text-text-3 hover:text-accent transition-colors"
+                          className="flex items-center gap-1 text-[10px] text-text-2 hover:text-accent transition-colors"
                         >
                           <RotateCcw className="w-3 h-3" /> Reset
                         </button>
@@ -157,7 +157,7 @@ export function GenerateModal({
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
                         rows={5}
-                        className="w-full px-3 py-2.5 rounded-lg bg-bg-input border border-border text-sm text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/50 resize-none"
+                        className="w-full px-3 py-2.5 rounded-lg bg-bg-input border border-border text-sm text-text-1 placeholder:text-text-2 focus:outline-none focus:border-accent/50 resize-none"
                         placeholder="Your prompt…"
                       />
                     </div>
@@ -191,7 +191,7 @@ export function GenerateModal({
                               )}
                             >
                               {m.name}
-                              <span className="ml-2 text-[10px] text-text-3">
+                              <span className="ml-2 text-[10px] text-text-2">
                                 {m.provider}
                               </span>
                             </button>
@@ -270,7 +270,7 @@ export function GenerateModal({
                     {loading && (
                       <div className="flex flex-col items-center gap-3">
                         <Loader2 className="w-8 h-8 text-accent animate-spin" />
-                        <p className="text-sm text-text-3">
+                        <p className="text-sm text-text-2">
                           Generating images…
                         </p>
                         {/* Progress bar stub */}
@@ -288,7 +288,7 @@ export function GenerateModal({
                     {!loading && !job && (
                       <div className="text-center p-6">
                         <ImageIcon className="w-10 h-10 text-text-3/40 mx-auto mb-3" />
-                        <p className="text-sm text-text-3">
+                        <p className="text-sm text-text-2">
                           Generated images will appear here
                         </p>
                       </div>

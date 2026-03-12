@@ -17,7 +17,7 @@ export function NegativePanel() {
   return (
     <div className="border border-accent/8 bg-bg-2 overflow-hidden">
       <div className="px-4 py-3 border-b border-accent/8">
-        <h3 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">Negative Prompt</h3>
+        <h3 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Negative Prompt</h3>
       </div>
       <div className="p-4 space-y-3">
         <textarea
@@ -28,14 +28,14 @@ export function NegativePanel() {
           className={clsx(
             "w-full px-3 py-2.5 text-xs font-mono resize-none",
             "bg-bg-input border border-accent/8",
-            "text-text-1 placeholder:text-text-3",
+            "text-text-1 placeholder:text-text-2",
             "focus:outline-none focus:border-accent/40",
             "transition-all duration-150",
           )}
         />
         {presets.length > 0 && (
           <div>
-            <p className="text-[10px] font-mono text-text-3 mb-2 uppercase tracking-[0.15em]">
+            <p className="text-[10px] font-mono text-text-2 mb-2 uppercase tracking-[0.15em]">
               Quick add
             </p>
             <div className="space-y-1.5">

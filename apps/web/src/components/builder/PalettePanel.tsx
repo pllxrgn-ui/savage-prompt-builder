@@ -22,7 +22,7 @@ export function PalettePanel() {
   return (
     <div className="border border-accent/8 bg-bg-2 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-accent/8">
-        <h3 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">Color Palettes</h3>
+        <h3 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">Color Palettes</h3>
         {selectedPalette && (
           <button
             onClick={() => setPalette(null)}
@@ -45,7 +45,7 @@ export function PalettePanel() {
             className={clsx(
               "w-full pl-8 pr-8 py-2 text-xs font-mono",
               "bg-bg-input border border-accent/8",
-              "text-text-1 placeholder:text-text-3",
+              "text-text-1 placeholder:text-text-2",
               "focus:outline-none focus:border-accent/40",
               "transition-all duration-150",
             )}
@@ -83,7 +83,7 @@ export function PalettePanel() {
       {/* Palette grid */}
       <div className="px-4 pb-4 max-h-80 overflow-y-auto space-y-2">
         {filtered.length === 0 && (
-          <p className="text-xs text-text-3 text-center py-4">
+          <p className="text-xs text-text-2 text-center py-4">
             No palettes found.
           </p>
         )}

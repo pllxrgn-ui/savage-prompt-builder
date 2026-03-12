@@ -42,8 +42,8 @@ export function MediaGrid({ images, onDelete, onStar }: MediaGridProps) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <ImageIcon className="w-12 h-12 text-text-3/30 mb-3" />
-        <p className="text-sm text-text-3">No generated images yet</p>
-        <p className="text-xs text-text-3 mt-1">
+        <p className="text-sm text-text-2">No generated images yet</p>
+        <p className="text-xs text-text-2 mt-1">
           Use the builder to create prompts and generate images.
         </p>
       </div>
@@ -126,14 +126,14 @@ export function MediaGrid({ images, onDelete, onStar }: MediaGridProps) {
               {/* Metadata */}
               <div className="p-4 space-y-3">
                 <div>
-                  <p className="text-[10px] text-text-3 uppercase tracking-wider font-medium mb-1">
+                  <p className="text-[10px] text-text-2 uppercase tracking-wider font-medium mb-1">
                     Prompt
                   </p>
                   <p className="text-xs text-text-1 leading-relaxed">
                     {selectedImage.prompt}
                   </p>
                 </div>
-                <div className="flex gap-4 text-xs text-text-3">
+                <div className="flex gap-4 text-xs text-text-2">
                   <span>Model: {selectedImage.modelId}</span>
                   <span>Ratio: {selectedImage.aspectRatio}</span>
                   <span>

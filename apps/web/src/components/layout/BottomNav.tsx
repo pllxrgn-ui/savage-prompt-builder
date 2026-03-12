@@ -35,7 +35,7 @@ export function BottomNav() {
             className={cn(
               "flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5",
               "transition-colors duration-150 relative",
-              isActive ? "text-accent" : "text-text-3",
+              isActive ? "text-accent" : "text-text-2",
             )}
           >
             {isActive && (

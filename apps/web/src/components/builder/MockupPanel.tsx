@@ -24,7 +24,7 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
   if (!config) {
     return (
       <div className="border border-accent/8 bg-bg-2 p-6 text-center">
-        <p className="text-xs font-mono text-text-3">
+        <p className="text-xs font-mono text-text-2">
           Mockup settings are not available for this template type.
         </p>
       </div>
@@ -61,7 +61,7 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
   return (
     <div className="border border-accent/8 bg-bg-2 overflow-hidden">
       <div className="px-4 py-3 border-b border-accent/8 flex items-center justify-between">
-        <h3 className="text-[10px] font-mono text-text-3 uppercase tracking-[0.15em]">{config.label}</h3>
+        <h3 className="text-[11px] font-mono text-text-2 uppercase tracking-[0.15em]">{config.label}</h3>
         <button
           onClick={toggleEnabled}
           aria-label="Toggle mockup"
@@ -83,7 +83,7 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
         <div className="p-4 space-y-3">
           {config.items.length > 0 && (
             <div>
-              <p className="text-[10px] font-mono text-text-3 mb-1.5 uppercase tracking-[0.15em]">
+              <p className="text-[10px] font-mono text-text-2 mb-1.5 uppercase tracking-[0.15em]">
                 Item
               </p>
               <select
@@ -104,7 +104,7 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
 
           {config.colors.length > 0 && (
             <div>
-              <p className="text-[10px] font-mono text-text-3 mb-1.5 uppercase tracking-[0.15em]">
+              <p className="text-[10px] font-mono text-text-2 mb-1.5 uppercase tracking-[0.15em]">
                 Color
               </p>
               <select
@@ -125,7 +125,7 @@ export function MockupPanel({ templateId, onMockupChange }: MockupPanelProps) {
 
           {config.displays.length > 0 && (
             <div>
-              <p className="text-[10px] font-mono text-text-3 mb-1.5 uppercase tracking-[0.15em]">
+              <p className="text-[10px] font-mono text-text-2 mb-1.5 uppercase tracking-[0.15em]">
                 Display
               </p>
               <select
