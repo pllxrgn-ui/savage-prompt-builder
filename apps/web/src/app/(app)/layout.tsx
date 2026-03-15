@@ -1,6 +1,6 @@
 "use client";
 
-import { TopNav, MobileTabBar } from "@/components/layout/TopNav";
+import { TopNav, MobileTopBar, MobileTabBar } from "@/components/layout/TopNav";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import { AmbientGlow } from "@/components/ui/AmbientGlow";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -11,6 +11,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <AmbientGlow />
+      <MobileTopBar />
       <TopNav />
       <main className="flex-1 relative pb-16 md:pb-0">
         {children}

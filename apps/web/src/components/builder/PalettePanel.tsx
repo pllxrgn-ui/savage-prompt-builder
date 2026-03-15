@@ -1,10 +1,120 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search, X } from "lucide-react";
+import { useState, useMemo, useRef } from "react";
+import { Search, X, Plus, Pipette } from "lucide-react";
 import { clsx } from "clsx";
 import { useBuilderStore } from "@/lib/store";
 import { PALETTES, searchPalettes, PALETTE_TAGS } from "@/lib/data";
+
+function CustomColorSection() {
+  const customColors = useBuilderStore((s) => s.customColors);
+  const addCustomColor = useBuilderStore((s) => s.addCustomColor);
+  const removeCustomColor = useBuilderStore((s) => s.removeCustomColor);
+  const setCustomColors = useBuilderStore((s) => s.setCustomColors);
+  const [hexInput, setHexInput] = useState("");
+  const colorPickerRef = useRef<HTMLInputElement>(null);
+
+  function handleAddHex() {
+    const trimmed = hexInput.trim().replace(/^#/, "");
+    if (!/^[0-9a-fA-F]{3,8}$/.test(trimmed)) return;
+    const hex = `#${trimmed.length === 3 ? trimmed.split("").map((c) => c + c).join("") : trimmed}`;
+    if (customColors.length < 8) {
+      addCustomColor(hex);
+      setHexInput("");
+    }
+  }
+
+  function handlePickerChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (customColors.length < 8) {
+      addCustomColor(e.target.value);
+    }
+  }
+
+  return (
+    <div className="px-4 pb-3 space-y-2">
+      <div className="flex items-center justify-between">
+        <p className="text-[10px] font-medium text-text-3 uppercase tracking-wider">Custom Colors</p>
+        {customColors.length > 0 && (
+          <button
+            onClick={() => setCustomColors([])}
+            className="text-[10px] text-text-3 hover:text-accent transition-colors cursor-pointer"
+          >
+            Clear all
+          </button>
+        )}
+      </div>
+
+      {/* Color swatches */}
+      {customColors.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {customColors.map((color, i) => (
+            <button
+              key={`${color}-${i}`}
+              onClick={() => removeCustomColor(i)}
+              className="group relative w-8 h-8 rounded-lg border border-glass-border hover:border-red-400/50 transition-colors cursor-pointer"
+              style={{ backgroundColor: color }}
+              aria-label={`Remove ${color}`}
+              title={color}
+            >
+              <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 rounded-lg">
+                <X className="w-3 h-3 text-white" />
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Add color row */}
+      {customColors.length < 8 && (
+        <div className="flex gap-1.5">
+          <div className="flex items-center gap-1.5 flex-1 border border-glass-border bg-bg-input px-2.5 py-1.5 rounded-[var(--radius-md)]">
+            <span className="text-text-3 text-xs">#</span>
+            <input
+              type="text"
+              value={hexInput}
+              onChange={(e) => setHexInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleAddHex(); }}
+              placeholder="FF6B00"
+              maxLength={8}
+              className="flex-1 bg-transparent text-xs text-text-1 placeholder:text-text-3 outline-none font-mono"
+            />
+          </div>
+          <button
+            onClick={handleAddHex}
+            disabled={!hexInput.trim()}
+            className={clsx(
+              "flex items-center justify-center w-8 h-8 rounded-[var(--radius-md)] transition-colors cursor-pointer",
+              hexInput.trim()
+                ? "bg-accent/15 text-accent hover:bg-accent/25"
+                : "bg-glass text-text-3",
+            )}
+            aria-label="Add hex color"
+          >
+            <Plus className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => colorPickerRef.current?.click()}
+            className="flex items-center justify-center w-8 h-8 rounded-[var(--radius-md)] bg-glass text-text-3 hover:text-accent2 hover:bg-accent2/10 transition-colors cursor-pointer"
+            aria-label="Pick color"
+          >
+            <Pipette className="w-3.5 h-3.5" />
+          </button>
+          <input
+            ref={colorPickerRef}
+            type="color"
+            onChange={handlePickerChange}
+            className="sr-only"
+            aria-label="Color picker"
+          />
+        </div>
+      )}
+
+      {customColors.length >= 8 && (
+        <p className="text-[10px] text-text-3">Max 8 custom colors reached.</p>
+      )}
+    </div>
+  );
+}
 
 export function PalettePanel() {
   const [query, setQuery] = useState("");
@@ -79,6 +189,11 @@ export function PalettePanel() {
           </button>
         ))}
       </div>
+
+      {/* Custom colors */}
+      <CustomColorSection />
+
+      <div className="mx-4 border-t border-glass-border" />
 
       {/* Palette grid */}
       <div className="px-4 pb-4 max-h-80 overflow-y-auto space-y-2">

@@ -12,8 +12,11 @@ import { formatForGenerator, } from "./generator-formats";
 /**
  * Assemble the full positive prompt from template output + styles + palette + keywords + phrases.
  */
-function assemblePositive(templatePrompt, styles, palette, keywords, phrases, mockup, garmentMode) {
+function assemblePositive(templatePrompt, styles, palette, keywords, phrases, mockup, garmentMode, mood) {
     const parts = [templatePrompt];
+    if (mood && mood.trim()) {
+        parts.push(mood.trim());
+    }
     if (garmentMode === "dark") {
         parts.push("light and neon colors on dark fabric");
     }
@@ -59,7 +62,7 @@ export function buildPrompt(input) {
     // Step 1: Build core prompt from template fields
     const templatePrompt = buildTemplatePrompt(input.templateId, input.fields);
     // Step 2: Assemble full positive prompt
-    const positive = assemblePositive(templatePrompt, input.styles, input.palette, input.keywords, input.phrases, input.mockup, input.garmentMode);
+    const positive = assemblePositive(templatePrompt, input.styles, input.palette, input.keywords, input.phrases, input.mockup, input.garmentMode, input.mood);
     // Step 3: Negative prompt (as-is)
     const negative = input.negative;
     // Step 4: Reference image injection

@@ -41,7 +41,9 @@ export function TemplateCard({ template, accent = defaultAccent }: TemplateCardP
     <button
       onClick={handleClick}
       className={cn(
-        "group flex flex-col items-start gap-3 p-6 text-left rounded-[var(--radius-xl)] w-full",
+        "group flex flex-col items-center justify-center gap-2 p-3 sm:items-start sm:gap-3 sm:p-6 sm:justify-start",
+        "aspect-square sm:aspect-auto",
+        "text-center sm:text-left rounded-[var(--radius-xl)] w-full",
         "bg-bg-2 border border-glass-border",
         accent.border, "hover:bg-glass-hover",
         "transition-colors duration-150 cursor-pointer",
@@ -59,11 +61,11 @@ export function TemplateCard({ template, accent = defaultAccent }: TemplateCardP
         <h3 className={cn("font-heading font-semibold text-sm text-text-1 transition-colors", accent.titleHover)}>
           {template.name}
         </h3>
-        <p className="text-xs text-text-2 mt-1 line-clamp-2 leading-relaxed">
+        <p className="text-xs text-text-2 mt-1 line-clamp-2 leading-relaxed hidden sm:block">
           {template.description}
         </p>
       </div>
-      <div className="flex items-center gap-1.5 mt-auto">
+      <div className="flex items-center gap-1.5 sm:mt-auto">
         <Badge variant="outline" className="text-[11px] text-text-2 border-white/[0.08] rounded-full">
           {template.fields.length} fields
         </Badge>

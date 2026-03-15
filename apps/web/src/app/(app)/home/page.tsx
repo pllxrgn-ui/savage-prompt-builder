@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -34,6 +35,7 @@ const SHOWCASE = [
     glow: "bg-rose-500/10",
     icon: Pen,
     accent: "text-rose-400",
+    image: "/showcase/tiles/tattoo-flash.jpg",
   },
   {
     label: "Streetwear",
@@ -42,6 +44,7 @@ const SHOWCASE = [
     glow: "bg-violet-500/10",
     icon: Shirt,
     accent: "text-violet-400",
+    image: "/showcase/tiles/streetwear.jpg",
   },
   {
     label: "Brand Identity",
@@ -50,6 +53,7 @@ const SHOWCASE = [
     glow: "bg-amber-500/10",
     icon: Palette,
     accent: "text-amber-400",
+    image: "/showcase/tiles/brand-identity.jpg",
   },
   {
     label: "Sticker Pack",
@@ -58,6 +62,7 @@ const SHOWCASE = [
     glow: "bg-emerald-500/10",
     icon: Sparkles,
     accent: "text-emerald-400",
+    image: "/showcase/tiles/sticker-pack.jpg",
   },
   {
     label: "Art Print",
@@ -66,6 +71,7 @@ const SHOWCASE = [
     glow: "bg-sky-500/10",
     icon: ImagePlay,
     accent: "text-sky-400",
+    image: "/showcase/tiles/art-print.jpg",
   },
   {
     label: "Product Mockup",
@@ -74,6 +80,7 @@ const SHOWCASE = [
     glow: "bg-pink-500/10",
     icon: Package,
     accent: "text-pink-400",
+    image: "/showcase/tiles/product-mockup.jpg",
   },
   {
     label: "Video Concept",
@@ -82,6 +89,7 @@ const SHOWCASE = [
     glow: "bg-cyan-500/10",
     icon: Video,
     accent: "text-cyan-400",
+    image: "/showcase/tiles/video-concept.jpg",
   },
   {
     label: "Pattern Design",
@@ -90,6 +98,7 @@ const SHOWCASE = [
     glow: "bg-fuchsia-500/10",
     icon: Palette,
     accent: "text-fuchsia-400",
+    image: "/showcase/tiles/pattern-design.jpg",
   },
 ] as const;
 
@@ -263,28 +272,28 @@ function ActivityChart({ prompts }: { prompts: { createdAt: string }[] }) {
 }
 
 function ShowcaseTile({ item }: { item: (typeof SHOWCASE)[number] }) {
-  const Icon = item.icon;
   return (
     <div
       className={cn(
         "relative shrink-0 w-40 h-52 rounded-[var(--radius-xl)] overflow-hidden",
-        "bg-gradient-to-b border border-glass-border",
+        "border border-glass-border",
         "hover:border-glass-border-strong hover:scale-[1.02] transition-all duration-200 cursor-pointer group",
-        item.color,
       )}
     >
-      {/* Glow orb */}
-      <div className={cn("absolute top-4 left-1/2 -translate-x-1/2 w-16 h-16 rounded-full blur-2xl", item.glow)} />
+      {/* Background image */}
+      <Image
+        src={item.image}
+        alt={item.label}
+        fill
+        className="object-cover"
+        sizes="160px"
+      />
 
-      {/* Icon */}
-      <div className="absolute top-6 left-0 right-0 flex justify-center">
-        <div className={cn(
-          "w-12 h-12 rounded-[var(--radius-lg)] flex items-center justify-center",
-          "bg-bg-base/60 border border-glass-border backdrop-blur-sm",
-        )}>
-          <Icon className={cn("w-5 h-5", item.accent)} />
-        </div>
-      </div>
+      {/* Gradient color overlay to preserve card tint */}
+      <div className={cn("absolute inset-0 bg-gradient-to-b opacity-60", item.color)} />
+
+      {/* Darkening overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/70" />
 
       {/* Bottom text */}
       <div className="absolute bottom-0 left-0 right-0 p-3.5 bg-gradient-to-t from-bg-base/95 via-bg-base/60 to-transparent">

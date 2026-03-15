@@ -14,7 +14,7 @@ import {
   LogOut,
   Zap,
   ChevronDown,
-  User,
+  ImageIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,6 +36,7 @@ import {
 
 /* ── Nav configuration ── */
 const NAV_ITEMS = [
+  { href: "/moodboard", label: "Moodboard", icon: ImageIcon, badge: null },
   { href: "/builder",  label: "Builder",  icon: Wand2,    badge: null },
   { href: "/generate", label: "Generate", icon: Sparkles, badge: null },
   { href: "/library",  label: "Library",  icon: BookOpen, badge: null },
@@ -167,12 +168,62 @@ function UserMenu() {
 
 /* ── Mobile bottom tab bar ── */
 const MOBILE_TABS = [
-  { href: "/home",     label: "Home",     icon: Flame },
-  { href: "/builder",  label: "Builder",  icon: Wand2 },
-  { href: "/generate", label: "Generate", icon: Sparkles },
-  { href: "/library",  label: "Library",  icon: BookOpen },
-  { href: "/settings", label: "Profile",  icon: User },
+  { href: "/home",      label: "Home",      icon: Flame },
+  { href: "/moodboard", label: "Mood",      icon: ImageIcon },
+  { href: "/builder",   label: "Builder",   icon: Wand2 },
+  { href: "/generate",  label: "Generate",  icon: Sparkles },
+  { href: "/library",   label: "Library",   icon: BookOpen },
 ] as const;
+
+/* ── Mobile top bar (profile icon) ── */
+export function MobileTopBar() {
+  const { user, isPro, isAuthenticated } = useAuth();
+
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "?";
+
+  return (
+    <header className="md:hidden flex items-center justify-between h-12 px-4 sticky top-0 z-50 bg-bg-base/80 backdrop-blur-2xl border-b border-glass-border">
+      <Link href="/home" className="flex items-center gap-2 cursor-pointer">
+        <div className="flex items-center justify-center w-6 h-6 rounded-[var(--radius-sm)] bg-accent/15">
+          <Flame className="w-3.5 h-3.5 text-accent" />
+        </div>
+        <span className="font-display font-bold text-sm text-text-1 tracking-tight">SAVAGE</span>
+      </Link>
+
+      {isAuthenticated && user ? (
+        <Link href="/settings" className="cursor-pointer" aria-label="Profile">
+          {user.avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={user.avatarUrl}
+              alt={user.name}
+              className="w-7 h-7 rounded-full object-cover ring-1 ring-glass-border"
+            />
+          ) : (
+            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-accent/15 text-accent text-xs font-semibold">
+              {initials}
+              {isPro && <Crown className="absolute -top-0.5 -right-0.5 w-3 h-3 text-accent-gold" />}
+            </div>
+          )}
+        </Link>
+      ) : (
+        <Link
+          href="/login"
+          className="px-3 py-1 rounded-full text-xs font-semibold bg-accent text-white hover:bg-accent-hover transition-colors cursor-pointer"
+        >
+          Sign In
+        </Link>
+      )}
+    </header>
+  );
+}
 
 export function MobileTabBar() {
   const pathname = usePathname();
@@ -186,7 +237,7 @@ export function MobileTabBar() {
       {MOBILE_TABS.map(({ href, label, icon: Icon }) => {
         const isActive =
           pathname === href ||
-          (href !== "/home" && href !== "/settings" && pathname?.startsWith(href));
+          (href !== "/home" && pathname?.startsWith(href));
         return (
           <Link
             key={href}

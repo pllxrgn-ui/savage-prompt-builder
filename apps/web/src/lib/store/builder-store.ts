@@ -23,6 +23,7 @@ interface BuilderState {
   templateFields: Record<string, string>;
   selectedStyles: string[];
   selectedPalette: string | null;
+  customColors: string[];
   selectedKeywords: string[];
   negativePrompt: string;
   selectedGenerator: GeneratorId;
@@ -45,6 +46,9 @@ interface BuilderActions {
   toggleStyle: (style: string) => void;
   setStyles: (styles: string[]) => void;
   setPalette: (palette: string | null) => void;
+  setCustomColors: (colors: string[]) => void;
+  addCustomColor: (color: string) => void;
+  removeCustomColor: (index: number) => void;
   toggleKeyword: (keyword: string) => void;
   setKeywords: (keywords: string[]) => void;
   setNegative: (value: string) => void;
@@ -97,6 +101,7 @@ const INITIAL_STATE: BuilderState = {
   templateFields: {},
   selectedStyles: [],
   selectedPalette: null,
+  customColors: [],
   selectedKeywords: [],
   negativePrompt: "",
   selectedGenerator: "nanobanana",
@@ -126,6 +131,7 @@ export const useBuilderStore = create<BuilderStore>()(
           templateFields: {},
           selectedStyles: [],
           selectedPalette: null,
+          customColors: [],
           selectedKeywords: [],
           negativePrompt: "",
           selectedPhrases: [],
@@ -160,6 +166,14 @@ export const useBuilderStore = create<BuilderStore>()(
       setStyles: (styles) => set({ selectedStyles: styles }),
 
       setPalette: (palette) => set({ selectedPalette: palette }),
+
+      setCustomColors: (colors) => set({ customColors: colors }),
+
+      addCustomColor: (color) =>
+        set((state) => ({ customColors: [...state.customColors, color] })),
+
+      removeCustomColor: (index) =>
+        set((state) => ({ customColors: state.customColors.filter((_, i) => i !== index) })),
 
       toggleKeyword: (keyword) =>
         set((state) => ({

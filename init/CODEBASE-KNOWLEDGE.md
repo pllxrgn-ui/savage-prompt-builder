@@ -140,7 +140,7 @@ Location: `apps/web/src/components/`
 ### ui/ (~35 components)
 **shadcn/ui primitives**: button, card, dialog, input, label, tabs, select, switch, separator, badge, dropdown-menu, slider, scroll-area, sheet, tooltip, accordion  
 **Magic UI**: magic-card, shimmer-button, border-beam, blur-fade, marquee, number-ticker, animated-gradient-text, animated-shiny-text, typing-animation, grid-pattern, dot-pattern, circuit-traces, AmbientGlow  
-**Custom**: LucideIcon (64 mapped icons), AccentPicker, AnimatedLayout (PageTransition, StaggerContainer, FadeUpItem), ProUpgradeCard, ThemeToggle, ToastProvider
+**Custom**: LucideIcon (64 mapped icons), AccentPicker, AnimatedLayout (PageTransition, StaggerContainer, FadeUpItem), ProUpgradeCard, ThemeToggle, ToastProvider, MasonryShowcase (4-column vertical Marquee with showcase images)
 
 ### builder/ (18 components)
 - `FieldInput.tsx` — Template field text inputs
@@ -219,6 +219,7 @@ Location: `apps/web/src/app/api/`
 | `/builder` | Protected | Core prompt builder (single-step tabs with AnimatePresence) |
 | `/generate` | Protected | Image generation results grid |
 | `/library` | Protected | Saved prompts + recipes |
+| `/moodboard` | Protected | Moodboard inspiration page with masonry background |
 | `/settings` | Protected | User preferences + account |
 
 ---
@@ -403,11 +404,26 @@ AWS_S3_BUCKET=
 
 # AI
 OPENAI_API_KEY=
+
+# Pollinations (showcase image generation)
+POLLINATIONS_API_KEY=
 ```
 
 ---
 
-## 16. Design Conventions & Anti-Patterns
+## 16. Static Assets
+
+### Showcase Images (`apps/web/public/showcase/`)
+- `tiles/` — 8 AI-generated images (Pollinations gptimage model) for "Made with Savage" carousel: tattoo-flash, streetwear, brand-identity, sticker-pack, art-print, product-mockup, video-concept, pattern-design
+- `moodboard/` — 18 Lorem Picsum images for MasonryShowcase background
+
+### Scripts (`apps/web/scripts/`)
+- `generate-showcase-tiles.ts` — Generates showcase tile images via Pollinations.ai API (gptimage model)
+- `generate-moodboard-showcase.ts` — Downloads moodboard background images from Lorem Picsum
+
+---
+
+## 17. Design Conventions & Anti-Patterns
 
 ### DO
 - Use design token classes (`bg-bg-2`, `text-text-3`, `border-glass-border`)

@@ -8,7 +8,7 @@ import type { UIStore } from "@/types";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-function MoodInput() {
+export function MoodInput() {
   const mood = useBuilderStore((s) => s.mood);
   const setMood = useBuilderStore((s) => s.setMood);
 
@@ -32,7 +32,7 @@ function MoodInput() {
   );
 }
 
-function ReferenceImageUpload() {
+export function ReferenceImageUpload() {
   const referenceImageUrl = useBuilderStore((s) => s.referenceImageUrl);
   const setReferenceImageUrl = useBuilderStore((s) => s.setReferenceImageUrl);
   const addToast = useUIStore((s: UIStore) => s.addToast);

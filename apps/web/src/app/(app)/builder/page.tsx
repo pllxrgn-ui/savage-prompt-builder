@@ -4,7 +4,7 @@ import { Suspense, useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Wand2, ArrowLeft, Paintbrush, Palette, Tags, Ban, Layers,
-  ImageIcon, FileText, Sparkles, ChevronRight, ChevronLeft,
+  FileText, Sparkles, ChevronRight, ChevronLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBuilderStore } from "@/lib/store";
@@ -29,7 +29,7 @@ import { GarmentSelector } from "@/components/builder/GarmentSelector";
 import { PlatformDropdown } from "@/components/builder/PlatformDropdown";
 import { BuilderActions } from "@/components/builder/BuilderActions";
 import { UndoRedo } from "@/components/builder/UndoRedo";
-import { ReferenceImage } from "@/components/builder/ReferenceImage";
+
 import { VariablesPanel } from "@/components/builder/VariablesPanel";
 import { VariationTabs } from "@/components/builder/VariationTabs";
 import { SaveRecipeModal } from "@/components/builder/SaveRecipeModal";
@@ -37,7 +37,7 @@ import { PromptOutput } from "@/components/builder/PromptOutput";
 import { decodeBuilderState } from "@/lib/services/share-service";
 import { useSearchParams } from "next/navigation";
 
-type StepId = "mood" | "fields" | "styles" | "colors" | "keywords" | "negative" | "mockup";
+type StepId = "fields" | "styles" | "colors" | "keywords" | "negative" | "mockup";
 
 interface WorkflowStep {
   id: StepId;
@@ -47,7 +47,6 @@ interface WorkflowStep {
 }
 
 const WORKFLOW_STEPS: WorkflowStep[] = [
-  { id: "mood",     label: "Mood & Reference", description: "Set visual direction",  Icon: ImageIcon  },
   { id: "fields",   label: "Fields",           description: "Core prompt details",   Icon: FileText   },
   { id: "styles",   label: "Styles",           description: "Aesthetic modifiers",   Icon: Paintbrush },
   { id: "colors",   label: "Colors",           description: "Color palette",         Icon: Palette    },
@@ -112,7 +111,7 @@ function BuilderPageInner() {
   const resetBuilder = useBuilderStore((s) => s.resetBuilder);
   const setMockup = useBuilderStore((s) => s.setMockup);
   const [recipeModalOpen, setRecipeModalOpen] = useState(false);
-  const [activeStepId, setActiveStepId] = useState<StepId>("mood");
+  const [activeStepId, setActiveStepId] = useState<StepId>("fields");
   const searchParams = useSearchParams();
 
   // Hydrate builder from share URL
@@ -279,7 +278,7 @@ function BuilderPageInner() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
+                className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5"
               >
                 {visibleTemplates.map((t, i) => (
                   <motion.div
@@ -410,12 +409,12 @@ function BuilderPageInner() {
 
                     {/* Step content */}
                     <div className="ml-11">
-                      {activeStepId === "mood" && <ReferenceImage />}
-
                       {activeStepId === "fields" && (
                         <div className="space-y-4">
                           <div className="bg-bg-1 border border-glass-border rounded-[var(--radius-lg)] p-4 space-y-4">
-                            {template.fields.map((field) => {
+                            {template.fields
+                              .filter((f) => !["mood", "colors", "avoid"].includes(f.id))
+                              .map((field) => {
                               if (template.id === "social" && field.id === "subject") {
                                 return <PlatformDropdown key={field.id} />;
                               }
