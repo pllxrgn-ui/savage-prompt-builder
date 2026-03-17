@@ -63,6 +63,10 @@ export default function LoginPage() {
   const [message, setMessage] = useState<string | null>(null);
 
   async function handleOAuthLogin(provider: 'google' | 'github') {
+    if (!supabase) {
+      setError("Authentication is not configured. Please check your Supabase credentials.");
+      return;
+    }
     setIsLoading(true);
     setError(null);
     const { error } = await supabase.auth.signInWithOAuth({
@@ -80,6 +84,11 @@ export default function LoginPage() {
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
+    
+    if (!supabase) {
+      setError("Authentication is not configured. Please check your Supabase credentials.");
+      return;
+    }
     
     setIsLoading(true);
     setError(null);

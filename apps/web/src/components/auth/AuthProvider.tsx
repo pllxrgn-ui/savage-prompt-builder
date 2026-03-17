@@ -14,6 +14,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logoutStore = useAuthStore((s) => s.logout);
 
   useEffect(() => {
+    if (!supabase) return;
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
