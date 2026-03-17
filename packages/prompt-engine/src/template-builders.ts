@@ -32,7 +32,7 @@ function social(f: Fields): string {
     f.mood ? f.mood + " tone" : undefined,
     f.colors ? "colors: " + f.colors : undefined,
     f.composition ? f.composition + " composition" : undefined,
-    "social media ready, 1:1 square aspect ratio, high quality",
+    "social media ready, high quality",
     f.avoid ? "--no " + f.avoid : undefined,
   ]);
 }

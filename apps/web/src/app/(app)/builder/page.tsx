@@ -278,7 +278,7 @@ function BuilderPageInner() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
-                className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5"
+                className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
               >
                 {visibleTemplates.map((t, i) => (
                   <motion.div
@@ -477,7 +477,7 @@ function BuilderPageInner() {
                     onClick={() => setActiveStepId(s.id)}
                     aria-label={`Go to ${s.label}`}
                     className={cn(
-                      "rounded-full transition-all duration-150 cursor-pointer",
+                      "rounded-full transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
                       i === activeIndex ? "w-4 h-1.5 bg-accent" : "w-1.5 h-1.5 bg-glass-border hover:bg-text-3",
                     )}
                   />

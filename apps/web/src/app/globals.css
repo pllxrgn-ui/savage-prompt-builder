@@ -293,6 +293,26 @@ body {
   background: var(--gradient-hero);
 }
 
+/* --- react-colorful dark theme overrides --- */
+.react-colorful {
+  gap: 8px;
+}
+.react-colorful__saturation {
+  border-radius: 6px;
+  border-bottom: none;
+}
+.react-colorful__hue,
+.react-colorful__alpha {
+  border-radius: 6px;
+  height: 10px;
+}
+.react-colorful__pointer {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
 /* --- Login left panel gradient --- */
 .bg-login-panel {
   background:

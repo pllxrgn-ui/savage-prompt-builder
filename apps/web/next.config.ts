@@ -10,6 +10,9 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@phosphor-icons/react'],
+  },
   async headers() {
     return [
       {

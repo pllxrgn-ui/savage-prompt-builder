@@ -1,33 +1,42 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
-import { Search, X, Plus, Pipette } from "lucide-react";
-import { clsx } from "clsx";
+import { useState, useMemo } from "react";
+import { Search, X, Plus } from "lucide-react";
+import { HexColorPicker } from "react-colorful";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { useBuilderStore } from "@/lib/store";
 import { PALETTES, searchPalettes, PALETTE_TAGS } from "@/lib/data";
+
+/** Normalize a raw hex string (with or without #, 3 or 6 chars) to a full 6-char #rrggbb, or null if invalid. */
+function normalizeHex(raw: string): string | null {
+  const trimmed = raw.trim().replace(/^#/, "");
+  if (/^[0-9a-fA-F]{6}$/.test(trimmed)) return `#${trimmed}`;
+  if (/^[0-9a-fA-F]{3}$/.test(trimmed))
+    return `#${trimmed.split("").map((c) => c + c).join("")}`;
+  return null;
+}
 
 function CustomColorSection() {
   const customColors = useBuilderStore((s) => s.customColors);
   const addCustomColor = useBuilderStore((s) => s.addCustomColor);
   const removeCustomColor = useBuilderStore((s) => s.removeCustomColor);
   const setCustomColors = useBuilderStore((s) => s.setCustomColors);
-  const [hexInput, setHexInput] = useState("");
-  const colorPickerRef = useRef<HTMLInputElement>(null);
 
-  function handleAddHex() {
-    const trimmed = hexInput.trim().replace(/^#/, "");
-    if (!/^[0-9a-fA-F]{3,8}$/.test(trimmed)) return;
-    const hex = `#${trimmed.length === 3 ? trimmed.split("").map((c) => c + c).join("") : trimmed}`;
-    if (customColors.length < 8) {
-      addCustomColor(hex);
-      setHexInput("");
-    }
+  const [hexInput, setHexInput] = useState("FF6B00");
+  const [pickerOpen, setPickerOpen] = useState(false);
+
+  const previewColor = useMemo(() => normalizeHex(hexInput), [hexInput]);
+
+  function handleAddColor() {
+    if (!previewColor || customColors.length >= 4) return;
+    addCustomColor(previewColor);
+    setPickerOpen(false);
   }
 
-  function handlePickerChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (customColors.length < 8) {
-      addCustomColor(e.target.value);
-    }
+  /** Sync picker → hex input */
+  function handlePickerChange(hex: string) {
+    setHexInput(hex.replace(/^#/, "").toUpperCase());
   }
 
   return (
@@ -44,7 +53,7 @@ function CustomColorSection() {
         )}
       </div>
 
-      {/* Color swatches */}
+      {/* Saved color swatches */}
       {customColors.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {customColors.map((color, i) => (
@@ -65,52 +74,106 @@ function CustomColorSection() {
       )}
 
       {/* Add color row */}
-      {customColors.length < 8 && (
-        <div className="flex gap-1.5">
-          <div className="flex items-center gap-1.5 flex-1 border border-glass-border bg-bg-input px-2.5 py-1.5 rounded-[var(--radius-md)]">
-            <span className="text-text-3 text-xs">#</span>
-            <input
-              type="text"
-              value={hexInput}
-              onChange={(e) => setHexInput(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") handleAddHex(); }}
-              placeholder="FF6B00"
-              maxLength={8}
-              className="flex-1 bg-transparent text-xs text-text-1 placeholder:text-text-3 outline-none font-mono"
-            />
-          </div>
-          <button
-            onClick={handleAddHex}
-            disabled={!hexInput.trim()}
-            className={clsx(
-              "flex items-center justify-center w-8 h-8 rounded-[var(--radius-md)] transition-colors cursor-pointer",
-              hexInput.trim()
-                ? "bg-accent/15 text-accent hover:bg-accent/25"
-                : "bg-glass text-text-3",
-            )}
-            aria-label="Add hex color"
-          >
-            <Plus className="w-3.5 h-3.5" />
-          </button>
-          <button
-            onClick={() => colorPickerRef.current?.click()}
-            className="flex items-center justify-center w-8 h-8 rounded-[var(--radius-md)] bg-glass text-text-3 hover:text-accent2 hover:bg-accent2/10 transition-colors cursor-pointer"
-            aria-label="Pick color"
-          >
-            <Pipette className="w-3.5 h-3.5" />
-          </button>
-          <input
-            ref={colorPickerRef}
-            type="color"
-            onChange={handlePickerChange}
-            className="sr-only"
-            aria-label="Color picker"
-          />
-        </div>
-      )}
+      {customColors.length < 4 ? (
+        <div className="space-y-2">
+          <div className="flex gap-1.5 items-center">
+            {/* Color swatch — opens react-colorful Popover */}
+            <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
+              <PopoverTrigger asChild>
+                <button
+                  className="relative w-8 h-8 rounded-[var(--radius-md)] border border-glass-border hover:border-accent/40 transition-colors cursor-pointer shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                  style={{ backgroundColor: previewColor ?? "#FF6B00" }}
+                  aria-label="Open color picker"
+                  title="Open color picker"
+                />
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-auto p-3 bg-bg-2 border border-glass-border rounded-[var(--radius-lg)] shadow-xl"
+                side="bottom"
+                align="start"
+                sideOffset={6}
+              >
+                <HexColorPicker
+                  color={previewColor ?? "#FF6B00"}
+                  onChange={handlePickerChange}
+                  style={{ width: 200, height: 160 }}
+                />
+                {/* Hex display + add button inline in popover */}
+                <div className="flex items-center gap-2 mt-2.5">
+                  <div className="flex items-center gap-1 flex-1 border border-glass-border bg-bg-input px-2.5 py-1.5 rounded-[var(--radius-md)]">
+                    <span className="text-text-3 text-xs select-none">#</span>
+                    <input
+                      type="text"
+                      value={hexInput}
+                      onChange={(e) =>
+                        setHexInput(e.target.value.toUpperCase().replace(/[^0-9A-F]/gi, ""))
+                      }
+                      onKeyDown={(e) => { if (e.key === "Enter") handleAddColor(); }}
+                      placeholder="FF6B00"
+                      maxLength={6}
+                      spellCheck={false}
+                      className="flex-1 bg-transparent text-xs text-text-1 placeholder:text-text-3 outline-none font-mono min-w-0"
+                    />
+                  </div>
+                  <button
+                    onClick={handleAddColor}
+                    disabled={!previewColor}
+                    className={cn(
+                      "flex items-center justify-center w-8 h-8 rounded-[var(--radius-md)] transition-colors cursor-pointer shrink-0",
+                      previewColor
+                        ? "bg-accent/15 text-accent hover:bg-accent/25"
+                        : "bg-glass text-text-3 cursor-not-allowed",
+                    )}
+                    aria-label="Add color"
+                    title={previewColor ? `Add ${previewColor}` : "Enter a valid hex first"}
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </PopoverContent>
+            </Popover>
 
-      {customColors.length >= 8 && (
-        <p className="text-[10px] text-text-3">Max 8 custom colors reached.</p>
+            {/* Hex text input (outside popover, for quick typing) */}
+            <div className="flex items-center gap-1 flex-1 border border-glass-border bg-bg-input px-2.5 py-1.5 rounded-[var(--radius-md)]">
+              <span className="text-text-3 text-xs select-none">#</span>
+              <input
+                type="text"
+                value={hexInput}
+                onChange={(e) =>
+                  setHexInput(e.target.value.toUpperCase().replace(/[^0-9A-F]/gi, ""))
+                }
+                onKeyDown={(e) => { if (e.key === "Enter") handleAddColor(); }}
+                placeholder="FF6B00"
+                maxLength={6}
+                spellCheck={false}
+                className="flex-1 bg-transparent text-xs text-text-1 placeholder:text-text-3 outline-none font-mono min-w-0"
+              />
+            </div>
+
+            {/* Add button */}
+            <button
+              onClick={handleAddColor}
+              disabled={!previewColor}
+              className={cn(
+                "flex items-center justify-center w-8 h-8 rounded-[var(--radius-md)] transition-colors cursor-pointer shrink-0",
+                previewColor
+                  ? "bg-accent/15 text-accent hover:bg-accent/25"
+                  : "bg-glass text-text-3 cursor-not-allowed",
+              )}
+              aria-label="Add color"
+              title={previewColor ? `Add ${previewColor}` : "Enter a valid hex first"}
+            >
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <p className="text-[10px] text-text-3 leading-tight">
+            Click the swatch to open the color picker, or type a hex value and press{" "}
+            <kbd className="px-1 py-0.5 bg-bg-3 rounded text-[9px] font-mono">Enter</kbd>.
+          </p>
+        </div>
+      ) : (
+        <p className="text-[10px] text-text-3">Max 4 custom colors reached.</p>
       )}
     </div>
   );
@@ -152,11 +215,11 @@ export function PalettePanel() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search palettes..."
-            className={clsx(
+            className={cn(
               "w-full pl-8 pr-8 py-2 text-xs",
               "bg-bg-input border border-accent/8 rounded-[var(--radius-md)]",
               "text-text-1 placeholder:text-text-2",
-              "focus:outline-none focus:border-accent/40",
+              "focus-visible:outline-none focus-visible:border-accent/40",
               "transition-all duration-150",
             )}
           />
@@ -178,11 +241,11 @@ export function PalettePanel() {
           <button
             key={tag}
             onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-            className={clsx(
-              "px-2 py-0.5 rounded text-[10px] font-medium transition-all duration-150",
+            className={cn(
+              "px-2 py-0.5 rounded text-[10px] font-medium transition-all duration-150 cursor-pointer",
               activeTag === tag
                 ? "bg-accent/15 text-accent"
-                : "bg-surface text-text-3 hover:text-text-2",
+                : "bg-glass text-text-3 hover:text-text-2",
             )}
           >
             {tag}
@@ -208,12 +271,12 @@ export function PalettePanel() {
             <button
               key={palette.id}
               onClick={() => setPalette(isSelected ? null : palette.name)}
-              className={clsx(
+              className={cn(
                 "w-full flex items-center gap-3 px-3 py-2 transition-all duration-150",
                 "border cursor-pointer text-left rounded-[var(--radius-md)]",
                 isSelected
                   ? "bg-accent/10 border-accent/30"
-                  : "bg-transparent border-transparent hover:bg-surface",
+                  : "bg-transparent border-transparent hover:bg-glass",
               )}
             >
               <div className="flex gap-0.5 shrink-0">
@@ -226,7 +289,7 @@ export function PalettePanel() {
                 ))}
               </div>
               <span
-                className={clsx(
+                className={cn(
                   "text-xs font-medium truncate",
                   isSelected ? "text-accent" : "text-text-2",
                 )}

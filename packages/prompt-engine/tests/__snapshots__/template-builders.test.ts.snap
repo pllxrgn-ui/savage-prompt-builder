@@ -32,7 +32,7 @@ exports[`template builder snapshots > snapshot: poster 1`] = `"Music festival po
 
 exports[`template builder snapshots > snapshot: sneaker 1`] = `"Air Max 1 sneaker concept, Y2K futurism design, Translucent TPU materials, colorway: Chrome and powder blue, featuring LED sole, side profile, white background, sharp detail"`;
 
-exports[`template builder snapshots > snapshot: social 1`] = `"Coffee shop aesthetic, Warm minimalist, Cozy tone, colors: Earth tones, social media ready, 1:1 square aspect ratio, high quality"`;
+exports[`template builder snapshots > snapshot: social 1`] = `"Coffee shop aesthetic, Warm minimalist, Cozy tone, colors: Earth tones, social media ready, high quality"`;
 
 exports[`template builder snapshots > snapshot: sticker 1`] = `"Happy cat astronaut sticker design, Kawaii style, Playful, limited palette: Pastel rainbow, Round shape, thick outlines, flat colors, die-cut ready, transparent background"`;
 

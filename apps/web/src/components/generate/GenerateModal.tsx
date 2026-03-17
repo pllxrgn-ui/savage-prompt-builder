@@ -12,7 +12,7 @@ import {
   Loader2,
   ChevronDown,
 } from "lucide-react";
-import { clsx } from "clsx";
+import { cn } from "@/lib/utils";
 import { IMAGE_GEN_MODELS } from "@/lib/data";
 import { useAuth } from "@/hooks/useAuth";
 import { useUIStore } from "@/lib/store";
@@ -103,14 +103,14 @@ export function GenerateModal({
 
           {/* Modal */}
           <motion.div
-            className="relative z-10 w-full max-w-4xl max-h-[90vh] mx-4 rounded-2xl border border-border bg-bg-1 shadow-2xl overflow-hidden flex flex-col"
+            className="relative z-10 w-full max-w-4xl max-h-[90vh] mx-4 rounded-[var(--radius-xl)] border border-glass-border bg-bg-1 shadow-2xl overflow-hidden flex flex-col"
             initial={{ scale: 0.95, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.95, y: 20 }}
             transition={{ duration: 0.2 }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-glass-border">
               <div className="flex items-center gap-2.5">
                 <ImageIcon className="w-5 h-5 text-accent" />
                 <h2 className="text-lg font-heading font-bold text-text-1">
@@ -122,7 +122,7 @@ export function GenerateModal({
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-lg hover:bg-surface transition-colors"
+                className="p-1.5 rounded-lg hover:bg-glass transition-colors cursor-pointer"
                 aria-label="Close"
               >
                 <X className="w-5 h-5 text-text-3" />
@@ -148,7 +148,7 @@ export function GenerateModal({
                         </label>
                         <button
                           onClick={handleReset}
-                          className="flex items-center gap-1 text-[10px] text-text-2 hover:text-accent transition-colors"
+                          className="flex items-center gap-1 text-[10px] text-text-2 hover:text-accent transition-colors cursor-pointer"
                         >
                           <RotateCcw className="w-3 h-3" /> Reset
                         </button>
@@ -157,7 +157,7 @@ export function GenerateModal({
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
                         rows={5}
-                        className="w-full px-3 py-2.5 rounded-lg bg-bg-input border border-border text-sm text-text-1 placeholder:text-text-2 focus:outline-none focus:border-accent/50 resize-none"
+                        className="w-full px-3 py-2.5 rounded-lg bg-bg-input border border-glass-border text-sm text-text-1 placeholder:text-text-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus-visible:border-accent resize-none"
                         placeholder="Your prompt…"
                       />
                     </div>
@@ -169,13 +169,13 @@ export function GenerateModal({
                       </label>
                       <button
                         onClick={() => setShowModelDropdown(!showModelDropdown)}
-                        className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-bg-input border border-border text-sm text-text-1 hover:bg-bg-3 transition-colors"
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-bg-input border border-glass-border text-sm text-text-1 hover:bg-bg-3 transition-colors cursor-pointer"
                       >
                         <span>{selectedModel?.name ?? "Select model"}</span>
                         <ChevronDown className="w-4 h-4 text-text-3" />
                       </button>
                       {showModelDropdown && (
-                        <div className="absolute left-0 right-0 top-full mt-1 z-20 bg-bg-1 border border-border rounded-xl shadow-lg py-1 max-h-48 overflow-y-auto">
+                          <div className="absolute left-0 right-0 top-full mt-1 z-20 bg-bg-1 border border-glass-border rounded-xl shadow-lg py-1 max-h-48 overflow-y-auto">
                           {IMAGE_GEN_MODELS.map((m) => (
                             <button
                               key={m.id}
@@ -183,8 +183,8 @@ export function GenerateModal({
                                 setModelId(m.id);
                                 setShowModelDropdown(false);
                               }}
-                              className={clsx(
-                                "w-full text-left px-3 py-2 text-sm hover:bg-surface transition-colors",
+                              className={cn(
+                                "w-full text-left px-3 py-2 text-sm hover:bg-glass transition-colors cursor-pointer",
                                 modelId === m.id
                                   ? "text-accent bg-accent/5"
                                   : "text-text-1",
@@ -210,11 +210,11 @@ export function GenerateModal({
                           <button
                             key={n}
                             onClick={() => setCount(n)}
-                            className={clsx(
-                              "flex-1 py-2 rounded-lg text-sm font-medium transition-all border",
+                            className={cn(
+                              "flex-1 py-2 rounded-lg text-sm font-medium transition-all border cursor-pointer",
                               count === n
                                 ? "bg-accent/15 text-accent border-accent/30"
-                                : "bg-surface text-text-3 border-transparent hover:text-text-2",
+                                : "bg-glass text-text-3 border-transparent hover:text-text-2",
                             )}
                           >
                             {n}
@@ -233,11 +233,11 @@ export function GenerateModal({
                           <button
                             key={r}
                             onClick={() => setRatio(r)}
-                            className={clsx(
-                              "px-3 py-1.5 rounded-lg text-xs font-medium transition-all border",
+                            className={cn(
+                              "px-3 py-1.5 rounded-lg text-xs font-medium transition-all border cursor-pointer",
                               ratio === r
                                 ? "bg-accent/15 text-accent border-accent/30"
-                                : "bg-surface text-text-3 border-transparent hover:text-text-2",
+                                : "bg-glass text-text-3 border-transparent hover:text-text-2",
                             )}
                           >
                             {r}
@@ -250,7 +250,7 @@ export function GenerateModal({
                     <button
                       onClick={handleGenerate}
                       disabled={!prompt.trim() || loading}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-accent text-white text-sm font-semibold hover:opacity-90 disabled:opacity-40 transition-opacity"
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-full bg-accent text-white text-sm font-semibold hover:opacity-90 disabled:opacity-40 transition-opacity cursor-pointer"
                     >
                       {loading ? (
                         <>
@@ -266,7 +266,7 @@ export function GenerateModal({
                   </div>
 
                   {/* Right column — Results */}
-                  <div className="min-h-[300px] flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-bg-2/50">
+                  <div className="min-h-[300px] flex flex-col items-center justify-center rounded-xl border border-dashed border-glass-border bg-bg-2/50">
                     {loading && (
                       <div className="flex flex-col items-center gap-3">
                         <Loader2 className="w-8 h-8 text-accent animate-spin" />
@@ -299,7 +299,7 @@ export function GenerateModal({
                         {job.images.map((img, i) => (
                           <div
                             key={img.id}
-                            className="group relative rounded-lg overflow-hidden border border-border bg-bg-3"
+                            className="group relative rounded-lg overflow-hidden border border-glass-border bg-bg-3"
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
@@ -311,20 +311,20 @@ export function GenerateModal({
                             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                               <button
                                 onClick={() => handleDownload(img, i)}
-                                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"
                                 aria-label="Download"
                               >
                                 <Download className="w-4 h-4 text-white" />
                               </button>
                               <button
                                 onClick={() => handleCopyUrl(img)}
-                                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"
                                 aria-label="Copy URL"
                               >
                                 <Copy className="w-4 h-4 text-white" />
                               </button>
                               <button
-                                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                                className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"
                                 aria-label="Save to Gallery"
                               >
                                 <Bookmark className="w-4 h-4 text-white" />

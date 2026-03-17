@@ -127,7 +127,7 @@ export default function LoginPage() {
         {/* Logo — group 1 */}
         <BlurFade delay={0.1} yOffset={10}>
           <div className="relative flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-accent/15 border border-accent/20">
+            <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-md)] bg-accent/15 border border-accent/20">
               <Flame className="w-5 h-5 text-accent" />
             </div>
             <span className="font-display font-semibold text-[15px] text-text-1 tracking-tight">
@@ -192,7 +192,7 @@ export default function LoginPage() {
           {/* Mobile logo (hidden on desktop) */}
           <BlurFade delay={0.8} yOffset={10}>
             <div className="flex flex-col items-center gap-3 lg:hidden">
-              <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-accent/15 border border-accent/20">
+              <div className="flex items-center justify-center w-12 h-12 rounded-[var(--radius-md)] bg-accent/15 border border-accent/20">
                 <Flame className="w-6 h-6 text-accent" />
               </div>
               <h1 className="font-display font-bold text-2xl text-text-1 tracking-tight">Savage</h1>
@@ -211,12 +211,12 @@ export default function LoginPage() {
 
           {/* Alerts */}
           {error && (
-            <div className="p-3 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+            <div className="p-3 rounded-[var(--radius-md)] bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
               {error}
             </div>
           )}
           {message && (
-            <div className="p-3 rounded-2xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center">
+            <div className="p-3 rounded-[var(--radius-md)] bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center">
               {message}
             </div>
           )}
@@ -227,10 +227,10 @@ export default function LoginPage() {
             <button
               onClick={() => handleOAuthLogin("google")}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-2xl
+              className="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-[var(--radius-md)]
                 bg-glass border border-glass-border text-text-1 text-sm font-medium
                 hover:bg-glass-hover hover:border-glass-border-strong transition-all duration-150
-                disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -244,10 +244,10 @@ export default function LoginPage() {
             <button
               onClick={() => handleOAuthLogin("github")}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-2xl
+              className="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-[var(--radius-md)]
                 bg-glass border border-glass-border text-text-1 text-sm font-medium
                 hover:bg-glass-hover hover:border-glass-border-strong transition-all duration-150
-                disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <Github className="w-4 h-4 shrink-0" />
               Continue with GitHub
@@ -270,7 +270,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="you@example.com"
-                  className="pl-10 rounded-2xl bg-glass border-glass-border focus:border-accent/50 text-sm h-11"
+                  className="pl-10 rounded-[var(--radius-md)] bg-glass border-glass-border focus-visible:border-accent focus-visible:ring-1 focus-visible:ring-accent/50 text-sm h-11"
                 />
               </div>
               <button
@@ -279,7 +279,7 @@ export default function LoginPage() {
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full
                   bg-accent text-white text-sm font-semibold
                   hover:opacity-90 transition-all duration-150
-                  disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -306,7 +306,7 @@ export default function LoginPage() {
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full
                 bg-accent-gold text-accent-gold-contrast text-sm font-semibold
                 hover:bg-accent-gold-hover transition-all duration-150 shadow-sm hover:shadow-md
-                disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <Zap className="w-4 h-4" />
               Explore as Guest
