@@ -207,7 +207,7 @@ export function MobileTopBar() {
               className="w-7 h-7 rounded-full object-cover ring-1 ring-glass-border"
             />
           ) : (
-            <div className="flex items-center justify-center w-7 h-7 rounded-full bg-accent/15 text-accent text-xs font-semibold">
+            <div className="relative flex items-center justify-center w-7 h-7 rounded-full bg-accent/15 text-accent text-xs font-semibold">
               {initials}
               {isPro && <Crown className="absolute -top-0.5 -right-0.5 w-3 h-3 text-accent-gold" />}
             </div>

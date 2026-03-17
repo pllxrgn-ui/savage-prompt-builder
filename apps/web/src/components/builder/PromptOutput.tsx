@@ -6,7 +6,7 @@ import {
   Copy, Check, ChevronDown, ChefHat, Share2,
   Star, Save, GitBranch, Shuffle, RotateCw,
   FileText, Sparkles, Loader2, Image as ImageIcon,
-  Lightbulb,
+  Lightbulb, AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBuilderStore, useUIStore, useHistoryStore } from "@/lib/store";
@@ -35,6 +35,7 @@ export function PromptOutput() {
     templateFields,
     selectedStyles,
     selectedPalette,
+    customColors,
     selectedKeywords,
     negativePrompt,
     selectedGenerator,
@@ -76,6 +77,7 @@ export function PromptOutput() {
       fields: templateFields,
       styles: selectedStyles,
       palette: selectedPalette,
+      customColors,
       keywords: selectedKeywords,
       negative: negativePrompt,
       generator: selectedGenerator,
@@ -107,6 +109,7 @@ export function PromptOutput() {
     templateFields,
     selectedStyles,
     selectedPalette,
+    customColors,
     selectedKeywords,
     negativePrompt,
     selectedGenerator,
@@ -345,7 +348,7 @@ export function PromptOutput() {
           className="absolute inset-0 rounded-xl pointer-events-none z-0"
           style={{
             background: polishedResult
-              ? "linear-gradient(90deg, transparent 0%, #a855f7 50%, transparent 100%)"
+              ? "linear-gradient(90deg, transparent 0%, var(--color-accent2) 50%, transparent 100%)"
               : "linear-gradient(90deg, transparent 0%, var(--color-accent) 50%, transparent 100%)",
             backgroundSize: "200% 100%",
             opacity: 0.08,
@@ -486,7 +489,7 @@ export function PromptOutput() {
               {/* Positive */}
               <div>
                 <p className="text-xs font-medium text-text-2 mb-1.5">Positive</p>
-                <div className="bg-bg-input border border-white/[0.06] rounded-[var(--radius-md)] p-3.5">
+                <div className="bg-bg-input border border-glass-border rounded-[var(--radius-md)] p-3.5">
                   <p className="text-xs text-text-1 leading-relaxed break-words whitespace-pre-wrap">
                     {result.positive || <span className="text-text-3 italic">Empty</span>}
                   </p>
@@ -497,7 +500,7 @@ export function PromptOutput() {
               {result.negative && (
                 <div>
                   <p className="text-xs font-medium text-text-2 mb-1.5">Negative</p>
-                  <div className="bg-bg-input border border-white/[0.06] rounded-[var(--radius-md)] p-3.5">
+                <div className="bg-bg-input border border-glass-border rounded-[var(--radius-md)] p-3.5">
                     <p className="text-xs text-text-2 leading-relaxed break-words whitespace-pre-wrap">
                       {result.negative}
                     </p>
@@ -537,7 +540,7 @@ export function PromptOutput() {
                 </span>
                 <span className="text-text-2">•</span>
                 <span className="text-text-2 text-[10px]">{charCount} chars</span>
-                {wordCount > 75 && <span className="text-warn">⚠ Token limit</span>}
+                {wordCount > 75 && <span className="text-warn flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5" />Token limit</span>}
               </div>
 
               {/* Score */}
@@ -566,7 +569,7 @@ export function PromptOutput() {
                 placeholder=">_ Add a note..."
                 value={promptNote}
                 onChange={(e) => setPromptNote(e.target.value)}
-                className="h-7 text-[11px] bg-bg-input border-accent/8 placeholder:text-text-3/30"
+                className="h-7 text-[11px] bg-bg-input border-glass-border placeholder:text-text-3/30"
               />
 
               {/* AI tip */}
@@ -587,7 +590,7 @@ export function PromptOutput() {
                   <p className="text-[9px] font-medium text-text-3 mb-1.5 uppercase tracking-wider">AI VARIATIONS</p>
                   <div className="space-y-2">
                     {variationsResult.map((v, i) => (
-                      <div key={i} className="bg-bg-input border border-accent/8 rounded-[var(--radius-md)] p-2.5">
+                      <div key={i} className="bg-bg-input border border-glass-border rounded-[var(--radius-md)] p-2.5">
                         <pre className="text-[11px] text-text-2 leading-relaxed whitespace-pre-wrap font-mono break-words">{v}</pre>
                         <Button
                           variant="ghost"

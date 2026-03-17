@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   BookOpen,
   Search,
@@ -12,7 +12,11 @@ import {
   List,
   Star,
   Columns2,
+  Download,
+  Sparkles,
 } from "lucide-react";
+import { getMedia, deleteMedia } from "@/lib/services/media-service";
+import type { GeneratedImage } from "@/lib/services/generate-service";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -39,6 +43,24 @@ export default function LibraryPage() {
   const [starFilter, setStarFilter] = useState(false);
   const [templateFilter, setTemplateFilter] = useState<string | "">("");
   const [projectFilter, setProjectFilter] = useState<string | "">("");
+
+  // Media gallery state
+  const [mediaItems, setMediaItems] = useState<GeneratedImage[]>([]);
+  const [clearConfirm, setClearConfirm] = useState(false);
+  const loadMedia = useCallback(() => setMediaItems(getMedia()), []);
+  useEffect(() => { loadMedia(); }, [loadMedia, activeTab]);
+
+  function handleDeleteMedia(id: string) {
+    deleteMedia(id);
+    setMediaItems((prev) => prev.filter((m) => m.id !== id));
+  }
+
+  function handleDownloadMedia(img: GeneratedImage) {
+    const a = document.createElement("a");
+    a.href = img.url;
+    a.download = `savage-${img.id}.png`;
+    a.click();
+  }
 
   // Diff selection
   const [diffIds, setDiffIds] = useState<string[]>([]);
@@ -90,7 +112,7 @@ export default function LibraryPage() {
   const tabs = [
     { id: "prompts" as const, label: "Prompts", icon: History, count: savedPrompts.length },
     { id: "recipes" as const, label: "Recipes", icon: ChefHat, count: recipes.length },
-    { id: "media" as const, label: "Gallery", icon: ImageIcon, count: 0 },
+    { id: "media" as const, label: "Gallery", icon: ImageIcon, count: mediaItems.length },
   ];
 
   const diffPromptA = diffIds[0] ? savedPrompts.find((p) => p.id === diffIds[0]) ?? null : null;
@@ -127,12 +149,29 @@ export default function LibraryPage() {
               Select 1 more to compare
             </span>
           )}
+          {clearConfirm ? (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-red-400">Clear all history?</span>
+              <Button
+                onClick={() => { clearHistory(); setClearConfirm(false); }}
+                size="sm"
+                variant="ghost"
+                className="h-7 text-xs text-white bg-red-500 hover:bg-red-600"
+              >
+                Yes, clear
+              </Button>
+              <Button
+                onClick={() => setClearConfirm(false)}
+                size="sm"
+                variant="ghost"
+                className="h-7 text-xs text-text-3 hover:text-text-1"
+              >
+                Cancel
+              </Button>
+            </div>
+          ) : (
           <Button
-            onClick={() => {
-              if (confirm("Are you sure you want to clear your entire history?")) {
-                clearHistory();
-              }
-            }}
+            onClick={() => setClearConfirm(true)}
             disabled={savedPrompts.length === 0 && recipes.length === 0}
             variant="ghost"
             className="text-text-3 hover:text-red-500 hover:bg-red-500/10"
@@ -140,6 +179,7 @@ export default function LibraryPage() {
             <Trash2 className="w-4 h-4" />
             Clear All
           </Button>
+          )}
         </div>
       </div>
       </BlurFade>
@@ -294,7 +334,7 @@ export default function LibraryPage() {
               ) : (
                 <div
                   className={cn(
-                    "grid gap-3",
+                    "grid gap-4 md:gap-6",
                     viewMode === "grid"
                       ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                       : "grid-cols-1",
@@ -333,7 +373,7 @@ export default function LibraryPage() {
               ) : (
                 <div
                   className={cn(
-                    "grid gap-3",
+                    "grid gap-4 md:gap-6",
                     viewMode === "grid"
                       ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                       : "grid-cols-1",
@@ -353,15 +393,52 @@ export default function LibraryPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="py-20 flex flex-col items-center justify-center text-center"
             >
-              <div className="w-14 h-14 rounded-2xl bg-bg-2 border border-glass-border flex items-center justify-center mb-4">
-                <ImageIcon className="w-6 h-6 text-text-3" />
-              </div>
-              <h3 className="text-sm font-heading font-semibold text-text-1 mb-1">Gallery coming soon</h3>
-              <p className="text-text-3 text-xs max-w-[280px]">
-                Generated images from the Generate page will be saved here.
-              </p>
+              {mediaItems.length === 0 ? (
+                <div className="py-20 flex flex-col items-center justify-center text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-bg-2 border border-glass-border flex items-center justify-center mb-4">
+                    <Sparkles className="w-6 h-6 text-text-3" />
+                  </div>
+                  <h3 className="text-sm font-heading font-semibold text-text-1 mb-1">No images yet</h3>
+                  <p className="text-text-3 text-xs max-w-[280px]">
+                    Generated images from the Generate page will appear here automatically.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {mediaItems.map((img, i) => (
+                    <motion.div
+                      key={img.id}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.03 }}
+                      className="group relative aspect-square rounded-[var(--radius-md)] overflow-hidden bg-bg-2 border border-glass-border"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={img.url} alt={img.prompt} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex flex-col justify-between p-2">
+                        <p className="text-[10px] text-white/80 line-clamp-3 leading-snug">{img.prompt}</p>
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            onClick={() => handleDownloadMedia(img)}
+                            aria-label="Download image"
+                            className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors cursor-pointer"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteMedia(img.id)}
+                            aria-label="Delete image"
+                            className="w-7 h-7 rounded-lg bg-white/10 hover:bg-red-500/60 text-white flex items-center justify-center transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

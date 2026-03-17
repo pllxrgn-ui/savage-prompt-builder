@@ -1,10 +1,10 @@
 # Savage Prompt Builder — Codebase Knowledge Base
 
 > **MANDATORY**: Read this file before starting any work. Update it after making structural changes.  
-> **Last Updated**: March 13, 2026
+> **Last Updated**: March 17, 2026
 
 **Project**: AI prompt engineering tool for generative image/video models (Nanobanana 2 primary, Midjourney, DALL·E, Stable Diffusion, Flux, Leonardo, Firefly, Ideogram, Replicate).  
-**Tech Stack**: Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · shadcn/ui · Magic UI · Framer Motion · Zustand 5 · Supabase · Drizzle ORM · Lucide icons
+**Tech Stack**: Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · shadcn/ui · Magic UI · Framer Motion · Zustand 5 · Supabase · Drizzle ORM · Lucide icons · Phosphor icons
 
 ---
 
@@ -84,7 +84,7 @@ All read-only static configuration. Imported via barrel `index.ts`.
 | `accents.ts` | `ACCENTS[]` | 8 accent colors (orange, rose, violet, blue, cyan, emerald, amber, pink) |
 | `field-presets.ts` | `FIELD_PRESETS[]` | Per-template field suggestion presets |
 | `negative-presets.ts` | `NEGATIVE_PRESETS[]` | Per-template negative prompt keywords |
-| `mockup-config.ts` | `MOCKUP_CONFIGS[]`, `getMockupConfig()` | 18 template mockup configs with items (Lucide icons), colors (hex swatches), displays |
+| `mockup-config.ts` | `MOCKUP_CONFIGS[]`, `getMockupConfig()` | 17 template mockup configs with items (Lucide + Phosphor icons), colors (hex swatches), displays |
 | `image-gen-models.ts` | `IMAGE_GEN_MODELS[]` | Image gen model specs (max dimensions, supported ratios) |
 
 ---
@@ -140,7 +140,7 @@ Location: `apps/web/src/components/`
 ### ui/ (~35 components)
 **shadcn/ui primitives**: button, card, dialog, input, label, tabs, select, switch, separator, badge, dropdown-menu, slider, scroll-area, sheet, tooltip, accordion  
 **Magic UI**: magic-card, shimmer-button, border-beam, blur-fade, marquee, number-ticker, animated-gradient-text, animated-shiny-text, typing-animation, grid-pattern, dot-pattern, circuit-traces, AmbientGlow  
-**Custom**: LucideIcon (64 mapped icons), AccentPicker, AnimatedLayout (PageTransition, StaggerContainer, FadeUpItem), ProUpgradeCard, ThemeToggle, ToastProvider, MasonryShowcase (4-column vertical Marquee with showcase images)
+**Custom**: LucideIcon (dual-library: ~80 Lucide + 15 Phosphor icons, use `"ph:Name"` prefix for Phosphor), AccentPicker, AnimatedLayout (PageTransition, StaggerContainer, FadeUpItem), ProUpgradeCard, ThemeToggle, ToastProvider, MasonryShowcase (4-column vertical Marquee with showcase images)
 
 ### builder/ (18 components)
 - `FieldInput.tsx` — Template field text inputs
@@ -272,9 +272,13 @@ font-mono: SF Mono / Fira Code (prompt output)
 ```
 
 ### Icons
-- **Lucide React only** — via `LucideIcon` component (`@/components/ui/LucideIcon`)
-- 64 icons in ICON_MAP: User, Mountain, MapPin, Package, Brush, Star, Droplets, BookOpen, Hexagon, Monitor, Image, Grid3x3, Box, Layers, Building, PersonStanding, Waves, Eye, Grid2x2, Scissors, Camera, Palette, PenTool, Sparkles, Sailboat, Cpu, Flame, Zap, Type, Banana, Server, Shirt, Tag, Pin, FileText, Disc, Megaphone, Smartphone, UserRound, Footprints, Gem, Car, Link, Laugh, Printer, Wind, Crown, ShoppingBag, Backpack, Baby, ChefHat, Frame, Hand, Music, CreditCard, Stamp, Lock, Gift, Users, Armchair, Bike, Laptop, Tablet
-- **NEVER use emojis as icons** — always use Lucide icons
+- **Dual-library system** — via `LucideIcon` component (`@/components/ui/LucideIcon`)
+- Bare name `"Shirt"` → Lucide icon. Prefix `"ph:TShirt"` → Phosphor icon (Regular weight)
+- **Lucide ICON_MAP (~80 icons):** User, Mountain, MapPin, Package, Brush, Star, Droplets, BookOpen, Hexagon, Monitor, Image, Grid3x3, Box, Layers, Building, PersonStanding, Waves, Eye, Grid2x2, Scissors, Camera, Palette, PenTool, Sparkles, Sailboat, Cpu, Flame, Zap, Type, Banana, Server, Shirt, Tag, Pin, FileText, Disc, DiscAlbum, Megaphone, Smartphone, UserRound, Footprints, Gem, Car, Link, Laugh, Printer, Wind, Crown, ShoppingBag, Backpack, Baby, ChefHat, Frame, Hand, Music, CreditCard, Stamp, Lock, Gift, Users, Armchair, Bike, Laptop, Tablet, BicepsFlexed, Heart, Award, BookMarked, BookText, Headphones, GalleryHorizontal, GalleryVertical, Fingerprint, Snowflake, Plane, Dumbbell, Store, Phone, PaintBucket
+- **Phosphor PHOSPHOR_MAP (15 icons):** TShirt, Hoodie, Pants, Dress, Sneaker, BaseballCap, CoatHanger, Jeep, Van, Truck, CarProfile, VinylRecord, CassetteTape, PersonArmsSpread, Bone
+- Package: `@phosphor-icons/react ^2.1.10` (installed in `apps/web`)
+- `next.config.ts` has `experimental.optimizePackageImports` for both libraries
+- **NEVER use emojis as icons** — always use LucideIcon with Lucide or Phosphor names
 
 ### Key UI Patterns
 - `cursor-pointer` on every clickable element

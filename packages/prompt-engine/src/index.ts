@@ -21,6 +21,7 @@ export interface PromptInput {
   fields: Record<string, string>;
   styles: string[];
   palette: string | null;
+  customColors?: string[];
   keywords: string[];
   negative: string;
   generator: string;
@@ -51,6 +52,7 @@ function assemblePositive(
   templatePrompt: string,
   styles: string[],
   palette: string | null,
+  customColors: string[],
   keywords: string[],
   phrases: string[],
   mockup?: { item: string; color: string; display: string },
@@ -73,8 +75,11 @@ function assemblePositive(
     parts.push(styles.join(", "));
   }
 
-  if (palette) {
-    parts.push(`color palette: ${palette}`);
+  const colorParts: string[] = [];
+  if (palette) colorParts.push(palette);
+  if (customColors.length > 0) colorParts.push(customColors.join(", "));
+  if (colorParts.length > 0) {
+    parts.push(`color palette: ${colorParts.join(", ")}`);
   }
 
   if (keywords.length > 0) {
@@ -116,6 +121,7 @@ export function buildPrompt(input: PromptInput): BuiltPrompt {
     templatePrompt,
     input.styles,
     input.palette,
+    input.customColors ?? [],
     input.keywords,
     input.phrases,
     input.mockup,

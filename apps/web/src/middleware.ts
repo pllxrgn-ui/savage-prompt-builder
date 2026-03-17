@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
 
   // Gating Logic
   const isAuthPage = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup') || request.nextUrl.pathname === '/'
-  const isProtectedPage = request.nextUrl.pathname.startsWith('/builder') || request.nextUrl.pathname.startsWith('/library') || request.nextUrl.pathname.startsWith('/settings') || request.nextUrl.pathname.startsWith('/home')
+  const isProtectedPage = request.nextUrl.pathname.startsWith('/builder') || request.nextUrl.pathname.startsWith('/library') || request.nextUrl.pathname.startsWith('/settings') || request.nextUrl.pathname.startsWith('/home') || request.nextUrl.pathname.startsWith('/moodboard') || request.nextUrl.pathname.startsWith('/generate')
 
   const guestCookie = request.cookies.get('spb-guest')?.value;
   const isGuest = guestCookie ? await verifyGuestToken(guestCookie) : false;

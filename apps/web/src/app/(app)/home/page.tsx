@@ -212,7 +212,7 @@ function ActivityChart({ prompts }: { prompts: { createdAt: string }[] }) {
   const todayCount = counts.find((c) => c.date === today)?.count ?? 0;
 
   return (
-    <div className="rounded-[var(--radius-xl)] bg-bg-2 border border-glass-border p-5">
+    <div className="rounded-[var(--radius-xl)] bg-bg-2 border border-glass-border p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-3.5 h-3.5 text-accent" />
@@ -277,7 +277,7 @@ function ShowcaseTile({ item }: { item: (typeof SHOWCASE)[number] }) {
       className={cn(
         "relative shrink-0 w-40 h-52 rounded-[var(--radius-xl)] overflow-hidden",
         "border border-glass-border",
-        "hover:border-glass-border-strong hover:scale-[1.02] transition-all duration-200 cursor-pointer group",
+        "hover:border-glass-border-strong transition-all duration-200 cursor-pointer group",
       )}
     >
       {/* Background image */}
@@ -373,7 +373,7 @@ export default function HomePage() {
                     }}
                     placeholder="Paste any rough idea… Savage will refine it into a precise prompt"
                     rows={3}
-                    className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-base p-4 pr-36 resize-none outline-none"
+                    className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-base p-4 pr-36 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/50"
                   />
                   <div className="absolute right-3 bottom-3 flex items-center gap-2">
                     <kbd className="hidden sm:block text-[10px] text-text-3 border border-glass-border rounded-lg px-1.5 py-0.5 font-mono">⌘↵</kbd>
@@ -422,7 +422,7 @@ export default function HomePage() {
         {/* ── PERSONAL STATS ── */}
         <BlurFade delay={0.08}>
           <section>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {[
                 { label: "Prompts",       value: personalStats.total.toString(),      accent: "text-text-1"    },
                 { label: "Favorites",     value: personalStats.favorites.toString(),  accent: "text-rose-400"  },
@@ -431,7 +431,7 @@ export default function HomePage() {
               ].map(({ label, value, accent }) => (
                 <div
                   key={label}
-                  className="rounded-[var(--radius-xl)] bg-bg-2 border border-glass-border p-4 md:p-5 text-center hover:border-glass-border-strong transition-colors"
+                  className="rounded-[var(--radius-xl)] bg-bg-2 border border-glass-border p-5 md:p-6 text-center hover:border-glass-border-strong transition-colors"
                 >
                   <p className={cn("text-3xl font-display font-bold leading-none mb-1.5", accent)}>{value}</p>
                   <p className="label-section">{label}</p>
@@ -463,7 +463,7 @@ export default function HomePage() {
                 All templates <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {QUICK_START.map(({ templateId, label, icon: Icon, color }) => (
                 <MagicCard
                   key={templateId}
@@ -473,7 +473,7 @@ export default function HomePage() {
                   }}
                   className="rounded-[var(--radius-xl)] bg-bg-2 border border-glass-border p-5 cursor-pointer hover:border-glass-border-strong transition-colors group"
                 >
-                  <div className={cn("w-10 h-10 rounded-[var(--radius-lg)] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform", color)}>
+                  <div className={cn("w-10 h-10 rounded-[var(--radius-lg)] flex items-center justify-center mb-3", color)}>
                     <Icon className="w-5 h-5" />
                   </div>
                   <p className="text-sm font-semibold text-text-1">{label}</p>

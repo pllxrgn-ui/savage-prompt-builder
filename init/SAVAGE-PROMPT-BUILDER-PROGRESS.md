@@ -4,10 +4,10 @@
 ---
 
 ## Current Status
-**Phase:** Phase 3 — Library + Persistence ✅ COMPLETE  
-**Last updated:** 2026-03-09  
-**Last session:** Completed Phase 3 — Auto-saving prompts, Library view with searching/filtering, Recipe save/load, and Settings data management (export/import).  
-**Next session should start at:** Step 23 — Supabase setup (Phase 4)
+**Phase:** Phase 5 — Image Generation + UI Redesign (active)  
+**Last updated:** 2026-03-17  
+**Last session:** Frontend sprint — Moodboard rebuild (multi-board, splash, pin grid, mood bar), Library Gallery tab (real grid + empty state, download/delete), generate→saveMedia wiring, mobile responsiveness pass. Fixed empty board state layout (upload tile + paste URL now vertically centered).  
+**Next session should start at:** Step 27 — Image generation API (or continue UI polish/auth middleware)
 
 ---
 
@@ -72,7 +72,21 @@
 - Turbopack is the default bundler now (no webpack)
 - `@/*` path alias already configured by create-next-app
 
-### 2026-03-07 — Session 4
+### 2026-03-17 — Frontend Sprint (Moodboard + Library + Generate wiring)
+**Completed:**
+- **Moodboard rebuild:** Created `moodboard-store.ts` (Zustand with persist, multi-board management). Rewrote moodboard page from scratch: splash (MasonryShowcase + mood presets + Get Started CTA), board tabs (inline rename, hover delete), PinGrid (AnimatePresence, upload tile, URL input), bottom mood bar (preset chips + text input + Apply to Builder). Fixed empty board state: upload tile + paste URL link are now vertically centered together.
+- **Library Gallery tab:** Replaced "coming soon" with real `GeneratedImage[]` grid (5-col desktop, 2-col mobile). Empty state with Sparkles icon. Hover overlay with Download + Delete buttons. Wired to `getMedia` / `deleteMedia` from `media-service`.
+- **Generate → saveMedia:** Added `saveMedia(job.images)` to generate page so all generated images auto-save to localStorage.
+- **Mobile pass:** Verified all 3 pages render cleanly at 375×812. Screenshots captured.
+
+**New/modified files:**
+- `apps/web/src/lib/store/moodboard-store.ts` *(NEW)*
+- `apps/web/src/lib/store/index.ts` — added moodboard exports
+- `apps/web/src/app/(app)/moodboard/page.tsx` — complete rewrite
+- `apps/web/src/app/(app)/generate/page.tsx` — + `saveMedia` call
+- `apps/web/src/app/(app)/library/page.tsx` — + real Gallery tab
+
+
 **Completed:**
 - Created `phase-2/builder-ui` branch for safety
 - **Step 11:** `TemplateCard` component + `LucideIcon` dynamic icon mapper + Home page with group filter tabs + template grid

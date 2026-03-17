@@ -35,6 +35,7 @@ import {
   Pin,
   FileText,
   Disc,
+  DiscAlbum,
   Megaphone,
   Smartphone,
   UserRound,
@@ -62,8 +63,41 @@ import {
   Bike,
   Laptop,
   Tablet,
+  BicepsFlexed,
+  Heart,
+  Award,
+  BookMarked,
+  BookText,
+  Headphones,
+  GalleryHorizontal,
+  GalleryVertical,
+  Fingerprint,
+  Snowflake,
+  Plane,
+  Dumbbell,
+  Store,
+  Phone,
+  PaintBucket,
   type LucideProps,
 } from "lucide-react";
+import {
+  TShirt,
+  Hoodie,
+  Pants,
+  Dress,
+  Sneaker,
+  BaseballCap,
+  CoatHanger,
+  Jeep,
+  Van,
+  Truck,
+  CarProfile,
+  VinylRecord,
+  CassetteTape,
+  PersonArmsSpread,
+  Bone,
+} from "@phosphor-icons/react";
+import type { Icon as PhosphorIconType } from "@phosphor-icons/react";
 
 const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   User,
@@ -102,6 +136,7 @@ const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   Pin,
   FileText,
   Disc,
+  DiscAlbum,
   Megaphone,
   Smartphone,
   UserRound,
@@ -129,13 +164,54 @@ const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   Bike,
   Laptop,
   Tablet,
+  BicepsFlexed,
+  Heart,
+  Award,
+  BookMarked,
+  BookText,
+  Headphones,
+  GalleryHorizontal,
+  GalleryVertical,
+  Fingerprint,
+  Snowflake,
+  Plane,
+  Dumbbell,
+  Store,
+  Phone,
+  PaintBucket,
+};
+
+// Phosphor icons registered with "ph:" prefix
+const PHOSPHOR_MAP: Record<string, PhosphorIconType> = {
+  TShirt,
+  Hoodie,
+  Pants,
+  Dress,
+  Sneaker,
+  BaseballCap,
+  CoatHanger,
+  Jeep,
+  Van,
+  Truck,
+  CarProfile,
+  VinylRecord,
+  CassetteTape,
+  PersonArmsSpread,
+  Bone,
 };
 
 interface LucideIconProps extends LucideProps {
   name: string;
 }
 
+// Supports both Lucide ("Shirt") and Phosphor ("ph:TShirt") icon names.
 export function LucideIcon({ name, ...props }: LucideIconProps) {
+  if (name.startsWith("ph:")) {
+    const phosphorName = name.slice(3);
+    const PhIcon = PHOSPHOR_MAP[phosphorName];
+    if (!PhIcon) return null;
+    return <PhIcon weight="regular" {...(props as React.ComponentProps<PhosphorIconType>)} />;
+  }
   const Icon = ICON_MAP[name];
   if (!Icon) return null;
   return <Icon {...props} />;

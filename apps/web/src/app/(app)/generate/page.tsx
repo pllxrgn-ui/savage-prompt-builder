@@ -21,6 +21,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { IMAGE_GEN_MODELS } from "@/lib/data";
 import { generateImages, type GeneratedImage } from "@/lib/services/generate-service";
+import { saveMedia } from "@/lib/services/media-service";
 import { useUIStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 
@@ -233,6 +234,7 @@ function GeneratePageInner() {
         negativePrompt: negativePrompt.trim() || undefined,
       });
       setImages(job.images);
+      saveMedia(job.images);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Generation failed";
       addToast({ message: msg, type: "error" });
@@ -284,7 +286,7 @@ function GeneratePageInner() {
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="rounded-[var(--radius-lg)] bg-bg-2 border border-glass-border p-5 space-y-5 lg:sticky lg:top-20"
+          className="rounded-[var(--radius-lg)] bg-bg-2 border border-glass-border p-6 space-y-5 lg:sticky lg:top-20"
         >
           {/* Prompt */}
           <div>
@@ -299,7 +301,7 @@ function GeneratePageInner() {
                 }}
                 placeholder="Describe the image you want to create…"
                 rows={4}
-                className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-sm p-4 resize-none outline-none"
+                className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-sm p-4 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/50"
               />
               <div className="flex items-center justify-between px-4 pb-2.5">
                 <span className="text-[10px] text-text-3">{prompt.length}/2000</span>
@@ -423,7 +425,7 @@ function GeneratePageInner() {
                     placeholder="What to avoid: blurry, low quality, text, watermark…"
                     rows={3}
                     className="mt-2 w-full bg-bg-input border border-glass-border rounded-[var(--radius-md)] text-xs text-text-1
-                      placeholder:text-text-3 p-3 resize-none outline-none focus:border-accent/30 focus:ring-1 focus:ring-accent/20 transition-colors"
+                      placeholder:text-text-3 p-3 resize-none focus-visible:outline-none focus-visible:border-accent focus-visible:ring-1 focus-visible:ring-accent/20 transition-colors"
                   />
                 </motion.div>
               )}

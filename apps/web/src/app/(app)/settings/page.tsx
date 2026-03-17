@@ -204,7 +204,7 @@ export default function SettingsPage() {
         {isAuthenticated && user && (
           <section className="space-y-4">
             <p className="label-section">Account</p>
-            <div className="p-5 bg-bg-2 border border-glass-border rounded-[var(--radius-md)] space-y-4">
+            <div className="p-6 bg-bg-2 border border-glass-border rounded-[var(--radius-lg)] space-y-4">
               <div className="flex items-center gap-4">
                 {user.avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -236,7 +236,7 @@ export default function SettingsPage() {
 
               {/* Pro/Free toggle (dev mode) */}
               {/* BACKEND: Auth required — show real user data, link to Stripe portal */}
-              <div className="flex items-center justify-between pt-2 border-t border-border">
+              <div className="flex items-center justify-between pt-2 border-t border-glass-border">
                 <div>
                   <p className="text-sm text-text-1 font-medium">Subscription Tier</p>
                   <p className="text-xs text-text-2 mt-0.5">
@@ -257,7 +257,7 @@ export default function SettingsPage() {
         <section className="space-y-4">
           <p className="label-section">Appearance</p>
 
-          <Card className="flex items-center gap-4 p-5">
+          <Card className="flex items-center gap-4 p-6">
             <div className="flex-1">
               <p className="text-sm font-medium text-text-1">Theme</p>
               <p className="text-xs text-text-2 mt-0.5">Switch between dark and light modes</p>
@@ -265,7 +265,7 @@ export default function SettingsPage() {
             <ThemeToggle />
           </Card>
 
-          <Card className="p-5">
+          <Card className="p-6">
             <p className="text-sm font-medium text-text-1 mb-4">Accent Color</p>
             <AccentPicker />
           </Card>
@@ -274,11 +274,11 @@ export default function SettingsPage() {
         {/* ──────── Default Generator (D1) ──────── */}
         <section className="space-y-4">
           <p className="label-section">Default Generator</p>
-          <Card className="p-5">
+          <Card className="p-6">
             <p className="text-xs text-text-2 mb-4">
               New prompts will start with this generator selected.
             </p>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-3">
               {GENERATORS.map((gen) => (
                 <Button
                   key={gen.id}
@@ -380,8 +380,7 @@ export default function SettingsPage() {
                   </div>
                   <button
                     onClick={() => handleCopyPhrase(phrase.id, phrase.content)}
-                    className="shrink-0 p-1.5 text-text-3 hover:text-accent hover:bg-accent/10 transition-colors"
-                    aria-label={`Copy ${phrase.label}`}
+                    className="shrink-0 p-1.5 text-text-3 hover:text-accent hover:bg-accent/10 transition-colors cursor-pointer rounded-[var(--radius-sm)]"
                   >
                     {copiedPhraseId === phrase.id ? (
                       <Check className="w-4 h-4 text-accent" />
@@ -517,7 +516,7 @@ export default function SettingsPage() {
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={() => handleCopyPhrase(phrase.id, phrase.content)}
-                        className="p-1.5 text-text-3 hover:text-accent hover:bg-accent/10 transition-colors"
+                        className="p-1.5 text-text-3 hover:text-accent hover:bg-accent/10 transition-colors cursor-pointer rounded-[var(--radius-sm)]"
                         aria-label={`Copy ${phrase.name}`}
                       >
                         {copiedPhraseId === phrase.id ? (
@@ -531,7 +530,7 @@ export default function SettingsPage() {
                           setEditingPhraseId(phrase.id);
                           setEditingPhrase({ name: phrase.name, content: phrase.content });
                         }}
-                        className="p-1.5 text-text-3 hover:text-text-1 hover:bg-surface transition-colors"
+                        className="p-1.5 text-text-3 hover:text-text-1 hover:bg-glass transition-colors cursor-pointer rounded-[var(--radius-sm)]"
                         aria-label={`Edit ${phrase.name}`}
                       >
                         <Pencil className="w-3.5 h-3.5" />
@@ -541,7 +540,7 @@ export default function SettingsPage() {
                           deleteCustomPhrase(phrase.id);
                           addToast({ message: "Phrase deleted.", type: "info" });
                         }}
-                        className="p-1.5 text-text-3 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                        className="p-1.5 text-text-3 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer rounded-[var(--radius-sm)]"
                         aria-label={`Delete ${phrase.name}`}
                       >
                         <X className="w-3.5 h-3.5" />
@@ -595,7 +594,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Clear All — with typed confirmation */}
-          <Card className="p-5 space-y-3">
+          <Card className="p-6 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex-1">
                 <p className="text-sm text-text-1 font-medium">Clear All Data</p>
@@ -616,7 +615,7 @@ export default function SettingsPage() {
               )}
             </div>
             {clearConfirmOpen && (
-              <div className="pt-2 border-t border-border space-y-2">
+              <div className="pt-2 border-t border-glass-border space-y-2">
                 <p className="text-xs text-red-400">
                   Type <span className="font-mono font-bold">DELETE</span> to confirm.
                 </p>
@@ -656,7 +655,7 @@ export default function SettingsPage() {
         {/* ──────── About ──────── */}
         <section className="space-y-4">
           <p className="label-section">About</p>
-          <Card className="p-5 space-y-4">
+          <Card className="p-6 space-y-4">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-[var(--radius-sm)] border border-accent/20 bg-accent/5">
                 <Database className="w-4 h-4 text-accent" />

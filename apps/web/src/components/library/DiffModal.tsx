@@ -85,6 +85,7 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          tabIndex={-1}
           onClick={onClose}
           onKeyDown={(e) => e.key === "Escape" && onClose()}
         >
@@ -104,7 +105,7 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
               <button
                 onClick={onClose}
                 aria-label="Close diff modal"
-                className="p-1.5 hover:bg-surface text-text-3 hover:text-text-1 transition-colors rounded-[var(--radius-md)]"
+                className="p-1.5 hover:bg-glass text-text-3 hover:text-text-1 transition-colors rounded-[var(--radius-md)] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>

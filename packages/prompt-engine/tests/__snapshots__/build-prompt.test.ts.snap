@@ -450,29 +450,29 @@ Negative prompt: blurry, low quality",
 
 exports[`integration snapshots > social × dalle3 1`] = `
 {
-  "full": "Coffee aesthetic, Cozy tone, social media ready, 1:1 square aspect ratio, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
+  "full": "Coffee aesthetic, Cozy tone, social media ready, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation. Avoid: blurry, low quality",
   "negative": "blurry, low quality",
   "parameters": "",
-  "positive": "Coffee aesthetic, Cozy tone, social media ready, 1:1 square aspect ratio, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+  "positive": "Coffee aesthetic, Cozy tone, social media ready, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
 }
 `;
 
 exports[`integration snapshots > social × midjourney 1`] = `
 {
-  "full": "Coffee aesthetic, Cozy tone, social media ready, 1:1 square aspect ratio, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
+  "full": "Coffee aesthetic, Cozy tone, social media ready, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation --no blurry, low quality",
   "negative": "blurry, low quality",
   "parameters": "",
-  "positive": "Coffee aesthetic, Cozy tone, social media ready, 1:1 square aspect ratio, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+  "positive": "Coffee aesthetic, Cozy tone, social media ready, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
 }
 `;
 
 exports[`integration snapshots > social × stable-diffusion 1`] = `
 {
-  "full": "Coffee aesthetic, Cozy tone, social media ready, 1:1 square aspect ratio, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
+  "full": "Coffee aesthetic, Cozy tone, social media ready, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation
 Negative prompt: blurry, low quality",
   "negative": "blurry, low quality",
   "parameters": "",
-  "positive": "Coffee aesthetic, Cozy tone, social media ready, 1:1 square aspect ratio, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
+  "positive": "Coffee aesthetic, Cozy tone, social media ready, high quality, dramatic lighting, color palette: warm tones, 8K, detailed, trending on ArtStation",
 }
 `;
 
