@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { GeneratorId } from "@/types";
 import { useSettingsStore } from "./settings-store";
+import { api } from "@/lib/api";
+import { useAuthStore } from "./auth-store";
 
 interface MockupState {
   enabled: boolean;
@@ -54,22 +56,7 @@ interface BuilderActions {
   setNegative: (value: string) => void;
   setGenerator: (id: GeneratorId) => void;
   togglePhrase: (phrase: string) => void;
-  loadRecipe: (recipe: {
-    templateId: string;
-    fieldData: Record<string, string>;
-    styles: string[];
-    palette: string | null;
-    keywords: string[];
-    negative: string;
-    generatorId: GeneratorId;
-    phrases?: string[];
-    garmentMode?: "dark" | "light" | null;
-    mood?: string;
-    referenceImageUrl?: string | null;
-    variables?: Record<string, string>;
-    variations?: Record<string, string>[];
-    mockup?: { enabled: boolean; item: string; color: string; display: string } | null;
-  }) => void;
+  loadRecipe: (recipe: any) => void;
   setMockup: (mockup: MockupState) => void;
   setGarmentMode: (mode: GarmentMode) => void;
   setMood: (value: string) => void;
@@ -82,9 +69,10 @@ interface BuilderActions {
   undo: () => void;
   redo: () => void;
   resetBuilder: () => void;
-  addCustomStyle: (style: CustomStyle) => void;
-  updateCustomStyle: (id: string, updates: Partial<Omit<CustomStyle, 'id'>>) => void;
-  deleteCustomStyle: (id: string) => void;
+  fetchCustomStyles: () => Promise<void>;
+  addCustomStyle: (style: Omit<CustomStyle, 'id'>) => Promise<void>;
+  updateCustomStyle: (id: string, updates: Partial<Omit<CustomStyle, 'id'>>) => Promise<void>;
+  deleteCustomStyle: (id: string) => Promise<void>;
 }
 
 export type BuilderStore = BuilderState & BuilderActions;
@@ -122,7 +110,7 @@ const MAX_UNDO = 20;
 
 export const useBuilderStore = create<BuilderStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...INITIAL_STATE,
 
       setTemplate: (id) =>
@@ -238,7 +226,6 @@ export const useBuilderStore = create<BuilderStore>()(
       addVariation: () =>
         set((state) => {
           if (state.variations.length >= 10) return state;
-          // Save current fields to current variation slot
           const updated = [...state.variations];
           updated[state.activeVariationIndex] = { ...state.templateFields };
           return {
@@ -269,7 +256,6 @@ export const useBuilderStore = create<BuilderStore>()(
         set((state) => {
           if (index === state.activeVariationIndex) return state;
           if (index < 0 || index >= state.variations.length) return state;
-          // Save current fields to current variation slot
           const updated = [...state.variations];
           updated[state.activeVariationIndex] = { ...state.templateFields };
           return {
@@ -310,25 +296,67 @@ export const useBuilderStore = create<BuilderStore>()(
           customStyles: state.customStyles,
         })),
 
-      addCustomStyle: (style) =>
-        set((state) => ({
-          customStyles: [...state.customStyles, style],
-        })),
+      fetchCustomStyles: async () => {
+        const { isAuthenticated } = useAuthStore.getState();
+        if (!isAuthenticated) return;
 
-      updateCustomStyle: (id, updates) =>
+        try {
+          const styles = await api.customStyles.list();
+          set({ customStyles: styles.map((s: any) => ({
+            id: s.id,
+            label: s.name,
+            content: s.content
+          })) });
+        } catch (error) {
+          console.error('[Fetch Styles Error]', error);
+        }
+      },
+
+      addCustomStyle: async (styleData) => {
+        const { isAuthenticated } = useAuthStore.getState();
+        const id = `${Date.now()}`;
+        
+        set((state) => ({
+          customStyles: [...state.customStyles, { ...styleData, id }],
+        }));
+
+        if (isAuthenticated) {
+          try {
+            const cloudStyle = await api.customStyles.save({
+              name: styleData.label,
+              content: styleData.content
+            });
+            set((state) => ({
+              customStyles: state.customStyles.map(s => s.id === id ? { ...s, id: cloudStyle.id } : s)
+            }));
+          } catch (error) {
+            console.error('[Add Style Error]', error);
+          }
+        }
+      },
+
+      updateCustomStyle: async (id, updates) => {
         set((state) => ({
           customStyles: state.customStyles.map((s) =>
             s.id === id ? { ...s, ...updates } : s,
           ),
-        })),
+        }));
+      },
 
-      deleteCustomStyle: (id) =>
+      deleteCustomStyle: async (id) => {
+        const { isAuthenticated } = useAuthStore.getState();
         set((state) => ({
           customStyles: state.customStyles.filter((s) => s.id !== id),
-          selectedStyles: state.selectedStyles.filter((label) =>
-            !state.customStyles.find((cs) => cs.id === id && cs.label === label),
-          ),
-        })),
+        }));
+
+        if (isAuthenticated && !id.includes('-')) {
+          try {
+            await api.customStyles.delete(id);
+          } catch (error) {
+            console.error('[Delete Style Error]', error);
+          }
+        }
+      },
     }),
     {
       name: "spb-builder",

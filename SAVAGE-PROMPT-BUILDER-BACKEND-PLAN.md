@@ -27,7 +27,7 @@ The foundation of the backend to handle users, sessions, and cloud syncing for P
 - [x] Create `/login` and `/signup` UI pages with auth state integration inside `apps/web`.
 - [x] Implement secure session handling using standard httpOnly cookies or JWTs.
 - [x] Set up an Auth Middleware to protect `(app)` dashboard routes and redirect unauthorized users.
-- [ ] Create simple onboarding flow (post-login) to migrate LocalStorage data to the Cloud for new users.
+- [x] Create simple onboarding flow (post-login) to migrate LocalStorage data to the Cloud for new users.
 
 ---
 
@@ -36,10 +36,10 @@ Routing frontend interactions to the database and integrating the core intellige
 
 ### 3. User Data APIs (CRUD endpoint)
 Create standard Next.js API App Router endpoints (`/api/...`) inside `apps/web`.
-- [ ] `GET /api/user` — Fetch user profile, settings, and Pro status.
-- [ ] `GET/POST/PUT/DELETE /api/prompts` — Sync prompt history.
-- [ ] `GET/POST/PUT/DELETE /api/recipes` — Sync user recipes.
-- [ ] `GET/POST/PUT/DELETE /api/custom-styles` — Sync user custom styles.
+- [x] `GET /api/user` — Fetch user profile, settings, and Pro status.
+- [x] `GET/POST/PUT/DELETE /api/prompts` — Sync prompt history.
+- [x] `GET/POST/PUT/DELETE /api/recipes` — Sync user recipes.
+- [x] `GET/POST/PUT/DELETE /api/custom-styles` — Sync user custom styles.
 
 ### 4. AI Intelligent Agent Endpoints (LLM Proxy)
 Create secure routes that read the `system-prompts.json` and pass user context to the Language Model. *These routes must be protected and gated for Pro users.*

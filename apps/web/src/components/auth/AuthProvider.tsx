@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/store/auth-store";
+import { useHistoryStore } from "@/lib/store/history-store";
+import { useBuilderStore } from "@/lib/store/builder-store";
 import type { User } from "@supabase/supabase-js";
 
 const AuthContext = createContext<{ user: User | null }>({ user: null });
@@ -39,9 +41,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Set Pro status based on tier
         useAuthStore.getState().setPro(profile?.tier === 'pro');
+
+        // Fetch History from Cloud
+        await useHistoryStore.getState().fetchHistory();
+        await useBuilderStore.getState().fetchCustomStyles();
       } else {
         setUser(null);
         logoutStore();
+        useHistoryStore.getState().clearHistory();
+        useBuilderStore.getState().resetBuilder();
       }
     });
 

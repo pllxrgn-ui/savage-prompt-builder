@@ -1,15 +1,6 @@
 import { NextResponse } from 'next/server';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import crypto from 'crypto';
-
-const s3Client = new S3Client({
-    region: process.env.R2_REGION || 'auto',
-    endpoint: process.env.R2_ENDPOINT,
-    credentials: {
-        accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-    },
-});
+import { createClient } from '@/lib/supabase/server';
 
 /** Whitelist of trusted image provider domains */
 const ALLOWED_IMAGE_DOMAINS = [
@@ -32,7 +23,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'No image URL provided' }, { status: 400 });
         }
 
-        // Validate URL to prevent SSRF
+        // 1. Validate URL
         let parsedUrl: URL;
         try {
             parsedUrl = new URL(outerImageUrl);
@@ -48,7 +39,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Untrusted image source' }, { status: 403 });
         }
 
-        // Fetch with timeout and size limit
+        // 2. Fetch the image from the provider
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 15_000);
 
@@ -56,12 +47,7 @@ export async function POST(req: Request) {
         clearTimeout(timeout);
 
         if (!imageResponse.ok) {
-            return NextResponse.json({ error: 'Failed to download image' }, { status: 502 });
-        }
-
-        const contentLength = parseInt(imageResponse.headers.get('content-length') || '0', 10);
-        if (contentLength > MAX_IMAGE_SIZE) {
-            return NextResponse.json({ error: 'Image too large (max 10MB)' }, { status: 413 });
+            return NextResponse.json({ error: 'Failed to download image from provider' }, { status: 502 });
         }
 
         const arrayBuffer = await imageResponse.arrayBuffer();
@@ -72,35 +58,44 @@ export async function POST(req: Request) {
         const buffer = Buffer.from(arrayBuffer);
         const contentType = imageResponse.headers.get('content-type') || 'image/png';
 
-        // Only allow image content types
-        if (!contentType.startsWith('image/')) {
-            return NextResponse.json({ error: 'Response is not an image' }, { status: 400 });
-        }
-
+        // 3. Prepare Supabase Client
+        const supabase = await createClient();
+        
+        // Generate a unique filename
         const hash = crypto.createHash('sha256').update(`${outerImageUrl}-${Date.now()}`).digest('hex');
         const extension = contentType.split('/')[1]?.replace(/[^a-z0-9]/g, '') || 'png';
-        const filename = `generated/${hash}.${extension}`;
+        const filename = `${hash}.${extension}`;
 
-        const s3Command = new PutObjectCommand({
-            Bucket: process.env.R2_BUCKET_NAME,
-            Key: filename,
-            Body: buffer,
-            ContentType: contentType,
-        });
+        // 4. Upload to Supabase Storage Bucket 'media'
+        const { data, error: uploadError } = await supabase.storage
+            .from('media')
+            .upload(filename, buffer, {
+                contentType,
+                upsert: true
+            });
 
-        await s3Client.send(s3Command);
+        if (uploadError) {
+            console.error('[Supabase Storage Error]', uploadError);
+            return NextResponse.json({ error: 'Failed to upload to storage' }, { status: 500 });
+        }
 
-        const publicDomain = process.env.NEXT_PUBLIC_R2_PUBLIC_DOMAIN;
-        const permanentUrl = `${publicDomain}/${filename}`;
+        // 5. Get the Public URL
+        const { data: { publicUrl } } = supabase.storage
+            .from('media')
+            .getPublicUrl(filename);
 
         return NextResponse.json({
             success: true,
-            url: permanentUrl,
-            metadata: { model, savedAt: new Date().toISOString() }
+            url: publicUrl,
+            metadata: { 
+                model, 
+                provider: parsedUrl.hostname,
+                savedAt: new Date().toISOString() 
+            }
         });
 
     } catch (error) {
         console.error('[Media Upload Error]', error);
-        return NextResponse.json({ error: 'Failed to upload media' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to process media' }, { status: 500 });
     }
 }
