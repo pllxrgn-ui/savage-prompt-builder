@@ -36,10 +36,10 @@ import {
 
 /* ── Nav configuration ── */
 const NAV_ITEMS = [
+  { href: "/builder",  label: "Builder",   icon: Wand2,     badge: null },
   { href: "/moodboard", label: "Moodboard", icon: ImageIcon, badge: null },
-  { href: "/builder",  label: "Builder",  icon: Wand2,    badge: null },
-  { href: "/generate", label: "Generate", icon: Sparkles, badge: null },
-  { href: "/library",  label: "Library",  icon: BookOpen, badge: null },
+  { href: "/generate", label: "Generate",  icon: Sparkles,  badge: null },
+  { href: "/library",  label: "Library",   icon: BookOpen,  badge: null },
 ] as const;
 
 /* ── Desktop nav link ── */
@@ -148,6 +148,12 @@ function UserMenu() {
         </div>
         <DropdownMenuSeparator className="bg-glass-border" />
         <DropdownMenuItem asChild className="rounded-[var(--radius-md)] cursor-pointer focus:bg-glass">
+          <Link href="/pricing" className="flex items-center gap-2 text-sm text-text-2">
+            <Sparkles className="w-3.5 h-3.5" />
+            Pricing
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild className="rounded-[var(--radius-md)] cursor-pointer focus:bg-glass">
           <Link href="/settings" className="flex items-center gap-2 text-sm text-text-2">
             <Settings className="w-3.5 h-3.5" />
             Settings
@@ -168,11 +174,11 @@ function UserMenu() {
 
 /* ── Mobile bottom tab bar ── */
 const MOBILE_TABS = [
-  { href: "/home",      label: "Home",      icon: Flame },
-  { href: "/moodboard", label: "Mood",      icon: ImageIcon },
-  { href: "/builder",   label: "Builder",   icon: Wand2 },
-  { href: "/generate",  label: "Generate",  icon: Sparkles },
-  { href: "/library",   label: "Library",   icon: BookOpen },
+  { href: "/home",      label: "Home",      icon: Flame,      primary: false },
+  { href: "/builder",   label: "Builder",   icon: Wand2,      primary: true  },
+  { href: "/moodboard", label: "Mood",      icon: ImageIcon,  primary: false },
+  { href: "/generate",  label: "Generate",  icon: Sparkles,   primary: false },
+  { href: "/library",   label: "Library",   icon: BookOpen,   primary: false },
 ] as const;
 
 /* ── Mobile top bar (profile icon) ── */
@@ -230,26 +236,72 @@ export function MobileTabBar() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around
-        bg-bg-1/95 backdrop-blur-2xl border-t border-glass-border h-16 px-2 safe-area-bottom"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-end justify-around
+        bg-bg-1/95 backdrop-blur-2xl border-t border-glass-border pb-safe px-1"
+      style={{ minHeight: 64 }}
       aria-label="Mobile navigation"
     >
-      {MOBILE_TABS.map(({ href, label, icon: Icon }) => {
+      {MOBILE_TABS.map(({ href, label, icon: Icon, primary }) => {
         const isActive =
           pathname === href ||
           (href !== "/home" && pathname?.startsWith(href));
+
+        if (primary) {
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-label={label}
+              className="relative flex flex-col items-center -mt-5 cursor-pointer group"
+            >
+              {/* Elevated pill */}
+              <div
+                className={cn(
+                  "flex items-center justify-center w-14 h-14 rounded-full border-2 shadow-lg transition-all duration-150 active:scale-95",
+                  isActive
+                    ? "bg-accent border-accent/60 shadow-[0_0_20px_rgba(255,107,0,0.45)]"
+                    : "bg-bg-3 border-glass-border-strong group-hover:border-accent/40 group-hover:bg-accent/10",
+                )}
+              >
+                <Icon
+                  className={cn(
+                    "w-6 h-6 transition-colors",
+                    isActive ? "text-white" : "text-text-2 group-hover:text-accent",
+                  )}
+                />
+              </div>
+              <span
+                className={cn(
+                  "text-[10px] font-semibold mt-1 mb-1 transition-colors",
+                  isActive ? "text-accent" : "text-text-3 group-hover:text-text-2",
+                )}
+              >
+                {label}
+              </span>
+            </Link>
+          );
+        }
+
         return (
           <Link
             key={href}
             href={href}
+            aria-label={label}
             className={cn(
-              "flex flex-col items-center gap-1 min-w-[48px] py-2 rounded-2xl transition-colors cursor-pointer",
+              "flex flex-col items-center gap-1 min-w-[48px] min-h-[48px] py-2 rounded-2xl",
+              "transition-all duration-150 cursor-pointer active:scale-95",
               isActive ? "text-accent" : "text-text-3 hover:text-text-2",
             )}
-            aria-label={label}
           >
-            <Icon className="w-5 h-5" />
-            <span className={cn("text-[10px] font-medium", isActive && "text-accent")}>
+            <div
+              className={cn(
+                "flex items-center justify-center w-8 h-8 rounded-xl transition-colors",
+                isActive ? "bg-accent/12" : "",
+              )}
+            >
+              <Icon className="w-5 h-5" />
+            </div>
+            <span className={cn("text-[10px] font-medium leading-none", isActive && "text-accent")}>
               {label}
             </span>
           </Link>

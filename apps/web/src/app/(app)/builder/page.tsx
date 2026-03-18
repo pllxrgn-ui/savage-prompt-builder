@@ -4,7 +4,7 @@ import { Suspense, useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Wand2, ArrowLeft, Paintbrush, Palette, Tags, Ban, Layers,
-  FileText, Sparkles, ChevronRight, ChevronLeft,
+  FileText, Sparkles, ChevronRight, ChevronLeft, Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBuilderStore } from "@/lib/store";
@@ -459,39 +459,70 @@ function BuilderPageInner() {
             </div>
 
             {/* Step navigation footer */}
-            <div className="shrink-0 flex items-center justify-between px-5 py-2.5 border-t border-glass-border bg-bg-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={activeIndex === 0}
-                onClick={() => setActiveStepId(WORKFLOW_STEPS[activeIndex - 1].id)}
-                className="gap-1.5 text-xs text-text-3 hover:text-text-1 disabled:opacity-30 cursor-pointer"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />Prev
-              </Button>
-              {/* Step dots */}
+            <div className="shrink-0 flex items-center justify-between px-5 py-2 border-t border-glass-border bg-bg-1">
+              {/* Prev — show target step name + icon */}
+              {activeIndex > 0 ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setActiveStepId(WORKFLOW_STEPS[activeIndex - 1].id)}
+                  className="gap-1.5 text-xs text-text-3 hover:text-text-1 cursor-pointer min-w-[90px] justify-start px-2"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
+                  {(() => { const S = WORKFLOW_STEPS[activeIndex - 1].Icon; return <S className="w-3.5 h-3.5 shrink-0" />; })()}
+                  <span>{WORKFLOW_STEPS[activeIndex - 1].label}</span>
+                </Button>
+              ) : (
+                <div className="min-w-[90px]" />
+              )}
+
+              {/* Step icon dots */}
               <div className="flex items-center gap-1.5">
-                {WORKFLOW_STEPS.map((s, i) => (
-                  <button
-                    key={s.id}
-                    onClick={() => setActiveStepId(s.id)}
-                    aria-label={`Go to ${s.label}`}
-                    className={cn(
-                      "rounded-full transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
-                      i === activeIndex ? "w-4 h-1.5 bg-accent" : "w-1.5 h-1.5 bg-glass-border hover:bg-text-3",
-                    )}
-                  />
-                ))}
+                {WORKFLOW_STEPS.map((s, i) => {
+                  const StepIcon = s.Icon;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => setActiveStepId(s.id)}
+                      aria-label={`Go to ${s.label}`}
+                      title={s.label}
+                      className={cn(
+                        "flex items-center justify-center w-7 h-7 rounded-full transition-all duration-150 cursor-pointer",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
+                        i === activeIndex
+                          ? "bg-accent text-white shadow-[0_0_8px_rgba(255,107,0,0.35)]"
+                          : i < activeIndex
+                          ? "bg-accent/15 text-accent hover:bg-accent/25"
+                          : "bg-glass text-text-3 hover:text-text-1 hover:bg-glass-hover",
+                      )}
+                    >
+                      <StepIcon className="w-3.5 h-3.5" />
+                    </button>
+                  );
+                })}
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={activeIndex === WORKFLOW_STEPS.length - 1}
-                onClick={() => setActiveStepId(WORKFLOW_STEPS[activeIndex + 1].id)}
-                className="gap-1.5 text-xs text-text-3 hover:text-text-1 disabled:opacity-30 cursor-pointer"
-              >
-                Next<ChevronRight className="w-3.5 h-3.5" />
-              </Button>
+
+              {/* Next — show target step name + icon, or Done on last step */}
+              {activeIndex < WORKFLOW_STEPS.length - 1 ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setActiveStepId(WORKFLOW_STEPS[activeIndex + 1].id)}
+                  className="gap-1.5 text-xs text-text-3 hover:text-text-1 cursor-pointer min-w-[90px] justify-end px-2"
+                >
+                  <span>{WORKFLOW_STEPS[activeIndex + 1].label}</span>
+                  {(() => { const S = WORKFLOW_STEPS[activeIndex + 1].Icon; return <S className="w-3.5 h-3.5 shrink-0" />; })()}
+                  <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                </Button>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-1.5 text-xs text-accent cursor-pointer min-w-[90px] justify-end px-2"
+                >
+                  Done <Check className="w-3.5 h-3.5 shrink-0" />
+                </Button>
+              )}
             </div>
           </main>
 

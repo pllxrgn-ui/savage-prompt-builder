@@ -67,7 +67,6 @@ export function AIStyleGenerator() {
 
   const handleAddStyle = (index: number, style: GeneratedStyle) => {
     addCustomStyle({
-      id: crypto.randomUUID(),
       label: style.label,
       content: style.content,
     });

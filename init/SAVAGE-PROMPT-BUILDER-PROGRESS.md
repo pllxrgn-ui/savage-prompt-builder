@@ -4,10 +4,10 @@
 ---
 
 ## Current Status
-**Phase:** Phase 5 — Image Generation + UI Redesign (active)  
-**Last updated:** 2026-03-17  
-**Last session:** Frontend sprint — Moodboard rebuild (multi-board, splash, pin grid, mood bar), Library Gallery tab (real grid + empty state, download/delete), generate→saveMedia wiring, mobile responsiveness pass. Fixed empty board state layout (upload tile + paste URL now vertically centered).  
-**Next session should start at:** Step 27 — Image generation API (or continue UI polish/auth middleware)
+**Phase:** Phase 5 — UI Polish + New Pages (active)  
+**Last updated:** 2026-03-18  
+**Last session:** UI polish sprint — Nav reorder (Builder first), mobile bottom nav redesign (elevated floating Builder button), TemplateCard 2-column slideshow layout, builder step nav with icon-circle dots + named Prev/Next, pricing page `/pricing`, UserMenu pricing link. TS fixes from git pull.  
+**Next session should start at:** Template showcase image generation script (Pollinations.ai → `public/showcase/templates/`) OR Stripe integration for pricing page
 
 ---
 
@@ -71,6 +71,35 @@
 - React 19.2.3 installed (19.2.4 available)
 - Turbopack is the default bundler now (no webpack)
 - `@/*` path alias already configured by create-next-app
+
+### 2026-03-18 — UI Polish Sprint (Nav, TemplateCard, Builder Step Nav, Pricing)
+**Completed:**
+- **TS fixes from git pull:** `AIStyleGenerator.tsx` + `StylesDrawer.tsx` — removed `id: crypto.randomUUID()` from `addCustomStyle()` call (now takes `Omit<CustomStyle, 'id'>`)
+- **Nav reorder (TopNav.tsx):** Desktop NAV_ITEMS and MOBILE_TABS reordered: Builder→Moodboard→Generate→Library
+- **Mobile bottom nav redesign:** Builder gets `primary: true` flag → elevated floating circle `-mt-5 w-14 h-14 rounded-full`, accent bg when active with orange glow shadow; regular tabs use `w-8 h-8 rounded-xl` tinted ring style
+- **Template showcase data file:** `apps/web/src/lib/data/template-showcase.ts` — maps all 21 template IDs to image path arrays; all currently empty (ready to populate when images generated)
+- **TemplateCard 2-column layout:** sm+: `flex-row h-[140px]`, left 55% metadata, right 42% gradient placeholder (`bg-gradient-to-br from-bg-3 via-bg-2 to-bg-base` + accent tint overlay); crossfade slideshow when images exist (using `onError` handler + `erroredSrcs` Set); active dots indicator
+- **Builder step nav redesign (builder/page.tsx):** 6 WORKFLOW_STEPS with `id` + `Icon`; icon-circle dots (orange accent active with glow, accent/15 completed, glass future); named Prev/Next buttons show target step label + icon; "Done ✓" on last step
+- **Pricing page (`/pricing`):** Monthly/Yearly billing toggle (saves 31%), Free $0 card + Pro $12/mo card with "MOST POPULAR" badge, 9-row feature comparison table, FAQ accordion (3 items), orange CTA → `/login?plan=pro`
+- **UserMenu pricing link:** Pricing item (Sparkles icon) added to TopNav dropdown above Settings
+- **TypeScript:** 0 errors (`npx tsc --noEmit` from `apps/web/`)
+- **Visual verification:** Playwright screenshots confirmed pricing page, template picker (clean gradient), and builder step nav all render correctly
+
+**New files created:**
+- `apps/web/src/lib/data/template-showcase.ts` — template ID → image paths map (all empty arrays)
+- `apps/web/src/app/(public)/pricing/page.tsx` — full pricing page
+
+**Modified files:**
+- `apps/web/src/components/layout/TopNav.tsx` — nav reorder, mobile nav, pricing link
+- `apps/web/src/components/builder/TemplateCard.tsx` — 2-column layout + gradient + slideshow
+- `apps/web/src/app/(app)/builder/page.tsx` — step nav redesign
+- `apps/web/src/components/builder/AIStyleGenerator.tsx` — TS fix
+- `apps/web/src/components/builder/StylesDrawer.tsx` — TS fix
+
+**Key decisions:**
+- Template showcase images deferred: populating paths before images exist causes Next.js Image 400 errors; gradient placeholder shows until images generated
+- WORKFLOW_STEPS defined as typed array with `{id, label, Icon}` — step nav reads directly for named buttons
+- Pricing: Stripe integration deferred; CTA links to `/login?plan=pro` for now
 
 ### 2026-03-17 — Frontend Sprint (Moodboard + Library + Generate wiring)
 **Completed:**

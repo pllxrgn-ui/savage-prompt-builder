@@ -271,3 +271,45 @@ When building for a specific page, check there first.
 | `/library` | Saved prompts | Grid/list toggle, filter chips |
 | `/settings` | User preferences | Section cards, switches, Pro badges |
 | `/login` | Auth | Centered card, OAuth + email, guest option |
+
+---
+
+## Skills — Project-Specific Trigger Map
+
+Read and apply the listed skill(s) **before** starting work on any matching task. Skills live at `C:\Users\yatzv\.copilot\skills\<name>\SKILL.md`.
+
+| Task Type | Skills to Read | Priority |
+|-----------|---------------|----------|
+| Any UI component, page, or layout | `frontend-design` + `web-accessibility` | Always |
+| Active redesign / design system work | `frontend-design` + `ui-ux-pro-max` | Always |
+| React patterns, hooks, state | `react-best-practices` | Before new components |
+| Auth, API routes, input validation | `security-review` | Before writing/editing handlers |
+| Drizzle schema or DB queries | `database-design` | Before schema changes |
+| Backend API route design | `backend-development` | Before creating routes |
+| Writing tests | `unit-testing` | Before writing test files |
+| Performance / bundle analysis | `performance-optimization` | When optimizing |
+| Reviewing a PR or diff | `code-review` | During reviews |
+| **End of any session** | **`progress-tracker`** | **MANDATORY — every session** |
+
+---
+
+## MCP Servers — When to Use
+
+| Server | Tools Prefix | Use For |
+|--------|-------------|---------|
+| `context-mode` | `ctx_*` | Large command output, batch file reads, indexing web docs — see `30-context-mode.instructions.md` |
+| `pencil` | `mcp_pencil_*` | Reading/editing `.pen` design files **only** — never use `read_file` on `.pen` files |
+| `microsoft/playwright-mcp` | `mcp_microsoft_pla_*` | Browser testing, visual verification, UI debugging — invoke via Debugger agent |
+
+---
+
+## Mandatory Session-End Checklist
+
+Apply the `progress-tracker` skill at the end of every session where meaningful work was done:
+
+1. `pnpm tsc --noEmit` — confirm 0 errors
+2. Update `/memories/repo/current-state-snapshot.md` — date, status, key files changed
+3. Update `init/CODEBASE-KNOWLEDGE.md` — if any structure changed (new components, routes, packages, patterns)
+4. Update `init/SAVAGE-PROMPT-BUILDER-PROGRESS.md` — tick off completed roadmap items
+5. Create `reports/YYYY-MM-DD.md` — match format of existing reports in `reports/`
+6. `git add -A` → `git commit -m "..."` (Conventional Commits) → `git push`

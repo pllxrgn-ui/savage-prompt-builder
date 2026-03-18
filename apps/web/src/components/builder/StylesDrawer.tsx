@@ -249,7 +249,7 @@ export function StylesDrawer({ templateId, styles }: StylesDrawerProps) {
           {showCreateForm ? (
             <CustomStyleForm
               onSave={(label, content) => {
-                addCustomStyle({ id: crypto.randomUUID(), label, content });
+                addCustomStyle({ label, content });
                 setShowCreateForm(false);
               }}
               onCancel={() => setShowCreateForm(false)}
