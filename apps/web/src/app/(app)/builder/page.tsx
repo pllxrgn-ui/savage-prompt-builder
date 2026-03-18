@@ -117,9 +117,21 @@ function BuilderPageInner() {
   // Hydrate builder from share URL
   useEffect(() => {
     const share = searchParams.get("share");
+    const sid = searchParams.get("sid");
+
     if (share) {
       decodeBuilderState(share);
       window.history.replaceState(null, "", "/builder");
+    } else if (sid) {
+      fetch(`/api/share?id=${sid}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.payload) {
+                decodeBuilderState(data.payload);
+            }
+            window.history.replaceState(null, "", "/builder");
+        })
+        .catch(console.error);
     }
   }, [searchParams]);
 

@@ -48,9 +48,39 @@ export async function generateImages(request: GenerateRequest): Promise<Generate
   }
 
   const data = await res.json();
-  const images: GeneratedImage[] = (data.images as string[]).map((url) => ({
+  const rawBase64Images: string[] = data.images;
+
+  // Upload the base64 images to Supabase via our proxy to get permanent URLs
+  const uploadedImages = await Promise.all(
+    rawBase64Images.map(async (base64Url) => {
+      try {
+        const uploadRes = await fetch('/api/media/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            imageBase64: base64Url,
+            model: request.modelId,
+          }),
+        });
+
+        if (uploadRes.ok) {
+          const uploadData = await uploadRes.json();
+          if (uploadData.url) {
+            return uploadData.url as string;
+          }
+        }
+        console.warn('Failed to upload image to Supabase, falling back to base64');
+        return base64Url;
+      } catch (e) {
+        console.warn('Error uploading image to Supabase, falling back to base64', e);
+        return base64Url;
+      }
+    })
+  );
+
+  const images: GeneratedImage[] = uploadedImages.map((publicUrl) => ({
     id: crypto.randomUUID(),
-    url,
+    url: publicUrl,
     prompt: request.prompt,
     modelId: request.modelId,
     aspectRatio: request.aspectRatio,

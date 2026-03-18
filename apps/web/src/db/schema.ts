@@ -75,3 +75,9 @@ export const media = pgTable('media', {
     starred: boolean('starred').default(false).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+export const sharedLinks = pgTable('shared_links', {
+    id: text('id').primaryKey(), // Using a generated 5-character string
+    payload: text('payload').notNull(), // The base64 compressed data
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+});

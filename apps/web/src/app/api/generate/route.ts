@@ -118,9 +118,9 @@ export async function POST(req: Request) {
 
         const { prompt, model, count, aspectRatio, negativePrompt } = parsed.data;
 
-        const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+        const apiKey = process.env.NANOBANANA_API_KEY;
         if (!apiKey) {
-            return NextResponse.json({ error: 'Google AI API key is not configured' }, { status: 500 });
+            return NextResponse.json({ error: 'NanoBanana API key is not configured' }, { status: 500 });
         }
 
         let images: string[];
