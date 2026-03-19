@@ -18,6 +18,7 @@ import { LucideIcon } from "@/components/ui/LucideIcon";
 import type { GeneratorId, UIStore } from "@/types";
 import { GenerateModal } from "@/components/generate/GenerateModal";
 import { copyShareUrl } from "@/lib/services/share-service";
+import { BorderBeam } from "@/components/ui/border-beam";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -542,17 +543,29 @@ export function PromptOutput() {
                     </Badge>
                   )}
                 </div>
-                <div className={cn(
-                  "border rounded-[var(--radius-lg)] p-3.5 transition-colors",
-                  polishedResult ? "bg-accent-gold/5 border-accent-gold/25" : "bg-bg-input border-glass-border"
-                )}>
-                  <pre className={cn(
-                    "text-sm leading-relaxed break-words whitespace-pre-wrap font-mono",
-                    polishedResult ? "text-accent-gold" : "text-accent"
-                  )}>
-                    {currentDisplayPrompt}
-                  </pre>
-                </div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={polishedResult ? "polished" : "raw"}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className={cn(
+                      "relative border rounded-[var(--radius-lg)] p-3.5",
+                      polishedResult ? "bg-bg-input border-accent-gold/25" : "bg-bg-input border-glass-border"
+                    )}
+                  >
+                    <pre className={cn(
+                      "text-sm leading-relaxed break-words whitespace-pre-wrap font-mono",
+                      polishedResult ? "text-accent-gold" : "text-accent"
+                    )}>
+                      {currentDisplayPrompt}
+                    </pre>
+                    {polishedResult && (
+                      <BorderBeam color="var(--color-accent-gold)" size={60} duration={4} />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
 
                 {/* Polish feedback */}
                 <AnimatePresence>
@@ -639,7 +652,14 @@ export function PromptOutput() {
                       key={star}
                       type="button"
                       aria-label={`Rate ${star} star${star !== 1 ? "s" : ""}`}
-                      onClick={() => setPromptScore(promptScore === star ? null : star)}
+                      onClick={() => {
+                        const newScore = promptScore === star ? null : star;
+                        setPromptScore(newScore);
+                        addToast({
+                          message: newScore ? `Rated ${newScore} star${newScore !== 1 ? "s" : ""} — saved with prompt on Copy/Save` : "Rating cleared",
+                          type: "info",
+                        });
+                      }}
                       className={cn(
                         "p-0.5 transition-colors cursor-pointer",
                         (promptScore ?? 0) >= star ? "text-warn" : "text-text-3/30 hover:text-warn/50",
