@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Copy, Check, ChevronDown, ChefHat, Share2,
   Star, Save, GitBranch, Shuffle, RotateCw,
   FileText, Sparkles, Loader2, Image as ImageIcon,
-  Lightbulb, AlertTriangle,
+  Lightbulb, AlertTriangle, ThumbsUp, ThumbsDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBuilderStore, useUIStore, useHistoryStore } from "@/lib/store";
@@ -65,6 +65,9 @@ export function PromptOutput() {
   const [promptScore, setPromptScore] = useState<number | null>(null);
   const [promptNote, setPromptNote] = useState("");
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+
+  // Polish feedback
+  const [polishRating, setPolishRating] = useState<"up" | "down" | null>(null);
 
   // AI variations state
   const [variationsLoading, setVariationsLoading] = useState(false);
@@ -216,6 +219,7 @@ export function PromptOutput() {
 
       const data = await response.json();
       setPolishedResult(data.result);
+      setPolishRating(null);
       addToast({ message: "Prompt polished successfully!", type: "success" });
     } catch (error) {
       console.error(error);
@@ -549,6 +553,71 @@ export function PromptOutput() {
                     {currentDisplayPrompt}
                   </pre>
                 </div>
+
+                {/* Polish feedback */}
+                <AnimatePresence>
+                  {polishedResult && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="flex items-center gap-2.5 mt-2"
+                    >
+                      <span className="text-[11px] text-text-3">
+                        {polishRating ? "Thanks for the feedback!" : "Satisfied with the polish?"}
+                      </span>
+
+                      {!polishRating && (
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => setPolishRating("up")}
+                            className={cn(
+                              "p-1.5 rounded-full transition-colors cursor-pointer",
+                              "hover:bg-emerald-500/15 hover:text-emerald-400",
+                              "text-text-3",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
+                            )}
+                            aria-label="Good polish"
+                          >
+                            <ThumbsUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => setPolishRating("down")}
+                            className={cn(
+                              "p-1.5 rounded-full transition-colors cursor-pointer",
+                              "hover:bg-red-500/15 hover:text-red-400",
+                              "text-text-3",
+                              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
+                            )}
+                            aria-label="Bad polish"
+                          >
+                            <ThumbsDown className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+
+                      {polishRating && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className={cn(
+                            "p-1.5 rounded-full",
+                            polishRating === "up"
+                              ? "bg-emerald-500/15 text-emerald-400"
+                              : "bg-red-500/15 text-red-400",
+                          )}
+                        >
+                          {polishRating === "up" ? (
+                            <ThumbsUp className="w-3.5 h-3.5" />
+                          ) : (
+                            <ThumbsDown className="w-3.5 h-3.5" />
+                          )}
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Stats */}
