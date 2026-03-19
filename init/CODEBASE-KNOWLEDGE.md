@@ -121,8 +121,8 @@ Actions: savePrompt, deletePrompt, toggleStar, saveRecipe, deleteRecipe
 
 ### auth-store.ts
 ```
-State: user (AuthUser|null), isPro, isAuthenticated, devMode
-Actions: login, logout, setDevMode, setPro
+State: user (AuthUser|null), isPro, isAuthenticated, devMode, credits (default 100)
+Actions: login, logout, setDevMode, setPro, setCredits, deductCredits
 ```
 
 ### ui-store.ts
@@ -140,7 +140,7 @@ Location: `apps/web/src/components/`
 ### ui/ (~35 components)
 **shadcn/ui primitives**: button, card, dialog, input, label, tabs, select, switch, separator, badge, dropdown-menu, slider, scroll-area, sheet, tooltip, accordion  
 **Magic UI**: magic-card, shimmer-button, border-beam, blur-fade, marquee, number-ticker, animated-gradient-text, animated-shiny-text, typing-animation, grid-pattern, dot-pattern, circuit-traces, AmbientGlow  
-**Custom**: LucideIcon (dual-library: ~80 Lucide + 15 Phosphor icons, use `"ph:Name"` prefix for Phosphor), AccentPicker, AnimatedLayout (PageTransition, StaggerContainer, FadeUpItem), ProUpgradeCard, ThemeToggle, ToastProvider, MasonryShowcase (4-column vertical Marquee with showcase images)
+**Custom**: LucideIcon (dual-library: ~80 Lucide + 15 Phosphor icons, use `"ph:Name"` prefix for Phosphor), AccentPicker, AnimatedLayout (PageTransition, StaggerContainer, FadeUpItem), ProUpgradeCard, ThemeToggle, ToastProvider, MasonryShowcase (4-column vertical Marquee with showcase images), CreditBalance (color-coded credit pill with Zap icon)
 
 ### builder/ (18 components)
 - `FieldInput.tsx` — Template field text inputs
@@ -161,12 +161,13 @@ Location: `apps/web/src/components/`
 - `MockupPanel.tsx` — Mockup settings (shadcn Select + Switch, Lucide icons, color swatches)
 - `SuggestionChips.tsx` — Quick-select chips
 - `PlatformDropdown.tsx` — Generator selector
+- `AISuggestButton.tsx` — AI-powered auto-fill for empty builder fields (calls `/api/ai/suggest`)
 
 ### library/ (4 components)
 PromptCard, RecipeCard, MediaGrid, DiffModal
 
-### generate/ (1 component)
-GenerateModal
+### generate/ (2 components)
+GenerateModal, ValidationGate (thumbs up/down feedback overlay after generation)
 
 ### layout/ (4 components)
 TopNav, Sidebar, TopBar, BottomNav
@@ -455,4 +456,5 @@ POLLINATIONS_API_KEY=
 
 | Date | Changes |
 |------|---------|
+| 2026-03-19 | L-series sprint: CreditBalance component, ValidationGate component, AISuggestButton component. auth-store gains credits state + actions. SavedPrompt type extended. loadRecipe + PromptCard.handleLoad fixed for full field restore. builder-store count: 19 → 19 components, generate count: 1 → 2 components. |
 | 2026-03-13 | Initial creation. Emoji removal from mockup-config (→ Lucide icons + hex color swatches). MockupPanel upgraded to shadcn Select + Switch. LucideIcon expanded to 64 icons. |

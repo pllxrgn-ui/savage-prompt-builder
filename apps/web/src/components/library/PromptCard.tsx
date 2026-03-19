@@ -50,7 +50,13 @@ export function PromptCard({ prompt, onSelectDiff, isDiffSelected }: PromptCardP
       keywords: prompt.keywords,
       negative: prompt.negative,
       generatorId: prompt.generatorId,
+      customColors: prompt.customColors,
+      phrases: prompt.phrases,
+      garmentMode: prompt.garmentMode,
+      referenceImageUrl: prompt.referenceImageUrl,
+      variables: prompt.variables,
       variations: prompt.variations,
+      mockup: prompt.mockup,
     });
     addToast({ message: "Prompt loaded into builder", type: "info" });
   }

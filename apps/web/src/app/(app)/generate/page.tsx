@@ -23,7 +23,9 @@ import { IMAGE_GEN_MODELS } from "@/lib/data";
 import { generateImages, type GeneratedImage } from "@/lib/services/generate-service";
 import { saveMedia } from "@/lib/services/media-service";
 import { useUIStore } from "@/lib/store";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { ValidationGate } from "@/components/generate/ValidationGate";
 
 /* ── Constants ── */
 const GOOGLE_MODELS = IMAGE_GEN_MODELS.filter((m) => m.provider === "google");
@@ -194,6 +196,7 @@ function SkeletonGrid({ count, ratio }: { count: number; ratio: string }) {
 function GeneratePageInner() {
   const searchParams = useSearchParams();
   const addToast = useUIStore((s) => s.addToast);
+  const { credits, deductCredits } = useAuth();
 
   const initialPrompt = searchParams.get("prompt") ?? "";
 
@@ -210,6 +213,8 @@ function GeneratePageInner() {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [hasGenerated, setHasGenerated] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
+  const [creditsUsed, setCreditsUsed] = useState(0);
 
   const selectedModel = GOOGLE_MODELS.find((m) => m.id === modelId) ?? GOOGLE_MODELS[0];
 
@@ -222,9 +227,18 @@ function GeneratePageInner() {
 
   const handleGenerate = useCallback(async () => {
     if (!prompt.trim() || loading) return;
+
+    const cost = count; // 1 credit per image
+    if (!deductCredits(cost)) {
+      addToast({ message: "Not enough credits — upgrade or wait for refresh", type: "error" });
+      return;
+    }
+
+    setCreditsUsed(cost);
     setLoading(true);
     setImages([]);
     setHasGenerated(true);
+    setShowValidation(false);
     try {
       const job = await generateImages({
         prompt: prompt.trim(),
@@ -235,13 +249,14 @@ function GeneratePageInner() {
       });
       setImages(job.images);
       saveMedia(job.images);
+      setShowValidation(true);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Generation failed";
       addToast({ message: msg, type: "error" });
     } finally {
       setLoading(false);
     }
-  }, [prompt, modelId, count, ratio, negativePrompt, loading, addToast]);
+  }, [prompt, modelId, count, ratio, negativePrompt, loading, addToast, deductCredits]);
 
   function handleDownload(image: GeneratedImage, index: number) {
     const a = document.createElement("a");
@@ -452,6 +467,7 @@ function GeneratePageInner() {
               <span className="flex items-center gap-2">
                 <Zap className="w-4 h-4" />
                 Generate {count > 1 ? `${count} Images` : "Image"}
+                <span className="text-white/60 text-xs">({count} cr)</span>
               </span>
             )}
           </Button>
@@ -506,22 +522,48 @@ function GeneratePageInner() {
           ) : loading ? (
             <SkeletonGrid count={count} ratio={ratio} />
           ) : (
-            <div
-              className={cn(
-                "grid gap-4",
-                images.length === 1 ? "grid-cols-1 max-w-lg" : "grid-cols-1 sm:grid-cols-2",
+            <div className="space-y-4">
+              {/* Credit usage badge */}
+              {creditsUsed > 0 && (
+                <div className="flex items-center gap-2 text-xs text-text-3">
+                  <Zap className="w-3 h-3 text-accent" />
+                  <span>{creditsUsed} credit{creditsUsed > 1 ? "s" : ""} used</span>
+                  <span className="text-text-3/50">·</span>
+                  <span>{credits} remaining</span>
+                </div>
               )}
-            >
-              {images.map((img, i) => (
-                <ImageResultCard
-                  key={img.id}
-                  image={img}
-                  index={i}
-                  ratio={ratio}
-                  onDownload={() => handleDownload(img, i)}
-                  onCopy={() => handleCopyPrompt(img)}
+
+              <div
+                className={cn(
+                  "grid gap-4",
+                  images.length === 1 ? "grid-cols-1 max-w-lg" : "grid-cols-1 sm:grid-cols-2",
+                )}
+              >
+                {images.map((img, i) => (
+                  <ImageResultCard
+                    key={img.id}
+                    image={img}
+                    index={i}
+                    ratio={ratio}
+                    onDownload={() => handleDownload(img, i)}
+                    onCopy={() => handleCopyPrompt(img)}
+                  />
+                ))}
+              </div>
+
+              {/* Validation gate — floats below results */}
+              <div className="flex justify-center pt-2">
+                <ValidationGate
+                  visible={showValidation}
+                  onRate={(rating) => {
+                    addToast({
+                      message: rating === "up" ? "Glad you liked it!" : "We'll improve — thanks for feedback",
+                      type: "info",
+                    });
+                  }}
+                  onDismiss={() => setShowValidation(false)}
                 />
-              ))}
+              </div>
             </div>
           )}
         </motion.div>

@@ -150,6 +150,7 @@ export function PromptOutput() {
       fieldData: templateFields,
       styles: selectedStyles,
       palette: selectedPalette,
+      customColors,
       keywords: selectedKeywords,
       negative: negativePrompt,
       starred: promptStarred,
@@ -158,7 +159,12 @@ export function PromptOutput() {
       parentId: null,
       version: 1,
       projectId: selectedProject,
+      phrases: selectedPhrases,
+      garmentMode: garmentMode ?? null,
+      referenceImageUrl: referenceImageUrl ?? null,
+      variables,
       variations,
+      mockup: mockup.enabled ? mockup : null,
     });
 
     addToast({ message: "Prompt copied and saved to history!", type: "success" });
@@ -239,6 +245,7 @@ export function PromptOutput() {
       fieldData: templateFields,
       styles: selectedStyles,
       palette: selectedPalette,
+      customColors,
       keywords: selectedKeywords,
       negative: negativePrompt,
       starred: promptStarred,
@@ -247,7 +254,12 @@ export function PromptOutput() {
       parentId: null,
       version: 1,
       projectId: selectedProject,
+      phrases: selectedPhrases,
+      garmentMode: garmentMode ?? null,
+      referenceImageUrl: referenceImageUrl ?? null,
+      variables,
       variations,
+      mockup: mockup.enabled ? mockup : null,
     });
     addToast({ message: "Prompt saved!", type: "success" });
   };
@@ -268,13 +280,19 @@ export function PromptOutput() {
       fieldData: templateFields,
       styles: selectedStyles,
       palette: selectedPalette,
+      customColors,
       keywords: selectedKeywords,
       negative: negativePrompt,
       starred: promptStarred,
       score: promptScore,
       note: promptNote,
       projectId: selectedProject,
+      phrases: selectedPhrases,
+      garmentMode: garmentMode ?? null,
+      referenceImageUrl: referenceImageUrl ?? null,
+      variables,
       variations,
+      mockup: mockup.enabled ? mockup : null,
     });
     addToast({ message: `Iteration v${lastSaved.version + 1} saved!`, type: "success" });
   };

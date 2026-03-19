@@ -34,6 +34,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { CreditBalance } from "@/components/ui/CreditBalance";
 
 /* ── Nav configuration ── */
 const NAV_ITEMS = [
@@ -215,7 +216,9 @@ export function MobileTopBar() {
       </Link>
 
       {isAuthenticated && user ? (
-        <Link href="/settings" className="cursor-pointer" aria-label="Profile">
+        <div className="flex items-center gap-2">
+          <CreditBalance compact />
+          <Link href="/settings" className="cursor-pointer" aria-label="Profile">
           {user.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -230,6 +233,7 @@ export function MobileTopBar() {
             </div>
           )}
         </Link>
+        </div>
       ) : (
         <Link
           href="/login"
@@ -374,6 +378,9 @@ export function TopNav() {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
+          {/* Credit balance */}
+          <CreditBalance />
+
           {/* Pricing CTA */}
           <Link
             href="/pricing"

@@ -4,10 +4,10 @@
 ---
 
 ## Current Status
-**Phase:** Phase 5 — UI Polish + New Pages (active)  
-**Last updated:** 2026-03-18  
-**Last session:** UI polish sprint — Nav reorder (Builder first), mobile bottom nav redesign (elevated floating Builder button), TemplateCard 2-column slideshow layout, builder step nav with icon-circle dots + named Prev/Next, pricing page `/pricing`, UserMenu pricing link. TS fixes from git pull.  
-**Next session should start at:** Template showcase image generation script (Pollinations.ai → `public/showcase/templates/`) OR Stripe integration for pricing page
+**Phase:** L-Series Frontend Sprint — COMPLETE ✅  
+**Last updated:** 2026-03-19  
+**Last session:** L-series sprint — implemented all 7 UAT-ready features: CreditBalance display, ValidationGate, generation results credit integration, AI Suggest button, history restore fixes, responsive audit + fixes. TypeScript: 0 errors.  
+**Next session should start at:** Visual QA/UAT of all L-series features in browser, OR Redesign Phase 1 (Magic UI install + typography + globals.css tokens), OR Stripe integration
 
 ---
 
@@ -71,6 +71,36 @@
 - React 19.2.3 installed (19.2.4 available)
 - Turbopack is the default bundler now (no webpack)
 - `@/*` path alias already configured by create-next-app
+
+### 2026-03-19 — L-Series Sprint (All 7 UAT Features)
+**Completed:**
+- **L4: Credit Balance** — `CreditBalance.tsx` component (color-coded pill: green/amber/red), added `credits` state + `setCredits`/`deductCredits` to `auth-store.ts`, exposed in `useAuth` hook, added `credits` column to DB schema, rendered in TopNav desktop + mobile
+- **L2: Validation Gate** — `ValidationGate.tsx` (animated thumbs up/down overlay after generation, auto-dismiss 10s, "Thanks!" feedback)
+- **L3: Generation Results Screen** — credit deduction per image in `handleGenerate`, insufficient credits error toast, credit usage badge, cost indicator "(N cr)" on Generate button, ValidationGate integration
+- **L6: AI Polish + AI Suggest** — `AISuggestButton.tsx` (calls `/api/ai/suggest`, auto-fills empty fields with AI suggestions), placed above fields area in builder
+- **L5: History Restore QA + Fix** — `loadRecipe` now restores `customColors`; `PromptCard.handleLoad` passes all fields (customColors, phrases, garmentMode, referenceImageUrl, variables, mockup); `SavedPrompt` type extended; all 3 save operations in `PromptOutput.tsx` include full field set
+- **L7: Responsive Audit + Fixes** — builder page height calc accounts for mobile tab bar (`h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)]`), library page `pb-20`, home page `pb-24`
+- **Cleanup:** Removed unused `CreditBalance` import from generate page
+- **TypeScript:** 0 errors (`npx tsc --noEmit`)
+
+**New files:**
+- `apps/web/src/components/ui/CreditBalance.tsx`
+- `apps/web/src/components/generate/ValidationGate.tsx`
+- `apps/web/src/components/builder/AISuggestButton.tsx`
+
+**Modified files:**
+- `apps/web/src/lib/store/auth-store.ts` — credits state + actions
+- `apps/web/src/hooks/useAuth.ts` — expose credits
+- `apps/web/src/db/schema.ts` — credits column
+- `apps/web/src/components/layout/TopNav.tsx` — CreditBalance in nav
+- `apps/web/src/app/(app)/generate/page.tsx` — credit deduction + ValidationGate + cost display
+- `apps/web/src/app/(app)/builder/page.tsx` — AISuggestButton + mobile height fix
+- `apps/web/src/lib/store/builder-store.ts` — loadRecipe customColors fix
+- `apps/web/src/components/library/PromptCard.tsx` — handleLoad full fields
+- `apps/web/src/types/generation.ts` — SavedPrompt extended fields
+- `apps/web/src/components/builder/PromptOutput.tsx` — save operations with full fields
+- `apps/web/src/app/(app)/library/page.tsx` — mobile bottom padding
+- `apps/web/src/app/(app)/home/page.tsx` — mobile bottom padding
 
 ### 2026-03-18 — UI Polish Sprint (Nav, TemplateCard, Builder Step Nav, Pricing)
 **Completed:**

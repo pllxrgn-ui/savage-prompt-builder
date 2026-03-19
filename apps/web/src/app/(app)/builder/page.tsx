@@ -30,6 +30,7 @@ import { PlatformDropdown } from "@/components/builder/PlatformDropdown";
 import { BuilderActions } from "@/components/builder/BuilderActions";
 import { UndoRedo } from "@/components/builder/UndoRedo";
 
+import { AISuggestButton } from "@/components/builder/AISuggestButton";
 import { VariablesPanel } from "@/components/builder/VariablesPanel";
 import { VariationTabs } from "@/components/builder/VariationTabs";
 import { SaveRecipeModal } from "@/components/builder/SaveRecipeModal";
@@ -176,7 +177,7 @@ function BuilderPageInner() {
 
   if (!template) {
     return (
-      <div className="flex flex-col md:flex-row h-[calc(100dvh-64px)] overflow-hidden">
+      <div className="flex flex-col md:flex-row h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)] overflow-hidden">
 
         {/* ── Mobile: Horizontal category chips ── */}
         <div className="md:hidden shrink-0 border-b border-glass-border bg-bg-1 px-4 py-3">
@@ -314,7 +315,7 @@ function BuilderPageInner() {
   return (
     <>
       {/* Full-height three-panel workspace */}
-      <div className="flex flex-col h-[calc(100dvh-64px)]">
+      <div className="flex flex-col h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)]">
 
         {/* Top bar */}
         <div className="flex items-center gap-3 px-4 md:px-6 py-3 border-b border-glass-border bg-bg-1/80 backdrop-blur-sm shrink-0">
@@ -423,6 +424,9 @@ function BuilderPageInner() {
                     <div className="ml-11">
                       {activeStepId === "fields" && (
                         <div className="space-y-4">
+                          <div className="flex items-center justify-end">
+                            <AISuggestButton />
+                          </div>
                           <div className="bg-bg-1 border border-glass-border rounded-[var(--radius-lg)] p-4 space-y-4">
                             {template.fields
                               .filter((f) => !["mood", "colors", "avoid"].includes(f.id))

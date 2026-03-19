@@ -9,6 +9,7 @@ export interface SavedPrompt {
   fieldData: Record<string, string>;
   styles: string[];
   palette: string | null;
+  customColors?: string[];
   keywords: string[];
   negative: string;
   starred: boolean;
@@ -17,7 +18,12 @@ export interface SavedPrompt {
   parentId: string | null;
   version: number;
   projectId: string | null;
+  phrases?: string[];
+  garmentMode?: "dark" | "light" | null;
+  referenceImageUrl?: string | null;
+  variables?: Record<string, string>;
   variations: Record<string, string>[];
+  mockup?: { enabled: boolean; item: string; color: string; display: string } | null;
   createdAt: string;
   updatedAt: string;
 }

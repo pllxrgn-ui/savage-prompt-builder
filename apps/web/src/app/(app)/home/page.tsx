@@ -336,7 +336,7 @@ export default function HomePage() {
       {/* Hero glow backdrop */}
       <div className="pointer-events-none fixed top-0 left-0 right-0 h-[500px] opacity-60 bg-hero-glow" />
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-10 py-10 space-y-10">
+      <div className="relative max-w-7xl mx-auto px-6 md:px-10 py-10 pb-24 md:pb-10 space-y-10">
 
         {/* ── HERO ── */}
         <section className="pt-2 md:pt-6">
