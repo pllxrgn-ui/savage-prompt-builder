@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Crown } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -25,11 +26,12 @@ export function ProUpgradeCard({ feature, description, className }: ProUpgradeCa
       {description && (
         <p className="text-xs text-text-2 mb-4 max-w-xs">{description}</p>
       )}
-      <button
-        className="px-4 py-2 rounded-lg bg-accent text-white text-xs font-semibold hover:opacity-90 transition-opacity"
+      <Link
+        href="/pricing"
+        className="px-4 py-2 rounded-lg bg-accent text-white text-xs font-semibold hover:opacity-90 transition-opacity cursor-pointer"
       >
         Upgrade to Pro
-      </button>
+      </Link>
     </div>
   );
 }

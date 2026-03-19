@@ -4,10 +4,10 @@
 ---
 
 ## Current Status
-**Phase:** L-Series Frontend Sprint — COMPLETE ✅  
+**Phase:** Post L-Series — Visual QA & UI Polish COMPLETE ✅  
 **Last updated:** 2026-03-19  
-**Last session:** L-series sprint — implemented all 7 UAT-ready features: CreditBalance display, ValidationGate, generation results credit integration, AI Suggest button, history restore fixes, responsive audit + fixes. TypeScript: 0 errors.  
-**Next session should start at:** Visual QA/UAT of all L-series features in browser, OR Redesign Phase 1 (Magic UI install + typography + globals.css tokens), OR Stripe integration
+**Last session:** Visual QA + UI polish — fixed mobile builder gap, template card hover states, chip strip cutoff, pricing/upgrade navigation, Dev Mode infrastructure. TypeScript: 0 errors.  
+**Next session should start at:** Redesign Phase 1 (Magic UI install + typography + globals.css tokens), OR Stripe integration, OR image quality review
 
 ---
 
@@ -71,6 +71,27 @@
 - React 19.2.3 installed (19.2.4 available)
 - Turbopack is the default bundler now (no webpack)
 - `@/*` path alias already configured by create-next-app
+
+### 2026-03-19 Session 2 — Visual QA & UI Polish Sprint
+**Completed:**
+- **Dev Mode infrastructure:** Fixed AuthProvider zeroing credits on every page load (devMode guard); added Dev Mode toggle to Settings page
+- **Mobile builder gap fix:** Desktop TopNav=56px, Mobile TopBar+TabBar=112px. Fixed builder height calc to `h-[calc(100dvh-112px)] md:h-[calc(100dvh-56px)]` (was miscalculated as 128px/64px)
+- **Template card hover fix:** Replaced harsh per-color accent borders with subtle `hover:border-white/[0.12]` across GROUP_CARD_ACCENTS + default accent; moved `hover:bg-glass-hover` from inner metadata div to outer `<button>` to fix mobile partial-highlight + desktop seam
+- **Chip strip cutoff/symmetry:** Added `pl-6 pr-6` inside scroll area + left/right fade gradients (`from-bg-1 to-transparent`) for visual scroll hints
+- **Pricing/Upgrade navigation:** TopNav "Upgrade to Pro" dropdown link changed from `/settings` to `/pricing`; ProUpgradeCard button replaced with `<Link href="/pricing">` (was non-functional `<button>`)
+- **Layout fix:** Removed `pb-16 md:pb-0` from `(app)/layout.tsx` (redundant bottom padding)
+- **Pricing page padding:** Added `pb-24 sm:pb-28` for mobile nav clearance
+- **TypeScript:** 0 errors (`npx tsc --noEmit`)
+
+**Modified files:**
+- `apps/web/src/components/auth/AuthProvider.tsx` — devMode guard
+- `apps/web/src/app/(app)/settings/page.tsx` — Dev Mode toggle
+- `apps/web/src/app/(app)/layout.tsx` — removed redundant bottom padding
+- `apps/web/src/app/(app)/builder/page.tsx` — height calc fix (2 instances), chip strip fade gradients + padding
+- `apps/web/src/components/builder/TemplateCard.tsx` — hover border + bg location fix
+- `apps/web/src/components/layout/TopNav.tsx` — "Upgrade to Pro" → `/pricing`
+- `apps/web/src/components/ui/ProUpgradeCard.tsx` — button → Link to `/pricing`
+- `apps/web/src/app/(app)/pricing/page.tsx` — bottom padding for mobile
 
 ### 2026-03-19 — L-Series Sprint (All 7 UAT Features)
 **Completed:**

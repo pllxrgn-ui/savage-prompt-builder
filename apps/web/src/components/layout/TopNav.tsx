@@ -145,7 +145,7 @@ function UserMenu() {
             </div>
           ) : (
             <Link
-              href="/settings"
+              href="/pricing"
               className="mt-2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-accent/10 text-accent text-[11px] font-semibold w-fit hover:bg-accent/20 transition-colors cursor-pointer"
             >
               <Zap className="w-3 h-3" />

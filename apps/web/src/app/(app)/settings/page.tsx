@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 
 export default function SettingsPage() {
   const { savedPrompts, recipes, clearHistory, savePrompt, saveRecipe } =
@@ -66,7 +67,7 @@ export default function SettingsPage() {
   })));
 
   const addToast = useUIStore((s: UIStore) => s.addToast);
-  const { user, isPro, isAuthenticated, devMode, setPro } = useAuth();
+  const { user, isPro, isAuthenticated, devMode, setDevMode, setPro } = useAuth();
   const { handleUpgrade, isLoading } = useProGate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -686,6 +687,20 @@ export default function SettingsPage() {
                   {isAuthenticated ? "Cloud Secured (Supabase + Local Cache)" : "Using Browser LocalStorage (persist enabled)"}
                 </p>
               </div>
+            </div>
+
+            <Separator />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-text-1">Dev Mode</p>
+                <p className="text-xs text-text-2 mt-0.5">Simulate authenticated user with 100 credits. No real Supabase session required.</p>
+              </div>
+              <Switch
+                checked={devMode}
+                onCheckedChange={(on) => setDevMode(on)}
+                aria-label="Toggle dev mode"
+              />
             </div>
           </Card>
         </section>

@@ -14,7 +14,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <AmbientGlow />
       <MobileTopBar />
       <TopNav />
-      <main className="flex-1 relative pb-16 md:pb-0">
+      <main className="flex-1 relative">
         <PageTransitionWrapper>
           {children}
         </PageTransitionWrapper>

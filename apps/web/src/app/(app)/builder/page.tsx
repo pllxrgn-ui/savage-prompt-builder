@@ -168,16 +168,16 @@ function BuilderPageInner() {
 
   // Per-group card accent colors passed to TemplateCard
   const GROUP_CARD_ACCENTS: Record<string, { text: string; bg: string; bgHover: string; border: string; titleHover: string }> = {
-    "design-print": { text: "text-accent",       bg: "bg-accent/10",       bgHover: "group-hover:bg-accent/15",       border: "hover:border-accent/30",       titleHover: "group-hover:text-accent" },
-    "branding":     { text: "text-violet-400",   bg: "bg-violet-500/10",   bgHover: "group-hover:bg-violet-500/15",   border: "hover:border-violet-400/30", titleHover: "group-hover:text-violet-400" },
-    "art":          { text: "text-rose-400",     bg: "bg-rose-500/10",     bgHover: "group-hover:bg-rose-500/15",     border: "hover:border-rose-400/30",   titleHover: "group-hover:text-rose-400" },
-    "product":      { text: "text-emerald-400",  bg: "bg-emerald-500/10",  bgHover: "group-hover:bg-emerald-500/15",  border: "hover:border-emerald-400/30",titleHover: "group-hover:text-emerald-400" },
-    "other":        { text: "text-sky-400",      bg: "bg-sky-500/10",      bgHover: "group-hover:bg-sky-500/15",      border: "hover:border-sky-400/30",    titleHover: "group-hover:text-sky-400" },
+    "design-print": { text: "text-accent",       bg: "bg-accent/10",       bgHover: "group-hover:bg-accent/15",       border: "hover:border-white/[0.12]",  titleHover: "group-hover:text-accent" },
+    "branding":     { text: "text-violet-400",   bg: "bg-violet-500/10",   bgHover: "group-hover:bg-violet-500/15",   border: "hover:border-white/[0.12]",  titleHover: "group-hover:text-violet-400" },
+    "art":          { text: "text-rose-400",     bg: "bg-rose-500/10",     bgHover: "group-hover:bg-rose-500/15",     border: "hover:border-white/[0.12]",  titleHover: "group-hover:text-rose-400" },
+    "product":      { text: "text-emerald-400",  bg: "bg-emerald-500/10",  bgHover: "group-hover:bg-emerald-500/15",  border: "hover:border-white/[0.12]",  titleHover: "group-hover:text-emerald-400" },
+    "other":        { text: "text-sky-400",      bg: "bg-sky-500/10",      bgHover: "group-hover:bg-sky-500/15",      border: "hover:border-white/[0.12]",  titleHover: "group-hover:text-sky-400" },
   };
 
   if (!template) {
     return (
-      <div className="flex flex-col md:flex-row h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)] overflow-hidden">
+      <div className="flex flex-col md:flex-row h-[calc(100dvh-112px)] md:h-[calc(100dvh-56px)] overflow-hidden">
 
         {/* ── Mobile: Horizontal category chips ── */}
         <div className="md:hidden shrink-0 border-b border-glass-border bg-bg-1 px-4 py-3">
@@ -187,7 +187,9 @@ function BuilderPageInner() {
             </div>
             <h1 className="text-sm font-heading font-bold text-text-1">Choose Canvas</h1>
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <div className="relative">
+          <div className="flex gap-2 overflow-x-auto pb-1 pl-6 pr-6 scrollbar-none">
+          
             {TEMPLATE_GROUPS.map((group) => {
               const isActive = group.id === activeGroupId;
               const accentClass = GROUP_ACCENTS[group.id] ?? GROUP_ACCENTS["other"];
@@ -207,6 +209,9 @@ function BuilderPageInner() {
                 </button>
               );
             })}
+          </div>
+            <div className="absolute left-0 top-0 bottom-1 w-8 bg-gradient-to-r from-bg-1 to-transparent pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-1 w-8 bg-gradient-to-l from-bg-1 to-transparent pointer-events-none" />
           </div>
         </div>
 
@@ -315,7 +320,7 @@ function BuilderPageInner() {
   return (
     <>
       {/* Full-height three-panel workspace */}
-      <div className="flex flex-col h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)]">
+      <div className="flex flex-col h-[calc(100dvh-112px)] md:h-[calc(100dvh-56px)]">
 
         {/* Top bar */}
         <div className="flex items-center gap-3 px-4 md:px-6 py-3 border-b border-glass-border bg-bg-1/80 backdrop-blur-sm shrink-0">
