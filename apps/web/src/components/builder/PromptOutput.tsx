@@ -365,20 +365,17 @@ export function PromptOutput() {
   return (
     <div className="relative flex flex-col h-full overflow-hidden bg-bg-1">
 
-      {/* Shimmer glow when output exists */}
+      {/* Subtle pulse glow when output exists */}
       {(result || polishedResult) && (
-        <motion.div
+        <div
           className="absolute inset-0 rounded-xl pointer-events-none z-0"
           style={{
             background: polishedResult
-              ? "linear-gradient(90deg, transparent 0%, var(--color-accent2) 50%, transparent 100%)"
-              : "linear-gradient(90deg, transparent 0%, var(--color-accent) 50%, transparent 100%)",
-            backgroundSize: "200% 100%",
-            opacity: 0.08,
-            filter: "blur(12px)",
+              ? "radial-gradient(ellipse at 50% 40%, var(--color-accent2) 0%, transparent 70%)"
+              : "radial-gradient(ellipse at 50% 40%, var(--color-accent) 0%, transparent 70%)",
+            filter: "blur(20px)",
+            animation: "pulse-glow-bg 3s ease-in-out infinite",
           }}
-          animate={{ backgroundPosition: ["200% 0%", "-200% 0%"] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
         />
       )}
 
@@ -578,7 +575,7 @@ export function PromptOutput() {
                       className="flex items-center gap-2.5 mt-2"
                     >
                       <span className="text-[11px] text-text-3">
-                        {polishRating ? "Thanks for the feedback!" : "Satisfied with the polish?"}
+                        {polishRating === "down" ? "Re-polishing..." : polishRating ? "Thanks for the feedback!" : "Satisfied with the polish?"}
                       </span>
 
                       {!polishRating && (
@@ -596,7 +593,15 @@ export function PromptOutput() {
                             <ThumbsUp className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => setPolishRating("down")}
+                            onClick={() => {
+                              setPolishRating("down");
+                              // Auto re-polish after brief feedback display
+                              setTimeout(() => {
+                                setPolishedResult(null);
+                                setPolishRating(null);
+                                handlePolish();
+                              }, 800);
+                            }}
                             className={cn(
                               "p-1.5 rounded-full transition-colors cursor-pointer",
                               "hover:bg-red-500/15 hover:text-red-400",

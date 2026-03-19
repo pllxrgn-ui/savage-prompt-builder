@@ -222,6 +222,16 @@ body {
   100% { offset-distance: 100%; }
 }
 
+@keyframes shimmer-wave {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse-glow-bg {
+  0%, 100% { opacity: 0.04; }
+  50% { opacity: 0.1; }
+}
+
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 8px rgba(255, 107, 0, 0.15); }
   50% { box-shadow: 0 0 20px rgba(255, 107, 0, 0.3); }

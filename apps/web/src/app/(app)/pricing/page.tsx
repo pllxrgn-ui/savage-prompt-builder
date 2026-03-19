@@ -71,7 +71,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
     <div className="border-b border-glass-border last:border-0">
       <button
         onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
+        aria-expanded={open ? "true" : "false"}
         className="w-full flex items-center justify-between gap-4 py-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
       >
         <span className="text-sm font-medium text-text-1">{q}</span>
@@ -116,7 +116,8 @@ export default function PricingPage() {
         </span>
         <button
           role="switch"
-          aria-checked={yearly}
+          aria-checked={yearly ? "true" : "false"}
+          aria-label="Toggle yearly billing"
           onClick={() => setYearly((v) => !v)}
           className={cn(
             "relative w-11 h-6 rounded-full transition-colors duration-200 cursor-pointer",

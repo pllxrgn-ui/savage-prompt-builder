@@ -19,11 +19,13 @@ export function ValidationGate({
   autoHideMs = 10000,
 }: ValidationGateProps) {
   const [rated, setRated] = useState<"up" | "down" | null>(null);
+  const [prevVisible, setPrevVisible] = useState(visible);
 
-  // Reset when visibility changes
-  useEffect(() => {
+  // Reset when visibility changes (render-time adjustment — avoids cascading effect)
+  if (visible !== prevVisible) {
+    setPrevVisible(visible);
     if (visible) setRated(null);
-  }, [visible]);
+  }
 
   // Auto-dismiss after timeout
   useEffect(() => {
