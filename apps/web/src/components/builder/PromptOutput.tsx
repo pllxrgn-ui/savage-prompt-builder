@@ -55,6 +55,8 @@ export function PromptOutput() {
 
   const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [shared, setShared] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [isPolishing, setIsPolishing] = useState(false);
   const [polishedResult, setPolishedResult] = useState<string | null>(null);
   const [generateOpen, setGenerateOpen] = useState(false);
@@ -140,6 +142,55 @@ export function PromptOutput() {
     setCopied(true);
     addToast({ message: "Prompt copied!", type: "success" });
     setTimeout(() => setCopied(false), 2000);
+  }
+
+  function handleSaveVary() {
+    if (!result || !activeTemplateId) return;
+    const template = getTemplateById(activeTemplateId);
+    promptService.savePrompt({
+      title: (template?.name ?? "Prompt") + (templateFields.subject ? ` — ${templateFields.subject}` : ""),
+      content: polishedResult || result.full,
+      templateId: activeTemplateId,
+      generatorId: selectedGenerator,
+      fieldData: templateFields,
+      styles: selectedStyles,
+      palette: selectedPalette,
+      keywords: selectedKeywords,
+      negative: negativePrompt,
+      starred: promptStarred,
+      score: promptScore,
+      note: promptNote,
+      parentId: null,
+      version: 1,
+      projectId: selectedProject,
+      variations,
+    });
+    setSaved(true);
+    addToast({ message: "Saved to history!", type: "success" });
+    setTimeout(() => setSaved(false), 2000);
+  }
+
+  async function handleShare() {
+    if (!result || !activeTemplateId) return;
+    setIsSharing(true);
+    try {
+      const payload = JSON.stringify({
+        content: polishedResult || result.full,
+        templateId: activeTemplateId,
+        generatorId: selectedGenerator,
+      });
+      const { id } = await api.share.create(payload);
+      const shareUrl = `${window.location.origin}/s/${id}`;
+      await navigator.clipboard.writeText(shareUrl);
+      setShared(true);
+      addToast({ message: "Share link copied to clipboard!", type: "success" });
+      setTimeout(() => setShared(false), 3000);
+    } catch (err: any) {
+      console.error(err);
+      addToast({ message: "Failed to create share link.", type: "error" });
+    } finally {
+      setIsSharing(false);
+    }
   }
 
   const handlePolish = async () => {
@@ -397,6 +448,44 @@ export function PromptOutput() {
             className="flex-1 rounded-full text-xs hover:text-accent hover:border-accent/40"
           >
             <ImageIcon className="w-3.5 h-3.5 mr-1.5" />Generate
+          </Button>
+        </div>
+
+        {/* Save Vary + Share row */}
+        <div className="flex gap-2">
+          <Button
+            onClick={handleSaveVary}
+            disabled={!result}
+            variant="outline"
+            className={cn(
+              "flex-1 rounded-full text-xs cursor-pointer",
+              saved
+                ? "bg-success/15 text-success border-success/30"
+                : "hover:text-accent hover:border-accent/40",
+            )}
+          >
+            {saved ? <Check className="w-3.5 h-3.5 mr-1.5" /> : <Save className="w-3.5 h-3.5 mr-1.5" />}
+            {saved ? "Saved!" : "Save Vary"}
+          </Button>
+          <Button
+            onClick={handleShare}
+            disabled={!result || isSharing}
+            variant="outline"
+            className={cn(
+              "flex-1 rounded-full text-xs cursor-pointer",
+              shared
+                ? "bg-accent/15 text-accent border-accent/30"
+                : "hover:text-accent hover:border-accent/40",
+            )}
+          >
+            {isSharing ? (
+              <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+            ) : shared ? (
+              <Check className="w-3.5 h-3.5 mr-1.5" />
+            ) : (
+              <Share2 className="w-3.5 h-3.5 mr-1.5" />
+            )}
+            {isSharing ? "Sharing…" : shared ? "Link Copied!" : "Share"}
           </Button>
         </div>
 

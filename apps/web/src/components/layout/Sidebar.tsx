@@ -31,6 +31,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const NAV_ITEMS = [
   { href: "/home", label: "Home", icon: Home },
@@ -108,6 +109,7 @@ function UserSection({
   collapsed?: boolean;
 }) {
   const { user, isPro, isAuthenticated, logout } = useAuth();
+  const router = useRouter();
 
   const initials = user?.name
     ? user.name
@@ -172,7 +174,7 @@ function UserSection({
             variant="ghost"
             size="icon"
             className="h-7 w-7 text-text-3 hover:text-red-400 hover:bg-red-400/10 shrink-0 rounded-lg"
-            onClick={logout}
+            onClick={() => { logout(); router.push("/login"); }}
             aria-label="Log out"
           >
             <LogOut className="w-3.5 h-3.5" />

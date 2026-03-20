@@ -1,7 +1,11 @@
 "use client";
 
 import Link from "next/link";
+<<<<<<< HEAD
 import { usePathname } from "next/navigation";
+=======
+import { usePathname, useRouter } from "next/navigation";
+>>>>>>> 555fa679dfea11fc2d332dad95f8eb89ae8b699c
 import { motion } from "framer-motion";
 import {
   Flame,
@@ -87,6 +91,7 @@ function NavLink({
 /* ── User menu ── */
 function UserMenu() {
   const { user, isPro, isAuthenticated, logout } = useAuth();
+  const router = useRouter();
 
   const initials = user?.name
     ? user.name
@@ -168,7 +173,7 @@ function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-glass-border" />
         <DropdownMenuItem
-          onClick={logout}
+          onClick={() => { logout(); router.push("/login"); }}
           className="rounded-[var(--radius-md)] cursor-pointer focus:bg-red-500/10 text-red-400 focus:text-red-400"
         >
           <LogOut className="w-3.5 h-3.5 mr-2" />

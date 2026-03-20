@@ -7,6 +7,7 @@ import { Flame, Github, Mail, Zap, Loader2, ArrowRight, Sparkles, Wand2 } from "
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { BlurFade } from "@/components/ui/blur-fade";
+import { useAuthStore } from "@/lib/store/auth-store";
 
 /* ── Typing animation for the login hero headline ── */
 const L1 = "Craft prompts";
@@ -111,13 +112,12 @@ export default function LoginPage() {
 
   async function handleDevLogin() {
     setIsLoading(true);
-    const res = await fetch('/api/auth/guest', { method: 'POST' });
-    if (res.ok) {
-      router.push("/home");
-    } else {
-      setError("Failed to start guest session");
-      setIsLoading(false);
-    }
+    // Set dev mode with Pro access for local development
+    useAuthStore.getState().setDevMode(true);
+    useAuthStore.getState().setPro(true);
+    // Also set guest cookie for API routes
+    await fetch('/api/auth/guest', { method: 'POST' });
+    router.push("/home");
   }
 
   return (
@@ -309,7 +309,7 @@ export default function LoginPage() {
                 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <Zap className="w-4 h-4" />
-              Explore as Guest
+              Dev Login (Pro)
             </button>
           </div>
           </BlurFade>
