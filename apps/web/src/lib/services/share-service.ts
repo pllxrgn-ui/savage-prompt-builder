@@ -77,6 +77,30 @@ export function decodeBuilderState(encoded: string): boolean {
   }
 }
 
+export async function getShareUrlAsync(): Promise<{ url: string; tooLong: boolean }> {
+  const encoded = encodeBuilderState();
+  
+  try {
+    const res = await fetch('/api/share', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payload: encoded })
+    });
+    
+    if (res.ok) {
+      const { id } = await res.json();
+      const url = `${window.location.origin}/builder?sid=${id}`;
+      return { url, tooLong: false };
+    }
+  } catch (error) {
+    console.error('Failed to generate short link', error);
+  }
+
+  // Fallback
+  const url = `${window.location.origin}/builder?share=${encoded}`;
+  return { url, tooLong: url.length > MAX_URL_LENGTH };
+}
+
 export function getShareUrl(): { url: string; tooLong: boolean } {
   const encoded = encodeBuilderState();
   const url = `${window.location.origin}/builder?share=${encoded}`;
@@ -87,7 +111,7 @@ export async function copyShareUrl(): Promise<{
   success: boolean;
   tooLong: boolean;
 }> {
-  const { url, tooLong } = getShareUrl();
+  const { url, tooLong } = await getShareUrlAsync();
   await navigator.clipboard.writeText(url);
   return { success: true, tooLong };
 }

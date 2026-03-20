@@ -71,7 +71,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
     <div className="border-b border-glass-border last:border-0">
       <button
         onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
+        aria-expanded={open ? "true" : "false"}
         className="w-full flex items-center justify-between gap-4 py-4 text-left cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
       >
         <span className="text-sm font-medium text-text-1">{q}</span>
@@ -94,7 +94,7 @@ export default function PricingPage() {
   const proPrice = yearly ? (YEARLY_PRO / 12).toFixed(2) : MONTHLY_PRO;
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center px-4 py-20 sm:py-28">
+    <div className="relative min-h-screen flex flex-col items-center px-4 py-20 pb-24 sm:py-28 sm:pb-28">
       {/* Header */}
       <div className="text-center mb-12 max-w-xl">
         <Badge className="mb-4 bg-accent/10 text-accent border-accent/20 rounded-full text-xs font-medium">
@@ -116,7 +116,8 @@ export default function PricingPage() {
         </span>
         <button
           role="switch"
-          aria-checked={yearly}
+          aria-checked={yearly ? "true" : "false"}
+          aria-label="Toggle yearly billing"
           onClick={() => setYearly((v) => !v)}
           className={cn(
             "relative w-11 h-6 rounded-full transition-colors duration-200 cursor-pointer",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Columns2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -77,6 +78,8 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
     return { wordsA, wordsB, shared };
   }, [promptA, promptB, diff]);
 
+  const trapRef = useFocusTrap(open && !!promptA && !!promptB);
+
   return (
     <AnimatePresence>
       {open && promptA && promptB && (
@@ -90,6 +93,10 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
           onKeyDown={(e) => e.key === "Escape" && onClose()}
         >
           <motion.div
+            ref={trapRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="diff-modal-title"
             className="bg-bg-1 border border-accent/8 shadow-2xl w-full max-w-3xl mx-4 max-h-[80vh] flex flex-col rounded-[var(--radius-xl)]"
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -100,7 +107,7 @@ export function DiffModal({ open, onClose, promptA, promptB }: DiffModalProps) {
             <div className="flex items-center justify-between p-5 border-b border-accent/8">
               <div className="flex items-center gap-2">
                 <Columns2 className="w-5 h-5 text-accent" />
-                <h2 className="text-lg font-semibold text-text-1 uppercase tracking-wide">Compare Prompts</h2>
+                <h2 id="diff-modal-title" className="text-lg font-semibold text-text-1 uppercase tracking-wide">Compare Prompts</h2>
               </div>
               <button
                 onClick={onClose}

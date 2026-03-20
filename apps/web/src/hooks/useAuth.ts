@@ -10,8 +10,11 @@ export function useAuth() {
   const devMode = useAuthStore((s) => s.devMode);
   const setDevMode = useAuthStore((s) => s.setDevMode);
   const setPro = useAuthStore((s) => s.setPro);
+  const credits = useAuthStore((s) => s.credits);
+  const setCredits = useAuthStore((s) => s.setCredits);
+  const deductCredits = useAuthStore((s) => s.deductCredits);
 
-  return { user, isPro, isAuthenticated, login, logout, devMode, setDevMode, setPro };
+  return { user, isPro, isAuthenticated, login, logout, devMode, setDevMode, setPro, credits, setCredits, deductCredits };
 }
 
 export type { AuthUser };

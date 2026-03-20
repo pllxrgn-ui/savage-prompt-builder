@@ -336,7 +336,7 @@ export default function HomePage() {
       {/* Hero glow backdrop */}
       <div className="pointer-events-none fixed top-0 left-0 right-0 h-[500px] opacity-60 bg-hero-glow" />
 
-      <div className="relative max-w-7xl mx-auto px-6 md:px-10 py-10 space-y-10">
+      <div className="relative max-w-7xl mx-auto px-6 md:px-10 py-10 pb-24 md:pb-10 space-y-10">
 
         {/* ── HERO ── */}
         <section className="pt-2 md:pt-6">
@@ -373,6 +373,7 @@ export default function HomePage() {
                     }}
                     placeholder="Paste any rough idea… Savage will refine it into a precise prompt"
                     rows={3}
+                    aria-label="Quick prompt polish input"
                     className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-base p-4 pr-36 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/50"
                   />
                   <div className="absolute right-3 bottom-3 flex items-center gap-2">

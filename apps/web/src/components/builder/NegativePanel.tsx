@@ -59,7 +59,7 @@ export function NegativePanel() {
             "w-full px-3 py-2.5 text-xs",
             "bg-bg-input border border-accent/8 rounded-[var(--radius-md)]",
             "text-text-1 placeholder:text-text-2",
-            "focus:outline-none focus:border-accent/40",
+            "focus-visible:outline-none focus-visible:border-accent/40 focus-visible:ring-1 focus-visible:ring-accent/20",
             "transition-all duration-150",
           )}
         />

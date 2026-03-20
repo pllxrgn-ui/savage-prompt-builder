@@ -11,6 +11,7 @@ export interface PromptInput {
     fields: Record<string, string>;
     styles: string[];
     palette: string | null;
+    customColors?: string[];
     keywords: string[];
     negative: string;
     generator: string;

@@ -20,6 +20,7 @@ import { AccentPicker } from "@/components/ui/AccentPicker";
 import { LucideIcon } from "@/components/ui/LucideIcon";
 import { useHistoryStore, useUIStore, useSettingsStore } from "@/lib/store";
 import { useAuth } from "@/hooks/useAuth";
+import { useProGate } from "@/hooks/use-pro-gate";
 import { GENERATORS, STYLE_PACKS, PHRASES } from "@/lib/data";
 import type { HistoryStore, UIStore, SettingsStore, GeneratorId } from "@/types";
 import { useRef, useState } from "react";
@@ -31,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 
 export default function SettingsPage() {
   const { savedPrompts, recipes, clearHistory, savePrompt, saveRecipe } =
@@ -65,7 +67,8 @@ export default function SettingsPage() {
   })));
 
   const addToast = useUIStore((s: UIStore) => s.addToast);
-  const { user, isPro, isAuthenticated, devMode, setPro } = useAuth();
+  const { user, isPro, isAuthenticated, devMode, setDevMode, setPro } = useAuth();
+  const { handleUpgrade, isLoading } = useProGate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /* ---------- Phrase form state ---------- */
@@ -234,8 +237,7 @@ export default function SettingsPage() {
                 )}
               </div>
 
-              {/* Pro/Free toggle (dev mode) */}
-              {/* BACKEND: Auth required — show real user data, link to Stripe portal */}
+              {/* Subscription Tier & Stripe Upgrade */}
               <div className="flex items-center justify-between pt-2 border-t border-glass-border">
                 <div>
                   <p className="text-sm text-text-1 font-medium">Subscription Tier</p>
@@ -243,11 +245,20 @@ export default function SettingsPage() {
                     {isPro ? "Pro — all features unlocked" : "Free — limited features"}
                   </p>
                 </div>
-                <Switch
-                  checked={isPro}
-                  onCheckedChange={(checked) => setPro(checked)}
-                  aria-label="Toggle Pro tier"
-                />
+                {isPro ? (
+                  <Badge variant="outline" className="bg-accent/15 text-accent border-accent/30 font-semibold px-3 py-1">
+                    PRO ACTIVE
+                  </Badge>
+                ) : (
+                  <Button
+                    onClick={handleUpgrade}
+                    disabled={isLoading}
+                    size="sm"
+                    className="bg-accent text-white hover:bg-accent/90 focus-visible:ring-accent"
+                  >
+                    {isLoading ? "Setting up..." : "Upgrade to Pro"}
+                  </Button>
+                )}
               </div>
             </div>
           </section>
@@ -672,8 +683,24 @@ export default function SettingsPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-text-1">Storage Status</p>
-                <p className="text-xs text-text-2 mt-0.5">Using Browser LocalStorage (persist enabled)</p>
+                <p className="text-xs text-text-2 mt-0.5">
+                  {isAuthenticated ? "Cloud Secured (Supabase + Local Cache)" : "Using Browser LocalStorage (persist enabled)"}
+                </p>
               </div>
+            </div>
+
+            <Separator />
+
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-text-1">Dev Mode</p>
+                <p className="text-xs text-text-2 mt-0.5">Simulate authenticated user with 100 credits. No real Supabase session required.</p>
+              </div>
+              <Switch
+                checked={devMode}
+                onCheckedChange={(on) => setDevMode(on)}
+                aria-label="Toggle dev mode"
+              />
             </div>
           </Card>
         </section>

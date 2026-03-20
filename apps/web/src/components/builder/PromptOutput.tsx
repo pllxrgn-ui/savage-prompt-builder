@@ -1,12 +1,11 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Copy, Check, ChevronDown, ChefHat, Share2,
-  Star, Save, GitBranch, Shuffle, RotateCw,
-  FileText, Sparkles, Loader2, Image as ImageIcon,
-  Lightbulb, AlertTriangle,
+  Copy, Check, ChevronDown, Share2,
+  Star, Save, Sparkles, Loader2, Image as ImageIcon,
+  Lightbulb, AlertTriangle, ThumbsUp, ThumbsDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBuilderStore, useUIStore, useHistoryStore } from "@/lib/store";
@@ -17,8 +16,7 @@ import { buildPrompt } from "@/lib/prompt-engine";
 import { LucideIcon } from "@/components/ui/LucideIcon";
 import type { GeneratorId, UIStore } from "@/types";
 import { GenerateModal } from "@/components/generate/GenerateModal";
-import { copyShareUrl } from "@/lib/services/share-service";
-import { Card } from "@/components/ui/card";
+import { BorderBeam } from "@/components/ui/border-beam";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -28,6 +26,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { api } from "@/lib/api";
 
 export function PromptOutput() {
   const {
@@ -60,11 +59,18 @@ export function PromptOutput() {
   const [polishedResult, setPolishedResult] = useState<string | null>(null);
   const [generateOpen, setGenerateOpen] = useState(false);
 
-  // Pre-save metadata (matches prototype: set before saving)
+  // Rewards system state
+  const [currentJobId, setCurrentJobId] = useState<string | null>(null);
+  const [rewardMessage, setRewardMessage] = useState<string | null>(null);
+
+  // Pre-save metadata
   const [promptStarred, setPromptStarred] = useState(false);
   const [promptScore, setPromptScore] = useState<number | null>(null);
   const [promptNote, setPromptNote] = useState("");
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+
+  // Polish feedback
+  const [polishRating, setPolishRating] = useState<"up" | "down" | null>(null);
 
   // AI variations state
   const [variationsLoading, setVariationsLoading] = useState(false);
@@ -90,7 +96,6 @@ export function PromptOutput() {
       mood,
     });
 
-    // Apply variable token replacement
     const varEntries = Object.entries(variables);
     if (varEntries.length === 0) return raw;
 
@@ -121,101 +126,73 @@ export function PromptOutput() {
     mood,
   ]);
 
-  // Clear polished result when the source prompt changes
   useEffect(() => {
     setPolishedResult(null);
+    setCurrentJobId(null);
+    setRewardMessage(null);
   }, [result?.full]);
 
   const activeGen = GENERATORS.find((g) => g.id === selectedGenerator);
 
   async function handleCopy() {
     if (!result || !activeTemplateId) return;
-
-    await navigator.clipboard.writeText(result.full);
+    await navigator.clipboard.writeText(polishedResult || result.full);
     setCopied(true);
-
-    // Generate title from template name + first field
-    const tmpl = getTemplateById(activeTemplateId);
-    const firstFieldValue = Object.values(templateFields).find((v) => v.trim() !== "");
-    const title = tmpl
-      ? tmpl.name + (firstFieldValue ? ` — ${firstFieldValue}` : "")
-      : activeTemplateId.charAt(0).toUpperCase() + activeTemplateId.slice(1).replace(/-/g, " ");
-
-    // Auto-save to history
-    promptService.savePrompt({
-      title,
-      content: result.full,
-      templateId: activeTemplateId,
-      generatorId: selectedGenerator,
-      fieldData: templateFields,
-      styles: selectedStyles,
-      palette: selectedPalette,
-      keywords: selectedKeywords,
-      negative: negativePrompt,
-      starred: promptStarred,
-      score: promptScore,
-      note: promptNote,
-      parentId: null,
-      version: 1,
-      projectId: selectedProject,
-      variations,
-    });
-
-    addToast({ message: "Prompt copied and saved to history!", type: "success" });
+    addToast({ message: "Prompt copied!", type: "success" });
     setTimeout(() => setCopied(false), 2000);
   }
-
-  const handleSaveRecipe = () => {
-    if (!activeTemplateId) return;
-
-    const tmpl = getTemplateById(activeTemplateId);
-    recipeServiceMod.saveRecipe({
-      title: `${tmpl?.name ?? activeTemplateId} Recipe`,
-      templateId: activeTemplateId,
-      generatorId: selectedGenerator,
-      fieldData: templateFields,
-      styles: selectedStyles,
-      palette: selectedPalette,
-      keywords: selectedKeywords,
-      negative: negativePrompt,
-      phrases: selectedPhrases,
-      garmentMode: garmentMode ?? null,
-      referenceImageUrl: referenceImageUrl ?? null,
-      variables,
-      variations,
-      mockup: mockup.enabled ? mockup : null,
-    });
-
-    setSaved(true);
-    addToast({ message: "Recipe saved to your library!", type: "success" });
-    setTimeout(() => setSaved(false), 2000);
-  };
 
   const handlePolish = async () => {
     if (!result || !activeTemplateId || !activeGen) return;
 
     setIsPolishing(true);
+    setRewardMessage(null);
     try {
-      const response = await fetch("/api/ai/polish", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: result.full,
-          generator: activeGen.name,
-          templateId: activeTemplateId,
-        }),
+      const { jobId } = await api.ai.polish({
+        prompt: result.full,
+        generator: activeGen.name,
+        templateId: activeTemplateId,
       });
 
-      if (!response.ok) throw new Error("Failed to polish prompt");
+      setCurrentJobId(jobId);
 
-      const data = await response.json();
-      setPolishedResult(data.result);
-      addToast({ message: "Prompt polished successfully!", type: "success" });
-    } catch (error) {
+      // Wait for async completion
+      const results = await api.generate.waitForCompletion(jobId);
+      
+      if (results && results.length > 0) {
+        setPolishedResult(results[0]);
+        setPolishRating(null);
+        addToast({ message: "Prompt polished successfully!", type: "success" });
+      }
+    } catch (error: any) {
       console.error(error);
-      addToast({ message: "Failed to connect to AI Agent. Check API key.", type: "error" });
+      const msg = error.message?.includes('credits') 
+        ? "Insufficient credits to polish." 
+        : "Failed to connect to AI Agent. Check API key.";
+      addToast({ message: msg, type: "error" });
     } finally {
       setIsPolishing(false);
+    }
+  };
+
+  const handleFeedback = async (isPositive: boolean) => {
+    if (!currentJobId) return;
+    setPolishRating(isPositive ? "up" : "down");
+    try {
+      const data = await api.generate.feedback(currentJobId, isPositive);
+      if (data.rewarded) {
+        setRewardMessage(data.message);
+        addToast({ message: data.message, type: "success" });
+      }
+    } catch (err) {
+      console.error("Feedback error", err);
+    }
+    if (!isPositive) {
+      setTimeout(() => {
+        setPolishedResult(null);
+        setPolishRating(null);
+        handlePolish();
+      }, 800);
     }
   };
 
@@ -223,139 +200,19 @@ export function PromptOutput() {
   const wordCount = result ? result.full.split(/\s+/).filter(Boolean).length : 0;
   const charCount = result ? result.full.length : 0;
 
-  const handleSavePrompt = () => {
-    if (!result || !activeTemplateId) return;
-    const tmpl = getTemplateById(activeTemplateId);
-    const firstFieldValue = Object.values(templateFields).find((v) => v.trim() !== "");
-    const title = tmpl
-      ? tmpl.name + (firstFieldValue ? ` — ${firstFieldValue}` : "")
-      : activeTemplateId;
-
-    promptService.savePrompt({
-      title,
-      content: result.full,
-      templateId: activeTemplateId,
-      generatorId: selectedGenerator,
-      fieldData: templateFields,
-      styles: selectedStyles,
-      palette: selectedPalette,
-      keywords: selectedKeywords,
-      negative: negativePrompt,
-      starred: promptStarred,
-      score: promptScore,
-      note: promptNote,
-      parentId: null,
-      version: 1,
-      projectId: selectedProject,
-      variations,
-    });
-    addToast({ message: "Prompt saved!", type: "success" });
-  };
-
-  const handleIterate = () => {
-    if (!result || !activeTemplateId) return;
-    const lastSaved = savedPrompts.find((p) => p.templateId === activeTemplateId);
-    if (!lastSaved) {
-      handleSavePrompt();
-      return;
-    }
-    const tmpl = getTemplateById(activeTemplateId);
-    promptService.iteratePrompt(lastSaved.id, {
-      title: (tmpl?.name ?? activeTemplateId) + ` v${lastSaved.version + 1}`,
-      content: result.full,
-      templateId: activeTemplateId,
-      generatorId: selectedGenerator,
-      fieldData: templateFields,
-      styles: selectedStyles,
-      palette: selectedPalette,
-      keywords: selectedKeywords,
-      negative: negativePrompt,
-      starred: promptStarred,
-      score: promptScore,
-      note: promptNote,
-      projectId: selectedProject,
-      variations,
-    });
-    addToast({ message: `Iteration v${lastSaved.version + 1} saved!`, type: "success" });
-  };
-
-  const handleVariations = async () => {
-    if (!result || !activeGen) return;
-    setVariationsLoading(true);
-    try {
-      const response = await fetch("/api/ai/variations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: result.full,
-          generator: activeGen.name,
-          count: 3,
-        }),
-      });
-      if (!response.ok) throw new Error("Failed");
-      const data = await response.json();
-      setVariationsResult(data.variations ?? []);
-      addToast({ message: "Variations generated!", type: "success" });
-    } catch {
-      addToast({ message: "Failed to generate variations.", type: "error" });
-    } finally {
-      setVariationsLoading(false);
-    }
-  };
-
-  const handleCopyRaw = async () => {
-    if (!result) return;
-    await navigator.clipboard.writeText(result.positive);
-    addToast({ message: "Raw prompt copied!", type: "success" });
-  };
-
-  const handleRandomFill = () => {
-    if (!activeTemplateId) return;
-    const tmpl = getTemplateById(activeTemplateId);
-    if (!tmpl) return;
-    const { setField } = useBuilderStore.getState();
-    for (const field of tmpl.fields) {
-      if (field.id === "avoid") continue;
-      const presets = getPresetsForField(tmpl.id, field.id);
-      if (presets.length > 0) {
-        setField(field.id, presets[Math.floor(Math.random() * presets.length)]);
-      }
-    }
-    addToast({ message: "Fields randomized!", type: "success" });
-  };
-
-  const handleRemix = () => {
-    if (!activeTemplateId) return;
-    const tmpl = getTemplateById(activeTemplateId);
-    if (!tmpl) return;
-    const { setField } = useBuilderStore.getState();
-    for (const field of tmpl.fields) {
-      if (field.id === "subject" || field.id === "avoid") continue;
-      const presets = getPresetsForField(tmpl.id, field.id);
-      if (presets.length > 0) {
-        setField(field.id, presets[Math.floor(Math.random() * presets.length)]);
-      }
-    }
-    addToast({ message: "Prompt remixed!", type: "success" });
-  };
-
   return (
     <div className="relative flex flex-col h-full overflow-hidden bg-bg-1">
-
-      {/* Shimmer glow when output exists */}
+      {/* Subtle pulse glow when output exists */}
       {(result || polishedResult) && (
-        <motion.div
+        <div
           className="absolute inset-0 rounded-xl pointer-events-none z-0"
           style={{
             background: polishedResult
-              ? "linear-gradient(90deg, transparent 0%, var(--color-accent2) 50%, transparent 100%)"
-              : "linear-gradient(90deg, transparent 0%, var(--color-accent) 50%, transparent 100%)",
-            backgroundSize: "200% 100%",
-            opacity: 0.08,
-            filter: "blur(12px)",
+              ? "radial-gradient(ellipse at 50% 40%, var(--color-accent2) 0%, transparent 70%)"
+              : "radial-gradient(ellipse at 50% 40%, var(--color-accent) 0%, transparent 70%)",
+            filter: "blur(20px)",
+            animation: "pulse-glow-bg 3s ease-in-out infinite",
           }}
-          animate={{ backgroundPosition: ["200% 0%", "-200% 0%"] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
         />
       )}
 
@@ -414,69 +271,6 @@ export function PromptOutput() {
         </DropdownMenu>
       </div>
 
-      {/* Badge row */}
-      <div className="relative px-5 py-2.5 border-b border-glass-border">
-        <div className="flex flex-wrap gap-1.5">
-          {activeTemplateId && (
-            <Badge variant="outline" className="text-[10px] text-accent border-accent/30">
-              {getTemplateById(activeTemplateId)?.name}
-            </Badge>
-          )}
-          {activeGen && (
-            <Badge variant="outline" className="text-[10px] text-text-2">
-              {activeGen.name}
-            </Badge>
-          )}
-          {selectedStyles.length > 0 && (
-            <Badge variant="outline" className="text-[10px] text-accent2 border-accent2/30">
-              {selectedStyles.length} style{selectedStyles.length !== 1 && "s"}
-            </Badge>
-          )}
-          {selectedKeywords.length > 0 && (
-            <Badge variant="outline" className="text-[10px] text-info border-info/30">
-              {selectedKeywords.length} keyword{selectedKeywords.length !== 1 && "s"}
-            </Badge>
-          )}
-          {selectedPalette && (
-            <Badge variant="outline" className="text-[10px] text-text-2">
-              Palette
-            </Badge>
-          )}
-          {mockup.enabled && (
-            <Badge variant="outline" className="text-[10px] text-mockup border-mockup/30">
-              Mockup
-            </Badge>
-          )}
-        </div>
-      </div>
-
-      {/* Phrases */}
-      <div className="relative px-5 py-3.5 border-b border-glass-border">
-        <p className="text-xs font-medium text-text-2 mb-2">
-          Boost Phrases
-        </p>
-        <div className="flex flex-wrap gap-1.5">
-          {PHRASES.map((phrase) => {
-            const isSelected = selectedPhrases.includes(phrase.content);
-            return (
-              <Badge
-                key={phrase.id}
-                variant={isSelected ? "default" : "outline"}
-                className={cn(
-                  "cursor-pointer text-[11px] font-medium transition-all duration-150",
-                  isSelected
-                    ? "bg-accent/15 text-accent border-accent/30 hover:bg-accent/20"
-                    : "text-text-3 hover:text-text-2 hover:bg-bg-3",
-                )}
-                onClick={() => togglePhrase(phrase.content)}
-              >
-                {phrase.label}
-              </Badge>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Scrollable output content */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-5">
@@ -486,29 +280,6 @@ export function PromptOutput() {
             </p>
           ) : (
             <div className="space-y-3">
-              {/* Positive */}
-              <div>
-                <p className="text-xs font-medium text-text-2 mb-1.5">Positive</p>
-                <div className="bg-bg-input border border-glass-border rounded-[var(--radius-md)] p-3.5">
-                  <p className="text-xs text-text-1 leading-relaxed break-words whitespace-pre-wrap">
-                    {result.positive || <span className="text-text-3 italic">Empty</span>}
-                  </p>
-                </div>
-              </div>
-
-              {/* Negative */}
-              {result.negative && (
-                <div>
-                  <p className="text-xs font-medium text-text-2 mb-1.5">Negative</p>
-                <div className="bg-bg-input border border-glass-border rounded-[var(--radius-md)] p-3.5">
-                    <p className="text-xs text-text-2 leading-relaxed break-words whitespace-pre-wrap">
-                      {result.negative}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Full formatted output */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <p className="text-xs font-medium text-text-2">
@@ -520,17 +291,76 @@ export function PromptOutput() {
                     </Badge>
                   )}
                 </div>
-                <div className={cn(
-                  "border rounded-[var(--radius-lg)] p-3.5 transition-colors",
-                  polishedResult ? "bg-accent-gold/5 border-accent-gold/25" : "bg-bg-input border-glass-border"
-                )}>
-                  <pre className={cn(
-                    "text-sm leading-relaxed break-words whitespace-pre-wrap font-mono",
-                    polishedResult ? "text-accent-gold" : "text-accent"
-                  )}>
-                    {currentDisplayPrompt}
-                  </pre>
-                </div>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={polishedResult ? "polished" : "raw"}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className={cn(
+                      "relative border rounded-[var(--radius-lg)] p-3.5",
+                      polishedResult ? "bg-bg-input border-accent-gold/25" : "bg-bg-input border-glass-border"
+                    )}
+                  >
+                    <pre className={cn(
+                      "text-sm leading-relaxed break-words whitespace-pre-wrap font-mono",
+                      polishedResult ? "text-accent-gold" : "text-accent"
+                    )}>
+                      {currentDisplayPrompt}
+                    </pre>
+                    {polishedResult && (
+                      <BorderBeam color="var(--color-accent-gold)" size={60} duration={4} />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Polish feedback / Reward UI */}
+                <AnimatePresence>
+                  {polishedResult && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex flex-col gap-2 mt-3 p-3 rounded-lg bg-bg-2 border border-glass-border"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] text-text-2 font-medium">
+                          {rewardMessage ? rewardMessage : "Did this prompt get you the correct results?"}
+                        </span>
+                        {!polishRating && (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleFeedback(true)}
+                              className="h-7 px-2 text-[10px] text-success hover:bg-success/10 gap-1.5"
+                            >
+                              <ThumbsUp className="w-3 h-3" /> YES
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleFeedback(false)}
+                              className="h-7 px-2 text-[10px] text-error hover:bg-error/10 gap-1.5"
+                            >
+                              <ThumbsDown className="w-3 h-3" /> NO
+                            </Button>
+                          </div>
+                        )}
+                        {polishRating && !rewardMessage && (
+                          <Loader2 className="w-3 h-3 animate-spin text-text-3" />
+                        )}
+                      </div>
+                      
+                      {rewardMessage && (
+                        <div className="flex items-center gap-2 text-[10px] text-success">
+                          <Check className="w-3 h-3" />
+                          <span>Goal: Optimized prompt training complete.</span>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               {/* Stats */}
@@ -538,76 +368,9 @@ export function PromptOutput() {
                 <span className={cn("text-[10px]", wordCount > 75 ? "text-warn" : "text-text-3")}>
                   {wordCount} words
                 </span>
-                <span className="text-text-2">•</span>
                 <span className="text-text-2 text-[10px]">{charCount} chars</span>
-                {wordCount > 75 && <span className="text-warn flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5" />Token limit</span>}
+                {wordCount > 75 && <span className="text-warn flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5" />Limit</span>}
               </div>
-
-              {/* Score */}
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-medium text-text-2 uppercase tracking-wider">SCORE</span>
-                <div className="flex gap-0.5">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      aria-label={`Rate ${star} star${star !== 1 ? "s" : ""}`}
-                      onClick={() => setPromptScore(promptScore === star ? null : star)}
-                      className={cn(
-                        "p-0.5 transition-colors cursor-pointer",
-                        (promptScore ?? 0) >= star ? "text-warn" : "text-text-3/30 hover:text-warn/50",
-                      )}
-                    >
-                      <Star className={cn("w-3.5 h-3.5", (promptScore ?? 0) >= star && "fill-current")} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Note */}
-              <Input
-                placeholder=">_ Add a note..."
-                value={promptNote}
-                onChange={(e) => setPromptNote(e.target.value)}
-                className="h-7 text-[11px] bg-bg-input border-glass-border placeholder:text-text-3/30"
-              />
-
-              {/* AI tip */}
-              {activeTemplateId && (
-                <div className="flex items-start gap-2 p-2.5 rounded-[var(--radius-md)] bg-accent/5 border border-accent/10">
-                  <Lightbulb className="w-3.5 h-3.5 text-accent mt-0.5 shrink-0" />
-                  <p className="text-[10px] text-text-3 leading-relaxed">
-                    Use <span className="text-accent font-medium">Polish</span> to optimize for{" "}
-                    {activeGen?.name ?? "your generator"}, or{" "}
-                    <span className="text-accent font-medium">Vary</span> for alternatives.
-                  </p>
-                </div>
-              )}
-
-              {/* AI Variations results */}
-              {variationsResult && variationsResult.length > 0 && (
-                <div>
-                  <p className="text-[9px] font-medium text-text-3 mb-1.5 uppercase tracking-wider">AI VARIATIONS</p>
-                  <div className="space-y-2">
-                    {variationsResult.map((v, i) => (
-                      <div key={i} className="bg-bg-input border border-glass-border rounded-[var(--radius-md)] p-2.5">
-                        <pre className="text-[11px] text-text-2 leading-relaxed whitespace-pre-wrap font-mono break-words">{v}</pre>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 text-[10px] mt-1.5 text-text-3 hover:text-accent cursor-pointer"
-                          onClick={async () => {
-                            await navigator.clipboard.writeText(v);
-                            addToast({ message: `Variation ${i + 1} copied!`, type: "success" });
-                          }}
-                        >
-                          <Copy className="w-3 h-3 mr-1" />Copy
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </div>
@@ -615,43 +378,37 @@ export function PromptOutput() {
 
       {/* ── Sticky action footer ── */}
       <div className="shrink-0 relative z-10 border-t border-glass-border bg-bg-1 p-4 space-y-2">
-        {/* Row 1: Copy + Generate — primary CTAs */}
         <div className="flex gap-2">
           <Button
             onClick={handleCopy}
             disabled={!result}
             className={cn(
-              "flex-1 rounded-full font-semibold text-xs cursor-pointer transition-colors duration-150 disabled:opacity-50",
-              copied
-                ? "bg-success/15 text-success border border-success/30 hover:bg-success/20"
-                : "bg-accent text-white hover:bg-accent-hover",
+              "flex-1 rounded-full font-semibold text-xs cursor-pointer",
+              copied ? "bg-success/15 text-success border border-success/30" : "bg-accent text-white",
             )}
           >
-            {copied ? (
-              <><Check className="w-3.5 h-3.5 mr-1.5" />Copied!</>
-            ) : (
-              <><Copy className="w-3.5 h-3.5 mr-1.5" />Copy Prompt</>
-            )}
+            {copied ? <Check className="w-3.5 h-3.5 mr-1.5" /> : <Copy className="w-3.5 h-3.5 mr-1.5" />}
+            {copied ? "Copied!" : "Copy Prompt"}
           </Button>
           <Button
             onClick={() => setGenerateOpen(true)}
             disabled={!result}
             variant="outline"
-            className="flex-1 rounded-full text-xs hover:text-accent hover:border-accent/40 cursor-pointer transition-colors duration-150 disabled:opacity-50"
+            className="flex-1 rounded-full text-xs hover:text-accent hover:border-accent/40"
           >
             <ImageIcon className="w-3.5 h-3.5 mr-1.5" />Generate
           </Button>
         </div>
 
-        {/* Row 2: Polish — featured full-width premium CTA */}
+        {/* Polish Button */}
         <button
           onClick={handlePolish}
           disabled={!result || isPolishing || !!polishedResult}
           className={cn(
-            "w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed",
+            "w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 cursor-pointer disabled:opacity-40",
             polishedResult
               ? "bg-accent-gold/15 text-accent-gold border border-accent-gold/30"
-              : "bg-gradient-to-r from-accent-gold/20 to-accent-gold/10 text-accent-gold border border-accent-gold/35 hover:from-accent-gold/30 hover:to-accent-gold/18 hover:border-accent-gold/50 shadow-[0_0_12px_rgba(245,200,66,0.12)] hover:shadow-[0_0_18px_rgba(245,200,66,0.22)]",
+              : "bg-gradient-to-r from-accent-gold/20 to-accent-gold/10 text-accent-gold border border-accent-gold/35",
           )}
         >
           {isPolishing ? (
@@ -662,52 +419,12 @@ export function PromptOutput() {
             <><Sparkles className="w-4 h-4" />Polish with AI</>
           )}
         </button>
-
-        {/* Row 3: Save · Vary · Share — utility actions */}
-        <div className="flex gap-1.5">
-          <Button
-            onClick={handleSavePrompt}
-            disabled={!result}
-            variant="outline"
-            size="sm"
-            className="flex-1 text-xs rounded-full hover:text-accent hover:border-accent/40 cursor-pointer disabled:opacity-50"
-          >
-            <Save className="w-3.5 h-3.5" />Save
-          </Button>
-          <Button
-            onClick={handleVariations}
-            disabled={!result || variationsLoading}
-            variant="outline"
-            size="sm"
-            className="flex-1 text-xs rounded-full hover:text-accent2 hover:border-accent2/40 cursor-pointer disabled:opacity-50"
-          >
-            {variationsLoading
-              ? <Loader2 className="w-3.5 h-3.5 text-accent2 animate-spin" />
-              : <><Sparkles className="w-3.5 h-3.5" />Vary</>
-            }
-          </Button>
-          <Button
-            onClick={async () => {
-              const { tooLong } = await copyShareUrl();
-              addToast({
-                message: tooLong ? "Share link copied! (URL long)" : "Share link copied!",
-                type: tooLong ? "info" : "success",
-              });
-            }}
-            variant="outline"
-            size="sm"
-            className="flex-1 text-xs rounded-full hover:text-accent hover:border-accent/40 cursor-pointer"
-          >
-            <Share2 className="w-3.5 h-3.5" />Share
-          </Button>
-        </div>
       </div>
 
-      {/* Generate Modal */}
       <GenerateModal
         open={generateOpen}
         onClose={() => setGenerateOpen(false)}
-        initialPrompt={currentDisplayPrompt ?? ""}
+        prompt={polishedResult || result?.full || ""}
       />
     </div>
   );

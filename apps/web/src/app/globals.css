@@ -222,6 +222,16 @@ body {
   100% { offset-distance: 100%; }
 }
 
+@keyframes shimmer-wave {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse-glow-bg {
+  0%, 100% { opacity: 0.04; }
+  50% { opacity: 0.1; }
+}
+
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 8px rgba(255, 107, 0, 0.15); }
   50% { box-shadow: 0 0 20px rgba(255, 107, 0, 0.3); }
@@ -237,6 +247,8 @@ body {
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+
 
 /* --- Marquee animations (Magic UI) --- */
 @keyframes marquee {
@@ -388,13 +400,7 @@ body {
 .ambient-blob-2 { animation: ambient-drift-2 30s ease-in-out infinite; }
 .ambient-blob-3 { animation: ambient-drift-3 22s ease-in-out infinite; }
 
-@media (prefers-reduced-motion: reduce) {
-  .ambient-blob { animation: none !important; }
-  .animate-aurora-1,
-  .animate-aurora-2,
-  .animate-aurora-3,
-  .animate-aurora-4 { animation: none !important; }
-}
+
 
 /* Aurora background keyframes */
 @keyframes aurora-drift-1 {

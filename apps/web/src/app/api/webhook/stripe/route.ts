@@ -9,6 +9,10 @@ import { eq } from 'drizzle-orm';
 const processedEvents = new Set<string>();
 const MAX_PROCESSED_EVENTS = 1000;
 
+// Credit amounts per tier
+const PRO_CREDITS = 1000;  // Credits granted upon Pro upgrade
+const FREE_CREDITS = 100;  // Credits restored when downgraded
+
 export async function POST(req: Request) {
     try {
         const rawBody = await req.text();
@@ -50,12 +54,16 @@ export async function POST(req: Request) {
                 const customerId = session.customer as string;
 
                 if (userId) {
-                    // Upgrade user to Pro tier and link Stripe customer
+                    // Upgrade user to Pro tier, link Stripe customer, and refill credits
                     await db.update(users)
-                        .set({ tier: 'pro', stripeCustomerId: customerId })
+                        .set({ 
+                            tier: 'pro', 
+                            stripeCustomerId: customerId,
+                            credits: PRO_CREDITS,  // Refill credits on upgrade
+                        })
                         .where(eq(users.id, userId));
 
-                    console.log(`[Stripe webhook] Upgraded user ${userId} to PRO.`);
+                    console.log(`[Stripe webhook] Upgraded user ${userId} to PRO with ${PRO_CREDITS} credits.`);
                 }
                 break;
             }
@@ -66,12 +74,15 @@ export async function POST(req: Request) {
                 const subscription = event.data.object as Stripe.Subscription;
                 const customerId = subscription.customer as string;
 
-                // Revoke Pro status when subscription is canceled
+                // Revoke Pro status and reset credits to free-tier amount
                 await db.update(users)
-                    .set({ tier: 'free' })
+                    .set({ 
+                        tier: 'free',
+                        credits: FREE_CREDITS,  // Reset credits on downgrade
+                    })
                     .where(eq(users.stripeCustomerId, customerId));
 
-                console.log(`[Stripe webhook] Downgraded customer ${customerId} to FREE.`);
+                console.log(`[Stripe webhook] Downgraded customer ${customerId} to FREE with ${FREE_CREDITS} credits.`);
                 break;
             }
 
@@ -86,3 +97,4 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
     }
 }
+

@@ -12,6 +12,14 @@
       "env": {
         "TWENTY_FIRST_API_KEY": "an_sk_49c3ad1f50460fc872c2c1ccd8a522816bd060257948433e6cff040a877cf957"
       }
+    },
+    "savage-prompt-builder": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "tsx",
+        "C:/Users/USER/Desktop/Micro Saas/packages/mcp-server/src/index.ts"
+      ]
     }
   }
 }

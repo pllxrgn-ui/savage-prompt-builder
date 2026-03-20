@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   Flame,
   Wand2,
@@ -33,6 +34,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { CreditBalance } from "@/components/ui/CreditBalance";
 
 /* ── Nav configuration ── */
 const NAV_ITEMS = [
@@ -60,12 +62,17 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        "relative flex items-center gap-2 px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-150 cursor-pointer",
-        isActive
-          ? "text-text-1 bg-bg-3 border border-glass-border-strong"
-          : "text-text-3 hover:text-text-1 hover:bg-glass border border-transparent",
+        "relative flex items-center gap-2 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors duration-150 cursor-pointer",
+        isActive ? "text-text-1" : "text-text-3 hover:text-text-1 hover:bg-glass",
       )}
     >
+      {isActive && (
+        <motion.span
+          layoutId="nav-active-pill"
+          className="pointer-events-none absolute inset-0 rounded-full bg-bg-3 border border-glass-border-strong -z-10"
+          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+        />
+      )}
       <Icon className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-accent" : "")} />
       {label}
       {badge && (
@@ -80,6 +87,7 @@ function NavLink({
 /* ── User menu ── */
 function UserMenu() {
   const { user, isPro, isAuthenticated, logout } = useAuth();
+  const router = useRouter();
 
   const initials = user?.name
     ? user.name
@@ -138,7 +146,7 @@ function UserMenu() {
             </div>
           ) : (
             <Link
-              href="/settings"
+              href="/pricing"
               className="mt-2 flex items-center gap-1.5 px-2 py-1 rounded-full bg-accent/10 text-accent text-[11px] font-semibold w-fit hover:bg-accent/20 transition-colors cursor-pointer"
             >
               <Zap className="w-3 h-3" />
@@ -161,7 +169,7 @@ function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-glass-border" />
         <DropdownMenuItem
-          onClick={logout}
+          onClick={() => { logout(); router.push("/login"); }}
           className="rounded-[var(--radius-md)] cursor-pointer focus:bg-red-500/10 text-red-400 focus:text-red-400"
         >
           <LogOut className="w-3.5 h-3.5 mr-2" />
@@ -175,7 +183,7 @@ function UserMenu() {
 /* ── Mobile bottom tab bar ── */
 const MOBILE_TABS = [
   { href: "/home",      label: "Home",      icon: Flame,      primary: false },
-  { href: "/builder",   label: "Builder",   icon: Wand2,      primary: true  },
+  { href: "/builder",   label: "Builder",   icon: Wand2,      primary: false },
   { href: "/moodboard", label: "Mood",      icon: ImageIcon,  primary: false },
   { href: "/generate",  label: "Generate",  icon: Sparkles,   primary: false },
   { href: "/library",   label: "Library",   icon: BookOpen,   primary: false },
@@ -195,7 +203,12 @@ export function MobileTopBar() {
     : "?";
 
   return (
-    <header className="md:hidden flex items-center justify-between h-12 px-4 sticky top-0 z-50 bg-bg-base/80 backdrop-blur-2xl border-b border-glass-border">
+    <motion.header
+      initial={{ y: -6, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="md:hidden flex items-center justify-between h-12 px-4 sticky top-0 z-50 bg-bg-base/80 backdrop-blur-2xl border-b border-glass-border"
+    >
       <Link href="/home" className="flex items-center gap-2 cursor-pointer">
         <div className="flex items-center justify-center w-6 h-6 rounded-[var(--radius-sm)] bg-accent/15">
           <Flame className="w-3.5 h-3.5 text-accent" />
@@ -204,7 +217,9 @@ export function MobileTopBar() {
       </Link>
 
       {isAuthenticated && user ? (
-        <Link href="/settings" className="cursor-pointer" aria-label="Profile">
+        <div className="flex items-center gap-2">
+          <CreditBalance compact />
+          <Link href="/settings" className="cursor-pointer" aria-label="Profile">
           {user.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -219,6 +234,7 @@ export function MobileTopBar() {
             </div>
           )}
         </Link>
+        </div>
       ) : (
         <Link
           href="/login"
@@ -227,7 +243,7 @@ export function MobileTopBar() {
           Sign In
         </Link>
       )}
-    </header>
+    </motion.header>
   );
 }
 
@@ -265,7 +281,7 @@ export function MobileTabBar() {
               >
                 <Icon
                   className={cn(
-                    "w-6 h-6 transition-colors",
+                    "w-5 h-5 transition-colors",
                     isActive ? "text-white" : "text-text-2 group-hover:text-accent",
                   )}
                 />
@@ -288,18 +304,22 @@ export function MobileTabBar() {
             href={href}
             aria-label={label}
             className={cn(
-              "flex flex-col items-center gap-1 min-w-[48px] min-h-[48px] py-2 rounded-2xl",
-              "transition-all duration-150 cursor-pointer active:scale-95",
-              isActive ? "text-accent" : "text-text-3 hover:text-text-2",
-            )}
-          >
-            <div
-              className={cn(
-                "flex items-center justify-center w-8 h-8 rounded-xl transition-colors",
-                isActive ? "bg-accent/12" : "",
+                "flex flex-col items-center gap-1 min-w-[48px] min-h-[48px] py-2 rounded-2xl",
+                "transition-colors duration-150 cursor-pointer active:scale-95",
+                isActive ? "text-accent" : "text-text-3 hover:text-text-2",
               )}
             >
-              <Icon className="w-5 h-5" />
+            <div
+              className="relative flex items-center justify-center w-8 h-8 rounded-xl"
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="mobile-tab-bg"
+                  className="absolute inset-0 rounded-xl bg-accent/12"
+                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                />
+              )}
+              <Icon className="w-5 h-5 relative" />
             </div>
             <span className={cn("text-[10px] font-medium leading-none", isActive && "text-accent")}>
               {label}
@@ -316,11 +336,13 @@ export function TopNav() {
   const pathname = usePathname();
   const theme = useSettingsStore((s) => s.theme);
   const toggleTheme = useSettingsStore((s) => s.toggleTheme);
-  const router = useRouter();
 
   return (
     <TooltipProvider delayDuration={0}>
-      <header
+      <motion.header
+        initial={{ y: -8, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
         className="hidden md:flex items-center justify-between h-14 px-6 sticky top-0 z-50
           bg-bg-base/80 backdrop-blur-2xl border-b border-glass-border"
       >
@@ -357,20 +379,20 @@ export function TopNav() {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
-          {/* Prompt Polish — primary value prop CTA */}
-          <button
-            onClick={() => router.push("/builder")}
+          {/* Credit balance */}
+          <CreditBalance />
+
+          {/* Pricing CTA */}
+          <Link
+            href="/pricing"
             className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold
-              bg-accent text-white hover:bg-accent-hover
-              transition-all duration-150 shadow-sm hover:shadow-[0_0_16px_rgba(255,107,0,0.35)]
-              shrink-0 cursor-pointer border border-accent/30"
+              bg-accent-muted text-accent hover:bg-accent/20
+              border border-accent/20 hover:border-accent/35
+              transition-all duration-150 shrink-0 cursor-pointer"
           >
-            <Zap className="w-3.5 h-3.5" />
-            Polish
-            <span className="flex items-center justify-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-white/25 leading-none">
-              AI
-            </span>
-          </button>
+            <Crown className="w-3.5 h-3.5" />
+            Pricing
+          </Link>
 
           {/* Theme toggle */}
           <Tooltip>
@@ -397,7 +419,7 @@ export function TopNav() {
           {/* User menu */}
           <UserMenu />
         </div>
-      </header>
+      </motion.header>
     </TooltipProvider>
   );
 }

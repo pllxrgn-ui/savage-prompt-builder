@@ -13,6 +13,7 @@ interface AuthState {
   isPro: boolean;
   isAuthenticated: boolean;
   devMode: boolean;
+  credits: number;
 }
 
 interface AuthActions {
@@ -20,6 +21,8 @@ interface AuthActions {
   logout: () => void;
   setDevMode: (on: boolean) => void;
   setPro: (isPro: boolean) => void;
+  setCredits: (credits: number) => void;
+  deductCredits: (amount: number) => boolean;
 }
 
 export type AuthStore = AuthState & AuthActions;
@@ -33,11 +36,12 @@ const DEV_USER: AuthUser = {
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       isPro: false,
       isAuthenticated: false,
       devMode: false,
+      credits: 100,
 
       // BACKEND: Replace with real Supabase Auth session check
       login: (user) =>
@@ -52,6 +56,7 @@ export const useAuthStore = create<AuthStore>()(
           isPro: false,
           isAuthenticated: false,
           devMode: false,
+          credits: 0,
         }),
 
       setDevMode: (on) =>
@@ -59,9 +64,19 @@ export const useAuthStore = create<AuthStore>()(
           devMode: on,
           isAuthenticated: on,
           user: on ? DEV_USER : null,
+          credits: on ? 100 : 0,
         }),
 
       setPro: (isPro) => set({ isPro }),
+
+      setCredits: (credits) => set({ credits: Math.max(0, credits) }),
+
+      deductCredits: (amount) => {
+        const { credits } = get();
+        if (credits < amount) return false;
+        set({ credits: credits - amount });
+        return true;
+      },
     }),
     {
       name: "spb-auth",

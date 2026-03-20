@@ -47,9 +47,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await useBuilderStore.getState().fetchCustomStyles();
       } else {
         setUser(null);
-        logoutStore();
-        useHistoryStore.getState().clearHistory();
-        useBuilderStore.getState().resetBuilder();
+        // Don't logout if devMode is active (local testing without Supabase)
+        if (!useAuthStore.getState().devMode) {
+          logoutStore();
+          useHistoryStore.getState().clearHistory();
+          useBuilderStore.getState().resetBuilder();
+        }
       }
     });
 

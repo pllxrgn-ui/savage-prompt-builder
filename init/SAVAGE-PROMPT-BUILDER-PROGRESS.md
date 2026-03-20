@@ -4,10 +4,10 @@
 ---
 
 ## Current Status
-**Phase:** Phase 5 — UI Polish + New Pages (active)  
-**Last updated:** 2026-03-18  
-**Last session:** UI polish sprint — Nav reorder (Builder first), mobile bottom nav redesign (elevated floating Builder button), TemplateCard 2-column slideshow layout, builder step nav with icon-circle dots + named Prev/Next, pricing page `/pricing`, UserMenu pricing link. TS fixes from git pull.  
-**Next session should start at:** Template showcase image generation script (Pollinations.ai → `public/showcase/templates/`) OR Stripe integration for pricing page
+**Phase:** Post L-Series — Visual QA & UI Polish COMPLETE ✅  
+**Last updated:** 2026-03-19  
+**Last session:** Added polish feedback strip (thumbs up/down) to PromptOutput — mirrors ValidationGate pattern. Visually tested via Playwright with mocked API. TypeScript: 0 errors.  
+**Next session should start at:** Redesign Phase 1 (Magic UI install + typography + globals.css tokens), OR Stripe integration, OR image quality review
 
 ---
 
@@ -71,6 +71,66 @@
 - React 19.2.3 installed (19.2.4 available)
 - Turbopack is the default bundler now (no webpack)
 - `@/*` path alias already configured by create-next-app
+
+### 2026-03-19 Session 3 — Polish Feedback Strip
+**Completed:**
+- **Polish feedback UI:** Added "Satisfied with the polish?" thumbs up/down strip to `PromptOutput.tsx` — appears after AI Polish succeeds; on click shows "Thanks for the feedback!" with animated icon (emerald green for up, red for down); resets on new polish; uses Framer Motion AnimatePresence + motion.div scale animation
+- **Visual testing:** Mocked `/api/ai/polish` via Playwright `page.evaluate`, verified feedback strip renders, tested thumbs-up interaction — confirmed layout, animation, and state transition
+- **TypeScript:** 0 errors
+
+**Modified files:**
+- `apps/web/src/components/builder/PromptOutput.tsx` — +71 lines (polish feedback strip)
+
+### 2026-03-19 Session 2 — Visual QA & UI Polish Sprint
+**Completed:**
+- **Dev Mode infrastructure:** Fixed AuthProvider zeroing credits on every page load (devMode guard); added Dev Mode toggle to Settings page
+- **Mobile builder gap fix:** Desktop TopNav=56px, Mobile TopBar+TabBar=112px. Fixed builder height calc to `h-[calc(100dvh-112px)] md:h-[calc(100dvh-56px)]` (was miscalculated as 128px/64px)
+- **Template card hover fix:** Replaced harsh per-color accent borders with subtle `hover:border-white/[0.12]` across GROUP_CARD_ACCENTS + default accent; moved `hover:bg-glass-hover` from inner metadata div to outer `<button>` to fix mobile partial-highlight + desktop seam
+- **Chip strip cutoff/symmetry:** Added `pl-6 pr-6` inside scroll area + left/right fade gradients (`from-bg-1 to-transparent`) for visual scroll hints
+- **Pricing/Upgrade navigation:** TopNav "Upgrade to Pro" dropdown link changed from `/settings` to `/pricing`; ProUpgradeCard button replaced with `<Link href="/pricing">` (was non-functional `<button>`)
+- **Layout fix:** Removed `pb-16 md:pb-0` from `(app)/layout.tsx` (redundant bottom padding)
+- **Pricing page padding:** Added `pb-24 sm:pb-28` for mobile nav clearance
+- **TypeScript:** 0 errors (`npx tsc --noEmit`)
+
+**Modified files:**
+- `apps/web/src/components/auth/AuthProvider.tsx` — devMode guard
+- `apps/web/src/app/(app)/settings/page.tsx` — Dev Mode toggle
+- `apps/web/src/app/(app)/layout.tsx` — removed redundant bottom padding
+- `apps/web/src/app/(app)/builder/page.tsx` — height calc fix (2 instances), chip strip fade gradients + padding
+- `apps/web/src/components/builder/TemplateCard.tsx` — hover border + bg location fix
+- `apps/web/src/components/layout/TopNav.tsx` — "Upgrade to Pro" → `/pricing`
+- `apps/web/src/components/ui/ProUpgradeCard.tsx` — button → Link to `/pricing`
+- `apps/web/src/app/(app)/pricing/page.tsx` — bottom padding for mobile
+
+### 2026-03-19 — L-Series Sprint (All 7 UAT Features)
+**Completed:**
+- **L4: Credit Balance** — `CreditBalance.tsx` component (color-coded pill: green/amber/red), added `credits` state + `setCredits`/`deductCredits` to `auth-store.ts`, exposed in `useAuth` hook, added `credits` column to DB schema, rendered in TopNav desktop + mobile
+- **L2: Validation Gate** — `ValidationGate.tsx` (animated thumbs up/down overlay after generation, auto-dismiss 10s, "Thanks!" feedback)
+- **L3: Generation Results Screen** — credit deduction per image in `handleGenerate`, insufficient credits error toast, credit usage badge, cost indicator "(N cr)" on Generate button, ValidationGate integration
+- **L6: AI Polish + AI Suggest** — `AISuggestButton.tsx` (calls `/api/ai/suggest`, auto-fills empty fields with AI suggestions), placed above fields area in builder
+- **L5: History Restore QA + Fix** — `loadRecipe` now restores `customColors`; `PromptCard.handleLoad` passes all fields (customColors, phrases, garmentMode, referenceImageUrl, variables, mockup); `SavedPrompt` type extended; all 3 save operations in `PromptOutput.tsx` include full field set
+- **L7: Responsive Audit + Fixes** — builder page height calc accounts for mobile tab bar (`h-[calc(100dvh-128px)] md:h-[calc(100dvh-64px)]`), library page `pb-20`, home page `pb-24`
+- **Cleanup:** Removed unused `CreditBalance` import from generate page
+- **TypeScript:** 0 errors (`npx tsc --noEmit`)
+
+**New files:**
+- `apps/web/src/components/ui/CreditBalance.tsx`
+- `apps/web/src/components/generate/ValidationGate.tsx`
+- `apps/web/src/components/builder/AISuggestButton.tsx`
+
+**Modified files:**
+- `apps/web/src/lib/store/auth-store.ts` — credits state + actions
+- `apps/web/src/hooks/useAuth.ts` — expose credits
+- `apps/web/src/db/schema.ts` — credits column
+- `apps/web/src/components/layout/TopNav.tsx` — CreditBalance in nav
+- `apps/web/src/app/(app)/generate/page.tsx` — credit deduction + ValidationGate + cost display
+- `apps/web/src/app/(app)/builder/page.tsx` — AISuggestButton + mobile height fix
+- `apps/web/src/lib/store/builder-store.ts` — loadRecipe customColors fix
+- `apps/web/src/components/library/PromptCard.tsx` — handleLoad full fields
+- `apps/web/src/types/generation.ts` — SavedPrompt extended fields
+- `apps/web/src/components/builder/PromptOutput.tsx` — save operations with full fields
+- `apps/web/src/app/(app)/library/page.tsx` — mobile bottom padding
+- `apps/web/src/app/(app)/home/page.tsx` — mobile bottom padding
 
 ### 2026-03-18 — UI Polish Sprint (Nav, TemplateCard, Builder Step Nav, Pricing)
 **Completed:**

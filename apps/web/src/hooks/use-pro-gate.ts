@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from 'react';
-// import { useAuth } from '@/hooks/use-auth'; // Once auth is real, pull from here
+import { useAuthStore } from '@/lib/store/auth-store';
 
 export function useProGate() {
-    // Mock 'isPro' status until the Auth context handles reading `user.tier === 'pro'`
-    const [isPro] = useState(false);
+    const isPro = useAuthStore((state) => state.isPro);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 

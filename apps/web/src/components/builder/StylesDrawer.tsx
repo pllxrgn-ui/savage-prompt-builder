@@ -148,7 +148,7 @@ function CustomStyleForm({
         value={label}
         onChange={(e) => setLabel(e.target.value)}
         aria-label="Style name"
-        className="w-full px-2.5 py-1.5 bg-bg-input border border-accent/8 text-xs text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/40 rounded-[var(--radius-md)]"
+        className="w-full px-2.5 py-1.5 bg-bg-input border border-accent/8 text-xs text-text-1 placeholder:text-text-3 focus-visible:outline-none focus-visible:border-accent/40 focus-visible:ring-1 focus-visible:ring-accent/20 rounded-[var(--radius-md)]"
       />
       <textarea
         placeholder="Style instruction (e.g. 'dramatic rim lighting, cinematic color grading')…"
@@ -156,7 +156,7 @@ function CustomStyleForm({
         onChange={(e) => setContent(e.target.value)}
         rows={2}
         aria-label="Style content"
-        className="w-full px-2.5 py-1.5 bg-bg-input border border-accent/8 text-xs text-text-1 placeholder:text-text-3 focus:outline-none focus:border-accent/40 resize-none rounded-[var(--radius-md)]"
+        className="w-full px-2.5 py-1.5 bg-bg-input border border-accent/8 text-xs text-text-1 placeholder:text-text-3 focus-visible:outline-none focus-visible:border-accent/40 focus-visible:ring-1 focus-visible:ring-accent/20 resize-none rounded-[var(--radius-md)]"
       />
       <div className="flex gap-2 justify-end">
         <button

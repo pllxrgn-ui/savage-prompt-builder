@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 
 // Stagger children container
@@ -186,5 +187,23 @@ export function PulseDot({ className }: { className?: string }) {
       animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
       transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
     />
+  );
+}
+
+// Route-level page transition — wrap {children} in (app)/layout.tsx
+export function PageTransitionWrapper({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={pathname}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -6 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
   );
 }

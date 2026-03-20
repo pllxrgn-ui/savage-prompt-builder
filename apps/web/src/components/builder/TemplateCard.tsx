@@ -27,7 +27,7 @@ const defaultAccent: CardAccent = {
   text: "text-accent",
   bg: "bg-accent/10",
   bgHover: "group-hover:bg-accent/15",
-  border: "hover:border-accent/30",
+  border: "hover:border-white/[0.12]",
   titleHover: "group-hover:text-accent",
 };
 
@@ -64,6 +64,7 @@ export function TemplateCard({ template, accent = defaultAccent }: TemplateCardP
         "text-center sm:text-left rounded-[var(--radius-xl)] w-full overflow-hidden",
         "bg-bg-2 border border-glass-border",
         accent.border,
+        "hover:bg-glass-hover",
         "transition-colors duration-150 cursor-pointer",
       )}
     >
@@ -71,7 +72,6 @@ export function TemplateCard({ template, accent = defaultAccent }: TemplateCardP
       <div className={cn(
         "flex flex-col items-center justify-center sm:items-start sm:justify-start",
         "sm:flex-1 sm:p-5 gap-2 sm:gap-2.5",
-        "group-hover:bg-glass-hover transition-colors duration-150",
       )}>
         <div className={cn(
           "flex items-center justify-center w-10 h-10 rounded-lg transition-colors",

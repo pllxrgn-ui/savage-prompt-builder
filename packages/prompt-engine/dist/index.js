@@ -12,7 +12,7 @@ import { formatForGenerator, } from "./generator-formats";
 /**
  * Assemble the full positive prompt from template output + styles + palette + keywords + phrases.
  */
-function assemblePositive(templatePrompt, styles, palette, keywords, phrases, mockup, garmentMode, mood) {
+function assemblePositive(templatePrompt, styles, palette, customColors, keywords, phrases, mockup, garmentMode, mood) {
     const parts = [templatePrompt];
     if (mood && mood.trim()) {
         parts.push(mood.trim());
@@ -26,8 +26,13 @@ function assemblePositive(templatePrompt, styles, palette, keywords, phrases, mo
     if (styles.length > 0) {
         parts.push(styles.join(", "));
     }
-    if (palette) {
-        parts.push(`color palette: ${palette}`);
+    const colorParts = [];
+    if (palette)
+        colorParts.push(palette);
+    if (customColors.length > 0)
+        colorParts.push(customColors.join(", "));
+    if (colorParts.length > 0) {
+        parts.push(`color palette: ${colorParts.join(", ")}`);
     }
     if (keywords.length > 0) {
         parts.push(keywords.join(", "));
@@ -62,7 +67,7 @@ export function buildPrompt(input) {
     // Step 1: Build core prompt from template fields
     const templatePrompt = buildTemplatePrompt(input.templateId, input.fields);
     // Step 2: Assemble full positive prompt
-    const positive = assemblePositive(templatePrompt, input.styles, input.palette, input.keywords, input.phrases, input.mockup, input.garmentMode, input.mood);
+    const positive = assemblePositive(templatePrompt, input.styles, input.palette, input.customColors ?? [], input.keywords, input.phrases, input.mockup, input.garmentMode, input.mood);
     // Step 3: Negative prompt (as-is)
     const negative = input.negative;
     // Step 4: Reference image injection

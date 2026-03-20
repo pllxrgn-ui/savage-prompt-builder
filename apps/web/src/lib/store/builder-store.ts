@@ -189,6 +189,7 @@ export const useBuilderStore = create<BuilderStore>()(
           templateFields: recipe.fieldData,
           selectedStyles: recipe.styles,
           selectedPalette: recipe.palette,
+          customColors: recipe.customColors ?? [],
           selectedKeywords: recipe.keywords,
           negativePrompt: recipe.negative,
           selectedGenerator: recipe.generatorId,

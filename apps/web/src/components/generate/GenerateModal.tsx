@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -48,6 +49,17 @@ export function GenerateModal({
 
   const [job, setJob] = useState<GenerateJob | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const trapRef = useFocusTrap(open);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [open, onClose]);
 
   const selectedModel = IMAGE_GEN_MODELS.find((m) => m.id === modelId);
 
@@ -103,6 +115,10 @@ export function GenerateModal({
 
           {/* Modal */}
           <motion.div
+            ref={trapRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="generate-modal-title"
             className="relative z-10 w-full max-w-4xl max-h-[90vh] mx-4 rounded-[var(--radius-xl)] border border-glass-border bg-bg-1 shadow-2xl overflow-hidden flex flex-col"
             initial={{ scale: 0.95, y: 20 }}
             animate={{ scale: 1, y: 0 }}
@@ -113,7 +129,7 @@ export function GenerateModal({
             <div className="flex items-center justify-between px-5 py-4 border-b border-glass-border">
               <div className="flex items-center gap-2.5">
                 <ImageIcon className="w-5 h-5 text-accent" />
-                <h2 className="text-lg font-heading font-bold text-text-1">
+                <h2 id="generate-modal-title" className="text-lg font-heading font-bold text-text-1">
                   Generate Image
                 </h2>
                 <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-accent/15 text-accent">
@@ -143,7 +159,7 @@ export function GenerateModal({
                     {/* Prompt textarea */}
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
-                        <label className="text-xs font-medium text-text-2">
+                        <label htmlFor="generate-modal-prompt" className="text-xs font-medium text-text-2">
                           Prompt
                         </label>
                         <button
@@ -154,6 +170,7 @@ export function GenerateModal({
                         </button>
                       </div>
                       <textarea
+                        id="generate-modal-prompt"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
                         rows={5}
@@ -164,7 +181,7 @@ export function GenerateModal({
 
                     {/* Model selector */}
                     <div className="relative">
-                      <label className="text-xs font-medium text-text-2 mb-1.5 block">
+                      <label htmlFor="generate-modal-model" className="text-xs font-medium text-text-2 mb-1.5 block">
                         Model
                       </label>
                       <button

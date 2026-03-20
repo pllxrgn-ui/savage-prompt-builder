@@ -4,11 +4,17 @@ import { z } from 'zod';
 import { NextResponse } from 'next/server';
 import { AI_SYSTEM_PROMPTS } from '@/lib/ai/prompts';
 import { requireAuth } from '@/lib/require-auth';
+import { validateAndDeductCredits } from '@/lib/credits';
 
 export async function POST(req: Request) {
     try {
         const auth = await requireAuth();
         if (auth.error) return auth.error;
+
+        const { profile } = auth;
+
+        const creditError = await validateAndDeductCredits(profile.id, profile.tier, 1);
+        if (creditError) return creditError;
 
         const { templateId, filledFields, emptyFields } = await req.json();
 
@@ -25,3 +31,4 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Failed to suggest fields' }, { status: 500 });
     }
 }
+
