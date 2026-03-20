@@ -194,6 +194,7 @@ export default function LibraryPage() {
             placeholder={`Search ${activeTab}…`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label={`Search ${activeTab}`}
             className="w-full pl-10 bg-bg-input border-glass-border"
           />
         </div>

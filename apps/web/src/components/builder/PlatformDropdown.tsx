@@ -124,7 +124,7 @@ export function PlatformDropdown() {
           className={clsx(
             "w-full flex items-center justify-between px-3 py-2.5 text-sm text-left",
             "bg-bg-input border border-accent/8 rounded-[var(--radius-md)]",
-            "focus:outline-none focus:border-accent/40",
+            "focus-visible:outline-none focus-visible:border-accent/40 focus-visible:ring-1 focus-visible:ring-accent/20",
             "transition-all duration-150",
           )}
         >
@@ -160,7 +160,7 @@ export function PlatformDropdown() {
                     "w-full pl-8 pr-8 py-2 text-xs",
                     "bg-bg-input border border-accent/8 rounded-[var(--radius-md)]",
                     "text-text-1 placeholder:text-text-3",
-                    "focus:outline-none focus:border-accent/40",
+                    "focus-visible:outline-none focus-visible:border-accent/40 focus-visible:ring-1 focus-visible:ring-accent/20",
                   )}
                 />
                 {search && (

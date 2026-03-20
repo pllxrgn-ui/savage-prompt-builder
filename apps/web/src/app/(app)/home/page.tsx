@@ -373,6 +373,7 @@ export default function HomePage() {
                     }}
                     placeholder="Paste any rough idea… Savage will refine it into a precise prompt"
                     rows={3}
+                    aria-label="Quick prompt polish input"
                     className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-base p-4 pr-36 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/50"
                   />
                   <div className="absolute right-3 bottom-3 flex items-center gap-2">

@@ -111,7 +111,7 @@ export function AIStyleGenerator() {
             onChange={(e) => setVibeText(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
             aria-label="Describe a vibe"
-            className="w-full px-3 py-2 rounded-lg bg-bg-input border border-border text-sm text-text-1 placeholder:text-text-2 focus:outline-none focus:border-accent/50"
+            className="w-full px-3 py-2 rounded-lg bg-bg-input border border-border text-sm text-text-1 placeholder:text-text-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus-visible:border-accent/50"
           />
 
           {/* Quick-fill chips */}

@@ -17,7 +17,11 @@ export function ToastProvider() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 right-6 z-50 flex flex-col gap-2 max-w-sm">
+    <div
+      role="status"
+      aria-live="polite"
+      className="fixed bottom-20 md:bottom-6 right-6 z-50 flex flex-col gap-2 max-w-sm"
+    >
       {toasts.map((toast) => {
         const Icon = ICONS[toast.type];
         return (

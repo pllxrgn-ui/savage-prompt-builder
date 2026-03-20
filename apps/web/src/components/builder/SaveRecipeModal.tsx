@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChefHat } from "lucide-react";
 import { clsx } from "clsx";
@@ -38,6 +39,16 @@ export function SaveRecipeModal({ open, onClose }: SaveRecipeModalProps) {
 
   const [name, setName] = useState(defaultName);
   const inputRef = useRef<HTMLInputElement>(null);
+  const trapRef = useFocusTrap(open);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [open, onClose]);
 
   function handleSave() {
     if (!activeTemplateId || !name.trim()) return;
@@ -74,6 +85,10 @@ export function SaveRecipeModal({ open, onClose }: SaveRecipeModalProps) {
           onClick={onClose}
         >
           <motion.div
+            ref={trapRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="save-recipe-title"
             className="bg-bg-1 border border-accent/8 shadow-2xl w-full max-w-md mx-4 p-6 rounded-[var(--radius-xl)]"
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -83,12 +98,12 @@ export function SaveRecipeModal({ open, onClose }: SaveRecipeModalProps) {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <ChefHat className="w-5 h-5 text-accent" />
-                <h2 className="text-lg font-semibold text-text-1 uppercase tracking-wide">Save Recipe</h2>
+                <h2 id="save-recipe-title" className="text-lg font-semibold text-text-1 uppercase tracking-wide">Save Recipe</h2>
               </div>
               <button
                 onClick={onClose}
                 aria-label="Close recipe modal"
-                className="p-1.5 hover:bg-surface text-text-3 hover:text-text-1 transition-colors rounded-[var(--radius-md)]"
+                className="p-1.5 hover:bg-surface text-text-3 hover:text-text-1 transition-colors rounded-[var(--radius-md)] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -110,7 +125,7 @@ export function SaveRecipeModal({ open, onClose }: SaveRecipeModalProps) {
                 className={clsx(
                   "w-full px-3 py-2 text-sm",
                   "bg-bg-input border border-accent/8 text-text-1 rounded-[var(--radius-md)]",
-                  "placeholder:text-text-3 focus:outline-none focus:border-accent/30",
+                  "placeholder:text-text-3 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus-visible:border-accent/30",
                 )}
               />
             </label>
@@ -157,7 +172,7 @@ export function SaveRecipeModal({ open, onClose }: SaveRecipeModalProps) {
             <div className="flex gap-3">
               <button
                 onClick={onClose}
-                className="flex-1 py-2 text-sm font-medium bg-surface text-text-2 hover:bg-bg-3 transition-colors border border-accent/8 rounded-[var(--radius-md)]"
+                className="flex-1 py-2 text-sm font-medium bg-surface text-text-2 hover:bg-bg-3 transition-colors border border-accent/8 rounded-[var(--radius-md)] cursor-pointer"
               >
                 Cancel
               </button>

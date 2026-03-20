@@ -33,7 +33,7 @@ export function FieldInput({ field, templateId }: FieldInputProps) {
           "w-full px-3.5 py-2.5 text-sm rounded-[var(--radius-md)]",
           "bg-bg-input border border-white/[0.06]",
           "text-text-1 placeholder:text-text-3",
-          "focus:outline-none focus:border-accent/40 focus:ring-1 focus:ring-accent/20",
+          "focus-visible:outline-none focus-visible:border-accent/40 focus-visible:ring-1 focus-visible:ring-accent/20",
           "transition-all duration-150",
         )}
       />

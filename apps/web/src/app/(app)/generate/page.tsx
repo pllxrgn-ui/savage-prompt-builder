@@ -316,7 +316,8 @@ function GeneratePageInner() {
                 }}
                 placeholder="Describe the image you want to create…"
                 rows={4}
-                className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-sm p-4 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/50"
+                aria-label="Image generation prompt"
+                className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-sm p-4 resize-none focus-visible:outline-none"
               />
               <div className="flex items-center justify-between px-4 pb-2.5">
                 <span className="text-[10px] text-text-3">{prompt.length}/2000</span>

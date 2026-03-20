@@ -121,7 +121,7 @@ export function ReferenceImageUpload() {
                   if (e.key === "Enter") handleUrlSubmit();
                 }}
                 placeholder="Paste image URL…"
-                className="flex-1 bg-transparent text-sm text-text-1 placeholder:text-text-3 outline-none"
+                className="flex-1 bg-transparent text-sm text-text-1 placeholder:text-text-3 outline-none focus-visible:ring-1 focus-visible:ring-accent/50"
               />
             </div>
             <button

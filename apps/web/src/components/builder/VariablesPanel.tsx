@@ -63,7 +63,7 @@ export function VariablesPanel() {
                     value={value}
                     onChange={(e) => setVariable(key, e.target.value)}
                     aria-label={`Value for ${key}`}
-                    className="flex-1 min-w-0 bg-bg-1 border border-border rounded px-2 py-1 text-xs text-text-1 outline-none focus:border-accent/50"
+                    className="flex-1 min-w-0 bg-bg-1 border border-border rounded px-2 py-1 text-xs text-text-1 outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus:border-accent/50"
                   />
                   <button
                     onClick={() => removeVariable(key)}
@@ -87,7 +87,7 @@ export function VariablesPanel() {
                 if (e.key === "Enter") handleAdd();
               }}
               placeholder="TOKEN"
-              className="w-24 bg-bg-1 border border-border rounded px-2 py-1 text-xs text-text-1 font-mono placeholder:text-text-3 outline-none focus:border-accent/50"
+              className="w-24 bg-bg-1 border border-border rounded px-2 py-1 text-xs text-text-1 font-mono placeholder:text-text-3 outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus:border-accent/50"
             />
             <span className="text-xs text-text-3">=</span>
             <input
@@ -98,7 +98,7 @@ export function VariablesPanel() {
                 if (e.key === "Enter") handleAdd();
               }}
               placeholder="Value"
-              className="flex-1 min-w-0 bg-bg-1 border border-border rounded px-2 py-1 text-xs text-text-1 placeholder:text-text-3 outline-none focus:border-accent/50"
+              className="flex-1 min-w-0 bg-bg-1 border border-border rounded px-2 py-1 text-xs text-text-1 placeholder:text-text-3 outline-none focus-visible:ring-1 focus-visible:ring-accent/50 focus:border-accent/50"
             />
             <button
               onClick={handleAdd}

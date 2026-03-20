@@ -185,7 +185,7 @@ function BuilderPageInner() {
             <div className="w-6 h-6 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
               <Wand2 className="w-3 h-3 text-accent" />
             </div>
-            <h1 className="text-sm font-heading font-bold text-text-1">Choose Canvas</h1>
+            <h2 className="text-sm font-heading font-bold text-text-1">Choose Canvas</h2>
           </div>
           <div className="relative">
           <div className="flex gap-2 overflow-x-auto pb-1 pl-6 pr-6 scrollbar-none">

@@ -195,7 +195,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-center w-12 h-12 rounded-[var(--radius-md)] bg-accent/15 border border-accent/20">
                 <Flame className="w-6 h-6 text-accent" />
               </div>
-              <h1 className="font-display font-bold text-2xl text-text-1 tracking-tight">Savage</h1>
+              <p className="font-display font-bold text-2xl text-text-1 tracking-tight">Savage</p>
             </div>
           </BlurFade>
 

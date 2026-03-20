@@ -112,7 +112,7 @@ function CustomColorSection() {
                       placeholder="FF6B00"
                       maxLength={6}
                       spellCheck={false}
-                      className="flex-1 bg-transparent text-xs text-text-1 placeholder:text-text-3 outline-none font-mono min-w-0"
+                      className="flex-1 bg-transparent text-xs text-text-1 placeholder:text-text-3 outline-none focus-visible:ring-1 focus-visible:ring-accent/50 font-mono min-w-0"
                     />
                   </div>
                   <button
@@ -146,7 +146,7 @@ function CustomColorSection() {
                 placeholder="FF6B00"
                 maxLength={6}
                 spellCheck={false}
-                className="flex-1 bg-transparent text-xs text-text-1 placeholder:text-text-3 outline-none font-mono min-w-0"
+                className="flex-1 bg-transparent text-xs text-text-1 placeholder:text-text-3 outline-none focus-visible:ring-1 focus-visible:ring-accent/50 font-mono min-w-0"
               />
             </div>
 
