@@ -9,18 +9,8 @@ export async function GET() {
     const auth = await requireAuth();
     if (auth.error) return auth.error;
 
-    const userRecord = await db.query.users.findFirst({
-      where: eq(users.id, auth.user.id),
-    });
-
-    if (!userRecord) {
-      // If trigger failed or hasn't run yet, user record might be missing
-      return NextResponse.json({ error: 'User record not found' }, { status: 404 });
-    }
-
-    return NextResponse.json({
-      user: userRecord,
-    });
+    // requireAuth now handles lazy registration, so profile is always present
+    return NextResponse.json({ user: auth.profile });
   } catch (error) {
     console.error('[API User GET Error]', error);
     return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
@@ -47,3 +37,19 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
   }
 }
+
+export async function DELETE() {
+  try {
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+
+    // Delete user profile — cascades to all user-owned data via DB foreign keys
+    await db.delete(users).where(eq(users.id, auth.user.id));
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('[API User DELETE Error]', error);
+    return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 });
+  }
+}
+

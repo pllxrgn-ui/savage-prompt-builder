@@ -1,55 +1,43 @@
 import { NextResponse } from 'next/server';
-
-const IMAGE_GEN_STATUS_API_URL = process.env.NANOBANANA_STATUS_API_URL || 'https://api.nanobanana.com/v1/jobs';
+import { db } from '@/db';
+import { generations } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { requireAuth } from '@/lib/require-auth';
 
 export async function GET(
     req: Request,
     { params }: { params: Promise<{ jobId: string }> }
 ) {
     try {
+        const auth = await requireAuth();
+        if (auth.error) return auth.error;
+
         const { jobId } = await params;
-        const apiKey = process.env.NANOBANANA_API_KEY;
 
-        if (!apiKey) {
-            return NextResponse.json(
-                { error: 'Image generation API key is not configured' },
-                { status: 500 }
-            );
-        }
-
-        // Ping the generation provider to get the current status of the job
-        const response = await fetch(`${IMAGE_GEN_STATUS_API_URL}/${jobId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json',
-            },
+        const job = await db.query.generations.findFirst({
+            where: eq(generations.id, jobId),
         });
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            return NextResponse.json(
-                { error: 'Failed to fetch job status', details: errorData },
-                { status: response.status }
-            );
+        if (!job) {
+            return NextResponse.json({ error: 'Job not found' }, { status: 404 });
         }
 
-        const data = await response.json();
-
-        // Standardize the output format for the frontend
-        // Possible statuses: 'pending', 'processing', 'completed', 'failed'
-        const status = data.status || 'processing';
-        const progress = data.progress || 0;
-        const images = data.images || data.urls || (data.output ? [data.output] : []);
+        // Security: users can only poll their own jobs
+        if (job.userId !== auth.user.id) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+        }
 
         return NextResponse.json({
-            jobId,
-            status,
-            progress,
-            images,
+            jobId: job.id,
+            status: job.status,
+            images: job.images ?? [],
+            error: job.error ?? null,
+            createdAt: job.createdAt,
+            completedAt: job.completedAt ?? null,
         });
+
     } catch (error: any) {
-        console.error('[Image Generation Status Proxy Error]', error);
+        console.error('[Generation Status Error]', error);
         return NextResponse.json(
             { error: 'Failed to check generation status', details: error.message },
             { status: 500 }

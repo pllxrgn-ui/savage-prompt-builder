@@ -1,8 +1,12 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { z } from 'zod';
+import crypto from 'crypto';
 import { requireAuth } from '@/lib/require-auth';
+import { validateAndDeductCredits } from '@/lib/credits';
+import { db } from '@/db';
+import { generations } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
-/** Models available on this Google AI key */
 const IMAGEN_MODELS = [
     'imagen-4.0-generate-001',
     'imagen-4.0-fast-generate-001',
@@ -10,15 +14,13 @@ const IMAGEN_MODELS = [
 ] as const;
 
 const NANOBANANA_MODELS = [
-    'gemini-3.1-flash-image-preview',  // Nanobanana 2
-    'gemini-3-pro-image-preview',      // Nanobanana Pro
-    'gemini-2.5-flash-image',          // Nano Banana
+    'gemini-3.1-flash-image-preview',
+    'gemini-3-pro-image-preview',
+    'gemini-2.5-flash-image',
 ] as const;
 
 type ImagenModel = typeof IMAGEN_MODELS[number];
 type NanobananaModel = typeof NANOBANANA_MODELS[number];
-
-const ALL_MODELS = [...IMAGEN_MODELS, ...NANOBANANA_MODELS] as const;
 
 const ALLOWED_RATIOS = ['1:1', '16:9', '9:16', '4:3', '3:4'] as const;
 
@@ -30,7 +32,6 @@ const generateSchema = z.object({
     negativePrompt: z.string().max(1000).optional(),
 });
 
-/** Call Imagen 4 via the predict endpoint */
 async function callImagen(
     apiKey: string,
     model: ImagenModel,
@@ -64,7 +65,6 @@ async function callImagen(
         .map((p) => `data:${p.mimeType ?? 'image/jpeg'};base64,${p.bytesBase64Encoded}`);
 }
 
-/** Call Nanobanana (Gemini image generation) via generateContent */
 async function callNanobanana(
     apiKey: string,
     model: NanobananaModel,
@@ -72,7 +72,6 @@ async function callNanobanana(
     count: number,
 ): Promise<string[]> {
     const images: string[] = [];
-    // Gemini image generation is one image per call
     await Promise.all(
         Array.from({ length: count }, async () => {
             const res = await fetch(
@@ -102,26 +101,21 @@ async function callNanobanana(
     return images;
 }
 
-export async function POST(req: Request) {
+/** Runs the actual generation and updates the job record in DB */
+async function runGeneration(
+    jobId: string,
+    apiKey: string,
+    model: string,
+    prompt: string,
+    count: number,
+    aspectRatio: string,
+    negativePrompt?: string,
+) {
     try {
-        const auth = await requireAuth();
-        if (auth.error) return auth.error;
-
-        const body = await req.json();
-        const parsed = generateSchema.safeParse(body);
-        if (!parsed.success) {
-            return NextResponse.json(
-                { error: 'Invalid request parameters', issues: parsed.error.issues.map(i => i.message) },
-                { status: 400 },
-            );
-        }
-
-        const { prompt, model, count, aspectRatio, negativePrompt } = parsed.data;
-
-        const apiKey = process.env.NANOBANANA_API_KEY;
-        if (!apiKey) {
-            return NextResponse.json({ error: 'NanoBanana API key is not configured' }, { status: 500 });
-        }
+        // Mark as processing
+        await db.update(generations)
+            .set({ status: 'processing' })
+            .where(eq(generations.id, jobId));
 
         let images: string[];
 
@@ -134,7 +128,68 @@ export async function POST(req: Request) {
             images = await callImagen(apiKey, imagenModel, prompt, count, aspectRatio, negativePrompt);
         }
 
-        return NextResponse.json({ success: true, images });
+        // Mark as completed with images
+        await db.update(generations)
+            .set({ status: 'completed', images, completedAt: new Date() })
+            .where(eq(generations.id, jobId));
+
+    } catch (err: any) {
+        console.error(`[Generation Job ${jobId} Failed]`, err);
+        // Mark as failed with error message
+        await db.update(generations)
+            .set({ status: 'failed', error: err.message ?? 'Generation failed' })
+            .where(eq(generations.id, jobId));
+    }
+}
+
+export async function POST(req: Request) {
+    try {
+        const auth = await requireAuth();
+        if (auth.error) return auth.error;
+
+        const { profile } = auth;
+
+        const body = await req.json();
+        const parsed = generateSchema.safeParse(body);
+        if (!parsed.success) {
+            return NextResponse.json(
+                { error: 'Invalid request parameters', issues: parsed.error.issues.map(i => i.message) },
+                { status: 400 },
+            );
+        }
+
+        const { prompt, model, count, aspectRatio, negativePrompt } = parsed.data;
+
+        // Credit Validation & Deduction (happens before job is queued)
+        const creditError = await validateAndDeductCredits(profile.id, profile.tier, count);
+        if (creditError) return creditError;
+
+        const apiKey = process.env.NANOBANANA_API_KEY;
+        if (!apiKey) {
+            return NextResponse.json({ error: 'Image generation API key is not configured' }, { status: 500 });
+        }
+
+        // Create a job record
+        const jobId = crypto.randomBytes(4).toString('hex');
+        await db.insert(generations).values({
+            id: jobId,
+            userId: profile.id,
+            status: 'pending',
+            prompt,
+            model,
+            count,
+            aspectRatio,
+        });
+
+        // Schedule the actual generation to run AFTER the response is sent
+        // This uses Next.js 15 `after()` — keeps the response fast
+        after(async () => {
+            await runGeneration(jobId, apiKey, model, prompt, count, aspectRatio, negativePrompt);
+        });
+
+        // Return the jobId immediately so the frontend can start polling
+        return NextResponse.json({ jobId, status: 'pending' });
+
     } catch (error: unknown) {
         console.error('[Image Generate Error]', error);
         const message = error instanceof Error ? error.message : 'Image generation failed';

@@ -82,3 +82,40 @@ export const sharedLinks = pgTable('shared_links', {
     payload: text('payload').notNull(), // The base64 compressed data
     createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+// Status: 'pending' | 'processing' | 'completed' | 'failed'
+export const generations = pgTable('generations', {
+    id: text('id').primaryKey(), // Short random job ID
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    type: text('type').default('image').notNull(), // 'image' | 'polish'
+    status: text('status').default('pending').notNull(),
+    prompt: text('prompt').notNull(),
+    model: text('model').notNull(),
+    count: integer('count').default(1).notNull(),
+    aspectRatio: text('aspect_ratio').default('1:1').notNull(),
+    images: jsonb('images'), // array of base64 data URLs when completed OR [polished_text]
+    error: text('error'),   // error message if failed
+    feedbackSubmitted: boolean('feedback_submitted').default(false).notNull(),
+    isRewarded: boolean('is_rewarded').default(false).notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    completedAt: timestamp('completed_at'),
+});
+
+// For SLM Training Dataset
+export const positiveDataset = pgTable('positive_dataset', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    generationId: text('generation_id').references(() => generations.id, { onDelete: 'cascade' }).notNull(),
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    prompt: text('prompt').notNull(),
+    metadata: jsonb('metadata'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const negativeDataset = pgTable('negative_dataset', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    generationId: text('generation_id').references(() => generations.id, { onDelete: 'cascade' }).notNull(),
+    userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+    prompt: text('prompt').notNull(),
+    metadata: jsonb('metadata'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+});

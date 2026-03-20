@@ -1,9 +1,16 @@
-import { db } from '../src/db';
-import { sql } from 'drizzle-orm';
+import postgres from 'postgres';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
+
+// Transaction pooler (port 6543) blocks DDL; switch to direct connection (port 5432)
+const raw = process.env.DATABASE_URL!;
+const directUrl = raw.replace(':6543/', ':5432/');
 
 async function setupRLS() {
   console.log('Setting up Row Level Security (RLS) on Supabase tables...');
-  
+  const sql = postgres(directUrl, { prepare: false, max: 1 });
+
   try {
     const commands = [
       // 1. Enable RLS on all tables
@@ -13,6 +20,9 @@ async function setupRLS() {
       `ALTER TABLE "custom_styles" ENABLE ROW LEVEL SECURITY;`,
       `ALTER TABLE "custom_palettes" ENABLE ROW LEVEL SECURITY;`,
       `ALTER TABLE "media" ENABLE ROW LEVEL SECURITY;`,
+      `ALTER TABLE "shared_links" ENABLE ROW LEVEL SECURITY;`,
+      `ALTER TABLE "generations" ENABLE ROW LEVEL SECURITY;`,
+      `ALTER TABLE "prompt_feedback" ENABLE ROW LEVEL SECURITY;`,
 
       // 2. Drop existing policies if running this multiple times
       `DROP POLICY IF EXISTS "Users can view own profile" ON "users";`,
@@ -43,10 +53,21 @@ async function setupRLS() {
       `DROP POLICY IF EXISTS "Users can update own media" ON "media";`,
       `DROP POLICY IF EXISTS "Users can delete own media" ON "media";`,
 
+      `DROP POLICY IF EXISTS "Anyone can read shared links" ON "shared_links";`,
+      `DROP POLICY IF EXISTS "Authenticated users can create shared links" ON "shared_links";`,
 
-      // 3. Create new Policies using auth.uid() == user_id
+      `DROP POLICY IF EXISTS "Users can view own generations" ON "generations";`,
+      `DROP POLICY IF EXISTS "Users can insert own generations" ON "generations";`,
+      `DROP POLICY IF EXISTS "Users can update own generations" ON "generations";`,
+
+      `DROP POLICY IF EXISTS "Users can view own feedback" ON "prompt_feedback";`,
+      `DROP POLICY IF EXISTS "Users can insert own feedback" ON "prompt_feedback";`,
+      `DROP POLICY IF EXISTS "Users can update own feedback" ON "prompt_feedback";`,
+
+
+      // 3. Create new Policies
       
-      // Users table (users can only read/update their own internal profile mapping)
+      // Users table
       `CREATE POLICY "Users can view own profile" ON "users" FOR SELECT USING (auth.uid() = id);`,
       `CREATE POLICY "Users can update own profile" ON "users" FOR UPDATE USING (auth.uid() = id);`,
 
@@ -79,17 +100,33 @@ async function setupRLS() {
       `CREATE POLICY "Users can insert own media" ON "media" FOR INSERT WITH CHECK (auth.uid() = user_id);`,
       `CREATE POLICY "Users can update own media" ON "media" FOR UPDATE USING (auth.uid() = user_id);`,
       `CREATE POLICY "Users can delete own media" ON "media" FOR DELETE USING (auth.uid() = user_id);`,
+
+      // Shared Links
+      `CREATE POLICY "Anyone can read shared links" ON "shared_links" FOR SELECT USING (true);`,
+      `CREATE POLICY "Authenticated users can create shared links" ON "shared_links" FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);`,
+
+      // Generations
+      `CREATE POLICY "Users can view own generations" ON "generations" FOR SELECT USING (auth.uid() = user_id);`,
+      `CREATE POLICY "Users can insert own generations" ON "generations" FOR INSERT WITH CHECK (auth.uid() = user_id);`,
+      `CREATE POLICY "Users can update own generations" ON "generations" FOR UPDATE USING (auth.uid() = user_id);`,
+
+      // Feedback Table
+      `CREATE POLICY "Users can view own feedback" ON "prompt_feedback" FOR SELECT USING (auth.uid() = user_id);`,
+      `CREATE POLICY "Users can insert own feedback" ON "prompt_feedback" FOR INSERT WITH CHECK (auth.uid() = user_id);`,
+      `CREATE POLICY "Users can update own feedback" ON "prompt_feedback" FOR UPDATE USING (auth.uid() = user_id);`,
     ];
 
     for (const statement of commands) {
-      await db.execute(sql.raw(statement));
+      await sql.unsafe(statement);
     }
     
     console.log('✅ Row Level Security fully enabled and configured!');
+    await sql.end();
     process.exit(0);
 
   } catch (err: any) {
     console.error('❌ Failed to setup RLS:', err.message);
+    await sql.end();
     process.exit(1);
   }
 }
