@@ -29,7 +29,7 @@ function CustomColorSection() {
   const previewColor = useMemo(() => normalizeHex(hexInput), [hexInput]);
 
   function handleAddColor() {
-    if (!previewColor || customColors.length >= 4) return;
+    if (!previewColor || customColors.length >= 8) return;
     addCustomColor(previewColor);
     setPickerOpen(false);
   }
@@ -74,7 +74,7 @@ function CustomColorSection() {
       )}
 
       {/* Add color row */}
-      {customColors.length < 4 ? (
+      {customColors.length < 8 ? (
         <div className="space-y-2">
           <div className="flex gap-1.5 items-center">
             {/* Color swatch — opens react-colorful Popover */}
@@ -173,7 +173,7 @@ function CustomColorSection() {
           </p>
         </div>
       ) : (
-        <p className="text-[10px] text-text-3">Max 4 custom colors reached.</p>
+        <p className="text-[10px] text-text-3">Max 8 custom colors reached.</p>
       )}
     </div>
   );
