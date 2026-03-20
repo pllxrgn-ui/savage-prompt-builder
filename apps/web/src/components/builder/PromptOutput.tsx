@@ -513,7 +513,7 @@ export function PromptOutput() {
       <GenerateModal
         open={generateOpen}
         onClose={() => setGenerateOpen(false)}
-        prompt={polishedResult || result?.full || ""}
+        initialPrompt={polishedResult || result?.full || ""}
       />
     </div>
   );

@@ -1,11 +1,7 @@
 "use client";
 
 import Link from "next/link";
-<<<<<<< HEAD
-import { usePathname } from "next/navigation";
-=======
 import { usePathname, useRouter } from "next/navigation";
->>>>>>> 555fa679dfea11fc2d332dad95f8eb89ae8b699c
 import { motion } from "framer-motion";
 import {
   Flame,
