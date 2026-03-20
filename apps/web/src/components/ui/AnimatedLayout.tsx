@@ -194,20 +194,13 @@ export function PulseDot({ className }: { className?: string }) {
 export function PageTransitionWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   return (
-<<<<<<< HEAD
-    <AnimatePresence mode="wait" initial={false}>
-=======
-    <AnimatePresence mode="wait">
->>>>>>> 555fa679dfea11fc2d332dad95f8eb89ae8b699c
-      <motion.div
-        key={pathname}
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -6 }}
-        transition={{ duration: 0.2, ease: "easeOut" }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      key={pathname}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+    >
+      {children}
+    </motion.div>
   );
 }
