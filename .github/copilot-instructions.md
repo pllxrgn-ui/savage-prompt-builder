@@ -274,22 +274,53 @@ When building for a specific page, check there first.
 
 ---
 
-## Skills — Project-Specific Trigger Map
+## Skills — When to Read Full SKILL.md
 
-Read and apply the listed skill(s) **before** starting work on any matching task. Skills live at `C:\Users\yatzv\.copilot\skills\<name>\SKILL.md`.
+Only read full SKILL.md files for **new patterns, unfamiliar domains, or complex tasks**. For routine edits, use the inline checklists below.
 
-| Task Type | Skills to Read | Priority |
-|-----------|---------------|----------|
-| Any UI component, page, or layout | `frontend-design` + `web-accessibility` | Always |
-| Active redesign / design system work | `frontend-design` + `ui-ux-pro-max` | Always |
-| React patterns, hooks, state | `react-best-practices` | Before new components |
-| Auth, API routes, input validation | `security-review` | Before writing/editing handlers |
-| Drizzle schema or DB queries | `database-design` | Before schema changes |
-| Backend API route design | `backend-development` | Before creating routes |
-| Writing tests | `unit-testing` | Before writing test files |
-| Performance / bundle analysis | `performance-optimization` | When optimizing |
-| Reviewing a PR or diff | `code-review` | During reviews |
-| **End of any session** | **`progress-tracker`** | **MANDATORY — every session** |
+| Task Type | Read Full SKILL.md? | When |
+|-----------|---------------------|------|
+| **New** UI component or page from scratch | `frontend-design` | Yes — first time only |
+| Editing existing UI components | No — use inline checklist below | Always |
+| Active redesign / design system work | `frontend-design` + `ui-ux-pro-max` | Yes |
+| Auth, API routes, input validation | `security-review` | Yes — always for auth/security |
+| New Drizzle schema or migration | `database-design` | Yes |
+| Writing tests | `unit-testing` | Yes |
+| Reviewing a PR or diff | `code-review` | Yes |
+| Performance / bundle analysis | `performance-optimization` | Yes |
+
+---
+
+## Inline Skill Checklists (Always Available — No Read Needed)
+
+These replace reading full SKILL.md files for routine work in this project.
+
+### UI Checklist (from frontend-design + web-accessibility)
+- [ ] `cursor-pointer` on every clickable element
+- [ ] Hover state on every interactive element (color, border, or shadow change)
+- [ ] `transition-colors duration-150` on all interactive elements
+- [ ] `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50` — never bare `outline-none`
+- [ ] `aria-label` on all icon-only buttons
+- [ ] `alt` text on all images
+- [ ] Semantic HTML (`button` not `div onClick`); ARIA only when native doesn't suffice
+- [ ] Use design tokens (never hardcoded colors, never `bg-white`, never `text-gray-*`)
+- [ ] Keyboard navigable — tab order matches visual order
+- [ ] No `scale` transforms on hover — use opacity/border/shadow
+
+### Security Checklist (from security-review)
+- [ ] Every API route that reads/writes user data calls `requireAuth()`
+- [ ] All user inputs validated with Zod at API boundary
+- [ ] Never expose `error.message` in API responses
+- [ ] No hardcoded secrets, API keys, or user IDs
+- [ ] Parameterized queries only — no string interpolation in SQL
+- [ ] Guest tokens via `/api/auth/guest` only — never manual cookies
+
+### React Checklist (from react-best-practices)
+- [ ] Use Zustand selectors, not `useStore()` directly
+- [ ] Colocate state — don't lift higher than needed
+- [ ] `useMemo`/`useCallback` only when profiled as necessary
+- [ ] No `useEffect` to sync state — restructure data flow instead
+- [ ] Extract shared logic into custom hooks when used 2+ times
 
 ---
 
@@ -297,19 +328,35 @@ Read and apply the listed skill(s) **before** starting work on any matching task
 
 | Server | Tools Prefix | Use For |
 |--------|-------------|---------|
-| `context-mode` | `ctx_*` | Large command output, batch file reads, indexing web docs — see `30-context-mode.instructions.md` |
-| `pencil` | `mcp_pencil_*` | Reading/editing `.pen` design files **only** — never use `read_file` on `.pen` files |
+| `context-mode` | `ctx_*` | Large command output (>50 lines), batch file reads, indexing web docs — see `30-context-mode.instructions.md` |
 | `microsoft/playwright-mcp` | `mcp_microsoft_pla_*` | Browser testing, visual verification, UI debugging — invoke via Debugger agent |
+| `shadcn-ui` | `mcp_shadcn-ui_*` | List/get shadcn components and blocks for installation |
+| `21st-magic` | `mcp_21st-magic_*` | Component building, inspiration, logo search |
 
 ---
 
 ## Mandatory Session-End Checklist
 
-Apply the `progress-tracker` skill at the end of every session where meaningful work was done:
+Apply at the end of **every session** where meaningful work was done. No exceptions.
 
-1. `pnpm tsc --noEmit` — confirm 0 errors
+1. `pnpm tsc --noEmit` from `apps/web/` — confirm 0 errors
 2. Update `/memories/repo/current-state-snapshot.md` — date, status, key files changed
-3. Update `init/CODEBASE-KNOWLEDGE.md` — if any structure changed (new components, routes, packages, patterns)
-4. Update `init/SAVAGE-PROMPT-BUILDER-PROGRESS.md` — tick off completed roadmap items
-5. Create `reports/YYYY-MM-DD.md` — match format of existing reports in `reports/`
-6. `git add -A` → `git commit -m "..."` (Conventional Commits) → `git push`
+3. Update `init/CODEBASE-KNOWLEDGE.md` — only if structure changed (new components, routes, packages)
+4. Create `reports/YYYY-MM-DD.md` — match format of existing reports
+5. `git add -A` → `git commit -m "..."` (Conventional Commits) → `git push`
+
+> Only read full `progress-tracker` SKILL.md if this checklist is unclear or missing context.
+
+---
+
+## Agents — When to Invoke
+
+Use these agents proactively — don't wait to be asked.
+
+| Agent | When to Use |
+|-------|------------|
+| `Plan` | Start of any multi-step feature, redesign phase, or sprint planning |
+| `Implementer` | Executing an approved plan with multiple files |
+| `Reviewer` | Before committing — review own changes for correctness, security, performance |
+| `Debugger` | TS errors, runtime bugs, visual regressions — also has Playwright MCP access |
+| `Explore` | Codebase discovery, finding patterns, understanding unfamiliar code — prefer over manual search chains |
