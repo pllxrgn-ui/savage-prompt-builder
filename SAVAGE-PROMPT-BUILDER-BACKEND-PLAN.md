@@ -18,7 +18,7 @@ The foundation of the backend to handle users, sessions, and cloud syncing for P
   - `custom_styles` (user-created style presets)
   - `custom_palettes` (user-created color palettes)
   - `media` (generated images metadata, urls, prompt references)
-- [ ] Implement Row Level Security (RLS) policies in Supabase so users can only access their own data.
+- [x] Implement Row Level Security (RLS) policies in Supabase so users can only access their own data.
 
 ### 2. Authentication Flows
 - [x] Set up NextAuth.js or Supabase Auth.
@@ -89,4 +89,4 @@ Additional backend utility integration as required.
 
 ### 9. Advanced Endpoints
 - [ ] Build the Bulk Processing backend service to handle iterating over an array of subjects and generating multiple prompts asynchronously to avoid timeout limits.
-- [ ] Set up the `/api/share` endpoint to generate short-URLs for encoded prompt states (if the base64 URL hashing gets too long).
+- [x] Set up the `/api/share` endpoint to generate short-URLs for encoded prompt states (if the base64 URL hashing gets too long).
