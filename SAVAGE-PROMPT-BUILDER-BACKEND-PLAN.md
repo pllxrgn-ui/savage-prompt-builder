@@ -85,7 +85,7 @@ Additional backend utility integration as required.
 
 ### 8. MCP Server (Claude Desktop Integration)
 - [ ] Navigate to the `packages/mcp-server` workspace.
-- [ ] Build out the 8 planned MCP tools to allow the Claude Desktop app to interact with the Savage Prompt Builder engine locally.
+- [x] Build out the 8 planned MCP tools to allow the Claude Desktop app to interact with the Savage Prompt Builder engine locally.
 
 ### 9. Advanced Endpoints
 - [ ] Build the Bulk Processing backend service to handle iterating over an array of subjects and generating multiple prompts asynchronously to avoid timeout limits.
