@@ -39,9 +39,9 @@ import { CreditBalance } from "@/components/ui/CreditBalance";
 /* ── Nav configuration ── */
 const NAV_ITEMS = [
   { href: "/builder",  label: "Builder",   icon: Wand2,     badge: null },
-  { href: "/moodboard", label: "Moodboard", icon: ImageIcon, badge: null },
-  { href: "/generate", label: "Generate",  icon: Sparkles,  badge: null },
+  { href: "/generate", label: "Manual",  icon: Sparkles,  badge: null },
   { href: "/library",  label: "Library",   icon: BookOpen,  badge: null },
+  { href: "/moodboard", label: "Moodboard", icon: ImageIcon, badge: null },
 ] as const;
 
 /* ── Desktop nav link ── */
@@ -184,9 +184,9 @@ function UserMenu() {
 const MOBILE_TABS = [
   { href: "/home",      label: "Home",      icon: Flame,      primary: false },
   { href: "/builder",   label: "Builder",   icon: Wand2,      primary: false },
-  { href: "/moodboard", label: "Mood",      icon: ImageIcon,  primary: false },
-  { href: "/generate",  label: "Generate",  icon: Sparkles,   primary: false },
+  { href: "/generate",  label: "Manual",  icon: Sparkles,   primary: false },
   { href: "/library",   label: "Library",   icon: BookOpen,   primary: false },
+  { href: "/moodboard", label: "Mood",      icon: ImageIcon,  primary: false },
 ] as const;
 
 /* ── Mobile top bar (profile icon) ── */
@@ -213,7 +213,7 @@ export function MobileTopBar() {
         <div className="flex items-center justify-center w-6 h-6 rounded-[var(--radius-sm)] bg-accent/15">
           <Flame className="w-3.5 h-3.5 text-accent" />
         </div>
-        <span className="font-display font-bold text-sm text-text-1 tracking-tight">SAVAGE</span>
+        <span className="font-display font-bold text-sm text-text-1 tracking-tight">SIDEKICK</span>
       </Link>
 
       {isAuthenticated && user ? (
@@ -355,7 +355,7 @@ export function TopNav() {
             <Flame className="w-4 h-4 text-accent" />
           </div>
           <span className="font-display font-bold text-[15px] text-text-1 tracking-tight">
-            SAVAGE
+            SIDEKICK
           </span>
         </Link>
 

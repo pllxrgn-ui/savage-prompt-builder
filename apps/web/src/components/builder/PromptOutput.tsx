@@ -431,21 +431,21 @@ export function PromptOutput() {
       <div className="shrink-0 relative z-10 border-t border-glass-border bg-bg-1 p-4 space-y-2">
         <div className="flex gap-2">
           <Button
-            onClick={handleCopy}
-            disabled={!result}
+            onClick={handlePolish}
+            disabled={!result || isPolishing || !!polishedResult}
             className={cn(
               "flex-1 rounded-full font-semibold text-xs cursor-pointer",
-              copied ? "bg-success/15 text-success border border-success/30" : "bg-accent text-white",
+              polishedResult ? "bg-accent-gold/15 text-accent-gold border border-accent-gold/30" : "bg-accent text-white",
             )}
           >
-            {copied ? <Check className="w-3.5 h-3.5 mr-1.5" /> : <Copy className="w-3.5 h-3.5 mr-1.5" />}
-            {copied ? "Copied!" : "Copy Prompt"}
+            {isPolishing ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 mr-1.5" />}
+            {isPolishing ? "Polishing…" : polishedResult ? "Polished ✓" : "Polish Prompt"}
           </Button>
           <Button
             onClick={() => setGenerateOpen(true)}
             disabled={!result}
             variant="outline"
-            className="flex-1 rounded-full text-xs hover:text-accent hover:border-accent/40"
+            className="flex-1 rounded-full text-xs hover:text-accent hover:border-accent/40 cursor-pointer"
           >
             <ImageIcon className="w-3.5 h-3.5 mr-1.5" />Generate
           </Button>
@@ -488,26 +488,6 @@ export function PromptOutput() {
             {isSharing ? "Sharing…" : shared ? "Link Copied!" : "Share"}
           </Button>
         </div>
-
-        {/* Polish Button */}
-        <button
-          onClick={handlePolish}
-          disabled={!result || isPolishing || !!polishedResult}
-          className={cn(
-            "w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 cursor-pointer disabled:opacity-40",
-            polishedResult
-              ? "bg-accent-gold/15 text-accent-gold border border-accent-gold/30"
-              : "bg-gradient-to-r from-accent-gold/20 to-accent-gold/10 text-accent-gold border border-accent-gold/35",
-          )}
-        >
-          {isPolishing ? (
-            <><Loader2 className="w-4 h-4 animate-spin" />Polishing…</>
-          ) : polishedResult ? (
-            <><Sparkles className="w-4 h-4" />Polished ✓</>
-          ) : (
-            <><Sparkles className="w-4 h-4" />Polish with AI</>
-          )}
-        </button>
       </div>
 
       <GenerateModal

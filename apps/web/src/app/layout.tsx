@@ -24,7 +24,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Savage Prompt Builder",
+  title: "Sidekick Prompt Builder",
   description: "Build precise, beautiful AI image prompts",
   themeColor: "#09090B",
 };

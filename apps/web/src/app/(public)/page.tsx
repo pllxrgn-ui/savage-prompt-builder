@@ -79,7 +79,7 @@ export default function LandingPage() {
               <Flame className="w-5 h-5 text-accent" />
             </div>
             <span className="font-display font-semibold text-lg text-text-1 tracking-tight">
-              Savage Prompt Builder
+              Sidekick Prompt Builder
             </span>
           </div>
         </BlurFade>

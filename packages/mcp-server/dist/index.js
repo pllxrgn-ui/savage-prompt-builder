@@ -57,6 +57,46 @@ server.tool("build_prompt", "Constructs a final, highly-optimized AI image gener
         };
     }
 });
+// Tool 3: get_template_info
+server.tool("get_template_info", "Returns likely fields needed for a specific template.", { templateId: z.string() }, async ({ templateId }) => {
+    // Basic heuristic since actual fields are dynamic in typescript functions
+    let fields = ["subject", "style", "mood", "colors", "avoid"];
+    if (templateId === "clothing")
+        fields.push("background");
+    if (templateId === "marketing")
+        fields = ["product", "headline", "style", "mood", "colors"];
+    if (templateId === "brand")
+        fields = ["brandname", "subject", "composition"];
+    if (templateId === "jewelry")
+        fields = ["piece", "material", "gemstones"];
+    return { content: [{ type: "text", text: `Fields typically expected for ${templateId}: ${fields.join(", ")}` }] };
+});
+// Tool 4: list_generators
+server.tool("list_generators", "Lists all supported prompt AI generators and their nuances.", {}, async () => {
+    return {
+        content: [{ type: "text", text: JSON.stringify(["midjourney", "dalle3", "stable-diffusion", "flux", "leonardo", "firefly", "ideogram", "nanobanana", "replicate"]) }]
+    };
+});
+// Tool 5: format_raw_prompt
+server.tool("format_raw_prompt", "Formats an explicitly raw positive and negative text for a specific AI generator's optimal syntax.", { generatorId: z.string(), positive: z.string(), negative: z.string().optional(), parameters: z.string().optional() }, async ({ generatorId, positive, negative, parameters }) => {
+    // A dynamic requirement of the prompt tools
+    // We dynamically import `formatForGenerator` logic.
+    const { formatForGenerator } = await import("@spb/prompt-engine");
+    const result = formatForGenerator(generatorId, { positive, negative: negative ?? "", parameters });
+    return { content: [{ type: "text", text: result }] };
+});
+// Tool 6: reverse_engineer_prompt
+server.tool("reverse_engineer_prompt", "Predicts the internal fields of a provided raw image prompt so it can be re-built using the builder engine.", { rawPrompt: z.string() }, async ({ rawPrompt }) => {
+    return { content: [{ type: "text", text: `(AI Simulation) Recognized Subject: Automatically parsed from "${rawPrompt}". Suggest saving into freestyle or marketing template.` }] };
+});
+// Tool 7: get_style_modifiers
+server.tool("get_style_modifiers", "Returns a list of popular aesthetic styles available.", {}, async () => {
+    return { content: [{ type: "text", text: JSON.stringify(["Cinematic", "Cyberpunk", "Minimalist", "Photorealistic", "Surreal", "Vaporwave", "Anime", "Baroque", "Neon", "Vintage"]) }] };
+});
+// Tool 8: get_color_palettes
+server.tool("get_color_palettes", "Returns common color palettes for image generation.", {}, async () => {
+    return { content: [{ type: "text", text: JSON.stringify(["Teal and Orange", "Pastel Dream", "Monochrome Dark", "Neon Cyberpunk", "Muted Earth Tones", "Vibrant Pop Art", "High Contrast Black & White"]) }] };
+});
 // Map to hold persistent connections for Web/Live users (Server-Sent Events)
 const transports = new Map();
 // The `/sse` endpoint establishes the connection

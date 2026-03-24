@@ -420,37 +420,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── PERSONAL STATS ── */}
-        <BlurFade delay={0.08}>
-          <section>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {[
-                { label: "Prompts",       value: personalStats.total.toString(),      accent: "text-text-1"    },
-                { label: "Favorites",     value: personalStats.favorites.toString(),  accent: "text-rose-400"  },
-                { label: "Avg Rating",    value: personalStats.avgRating ?? "—",      accent: "text-amber-400" },
-                { label: "Active Styles", value: personalStats.activeStyles.toString(), accent: "text-violet-400" },
-              ].map(({ label, value, accent }) => (
-                <div
-                  key={label}
-                  className="rounded-[var(--radius-xl)] bg-bg-2 border border-glass-border p-5 md:p-6 text-center hover:border-glass-border-strong transition-colors"
-                >
-                  <p className={cn("text-3xl font-display font-bold leading-none mb-1.5", accent)}>{value}</p>
-                  <p className="label-section">{label}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        </BlurFade>
-
-        {/* ── 14-DAY ACTIVITY ── */}
-        <BlurFade delay={0.12}>
-          <section>
-            <ActivityChart prompts={savedPrompts} />
-          </section>
-        </BlurFade>
-
         {/* ── QUICK START ── */}
-        <BlurFade delay={0.16}>
+        <BlurFade delay={0.08}>
           <section>
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -488,7 +459,7 @@ export default function HomePage() {
         </BlurFade>
 
         {/* ── SHOWCASE MARQUEE ── */}
-        <BlurFade delay={0.2}>
+        <BlurFade delay={0.12}>
           <section className="overflow-hidden relative pb-2">
             <p className="label-section mb-4">Made with Savage</p>
             <div className="relative">
@@ -500,6 +471,35 @@ export default function HomePage() {
                 ))}
               </Marquee>
             </div>
+          </section>
+        </BlurFade>
+
+        {/* ── PERSONAL STATS ── */}
+        <BlurFade delay={0.16}>
+          <section>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {[
+                { label: "Prompts",       value: personalStats.total.toString(),      accent: "text-text-1"    },
+                { label: "Favorites",     value: personalStats.favorites.toString(),  accent: "text-rose-400"  },
+                { label: "Avg Rating",    value: personalStats.avgRating ?? "—",      accent: "text-amber-400" },
+                { label: "Active Styles", value: personalStats.activeStyles.toString(), accent: "text-violet-400" },
+              ].map(({ label, value, accent }) => (
+                <div
+                  key={label}
+                  className="rounded-[var(--radius-xl)] bg-bg-2 border border-glass-border p-5 md:p-6 text-center hover:border-glass-border-strong transition-colors"
+                >
+                  <p className={cn("text-3xl font-display font-bold leading-none mb-1.5", accent)}>{value}</p>
+                  <p className="label-section">{label}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </BlurFade>
+
+        {/* ── 14-DAY ACTIVITY ── */}
+        <BlurFade delay={0.2}>
+          <section>
+            <ActivityChart prompts={savedPrompts} />
           </section>
         </BlurFade>
 
