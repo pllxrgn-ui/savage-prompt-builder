@@ -287,7 +287,7 @@ function GeneratePageInner() {
           <ImageIcon className="w-5 h-5 text-accent" />
         </div>
         <div>
-          <h1 className="text-xl font-heading font-bold text-text-1">Generate</h1>
+          <h1 className="text-xl font-heading font-bold text-text-1">Manual</h1>
           <p className="text-text-2 text-sm">
             Turn your prompt into stunning images — powered by Imagen 4 &amp; Nanobanana 2.
           </p>

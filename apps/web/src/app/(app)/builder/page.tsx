@@ -31,7 +31,6 @@ import { BuilderActions } from "@/components/builder/BuilderActions";
 import { UndoRedo } from "@/components/builder/UndoRedo";
 
 import { AISuggestButton } from "@/components/builder/AISuggestButton";
-import { VariablesPanel } from "@/components/builder/VariablesPanel";
 import { VariationTabs } from "@/components/builder/VariationTabs";
 import { SaveRecipeModal } from "@/components/builder/SaveRecipeModal";
 import { PromptOutput } from "@/components/builder/PromptOutput";
@@ -403,8 +402,34 @@ function BuilderPageInner() {
               <VariationTabs />
             </div>
 
-            {/* Step content — scrollable */}
-            <div className="flex-1 overflow-y-auto">
+            {/* Step content — scrollable with floating navigation */}
+            <div className="flex-1 overflow-y-auto relative">
+              {/* Floating prev arrow */}
+              {activeIndex > 0 && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setActiveStepId(WORKFLOW_STEPS[activeIndex - 1].id)}
+                  className="fixed left-2 xl:left-56 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-bg-2/95 hover:bg-bg-3 border border-glass-border hover:border-border-strong text-text-3 hover:text-accent cursor-pointer z-20 shadow-xl backdrop-blur-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                  aria-label="Previous step"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </Button>
+              )}
+              
+              {/* Floating next arrow */}
+              {activeIndex < WORKFLOW_STEPS.length - 1 && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setActiveStepId(WORKFLOW_STEPS[activeIndex + 1].id)}
+                  className="fixed right-2 lg:right-[476px] top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-bg-2/95 hover:bg-bg-3 border border-glass-border hover:border-border-strong text-text-3 hover:text-accent cursor-pointer z-20 shadow-xl backdrop-blur-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                  aria-label="Next step"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </Button>
+              )}
+              
               <div className="px-4 md:px-8 pt-6 pb-4 max-w-2xl mx-auto">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -442,9 +467,6 @@ function BuilderPageInner() {
                               return <FieldInput key={field.id} field={field} templateId={template.id} />;
                             })}
                           </div>
-                          {(template.id === "clothing" || template.id === "collection") && (
-                            <GarmentSelector />
-                          )}
                         </div>
                       )}
 
@@ -462,9 +484,11 @@ function BuilderPageInner() {
                       {activeStepId === "mockup" && (
                         <div className="space-y-5">
                           <MockupPanel templateId={template.id} onMockupChange={setMockup} />
-                          <div className="pt-4 border-t border-glass-border space-y-3">
+                          {(template.id === "clothing" || template.id === "collection") && (
+                            <GarmentSelector />
+                          )}
+                          <div className="pt-4 border-t border-glass-border">
                             <BuilderActions template={template} onRecipe={() => setRecipeModalOpen(true)} />
-                            <VariablesPanel />
                           </div>
                         </div>
                       )}
@@ -481,21 +505,8 @@ function BuilderPageInner() {
 
             {/* Step navigation footer */}
             <div className="shrink-0 flex items-center justify-between px-5 py-2 border-t border-glass-border bg-bg-1">
-              {/* Prev — show target step name + icon */}
-              {activeIndex > 0 ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setActiveStepId(WORKFLOW_STEPS[activeIndex - 1].id)}
-                  className="gap-1.5 text-xs text-text-3 hover:text-text-1 cursor-pointer min-w-[90px] justify-start px-2"
-                >
-                  <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
-                  {(() => { const S = WORKFLOW_STEPS[activeIndex - 1].Icon; return <S className="w-3.5 h-3.5 shrink-0" />; })()}
-                  <span>{WORKFLOW_STEPS[activeIndex - 1].label}</span>
-                </Button>
-              ) : (
-                <div className="min-w-[90px]" />
-              )}
+              {/* Left spacer - removed Prev button for cleaner layout */}
+              <div className="min-w-[90px]" />
 
               {/* Step icon dots */}
               <div className="flex items-center gap-1.5">
@@ -548,7 +559,7 @@ function BuilderPageInner() {
           </main>
 
           {/* ── Right: Sticky output panel (LG+ only) ── */}
-          <aside className="hidden lg:flex flex-col w-[380px] shrink-0 border-l border-glass-border bg-bg-1 overflow-hidden">
+          <aside className="hidden lg:flex flex-col w-[460px] shrink-0 border-l border-glass-border bg-bg-1 overflow-hidden">
             <PromptOutput />
           </aside>
         </div>

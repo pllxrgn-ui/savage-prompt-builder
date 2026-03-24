@@ -164,11 +164,6 @@ export function BuilderActions({ template, onRecipe }: BuilderActionsProps) {
     addToast({ message: "Fields cleared", type: "info" });
   }
 
-  function handleClearStyles() {
-    setStyles([]);
-    addToast({ message: "Styles cleared", type: "info" });
-  }
-
   function handleRandomFill() {
     template.fields.forEach((field) => {
       if (field.id === "avoid") return; // Don't randomize avoid field
@@ -183,81 +178,18 @@ export function BuilderActions({ template, onRecipe }: BuilderActionsProps) {
   return (
     <div className="space-y-2">
       {/* Primary actions */}
-      <div className="flex flex-wrap gap-2">
+      {lastSaved && (
         <Button
-          onClick={handleSave}
-          disabled={!hasFields}
-          variant="outline"
-          size="sm"
-          className={cn(
-            "h-7 text-xs",
-            hasFields && "bg-accent/10 text-accent border-accent/30 hover:bg-accent/20",
-          )}
-        >
-          <Save className="w-3.5 h-3.5" />
-          Save
-        </Button>
-
-        <Button
-          onClick={onRecipe ?? handleSaveRecipe}
+          onClick={handleIterate}
           disabled={!hasFields}
           variant="ghost"
           size="sm"
           className="h-7 text-xs"
         >
-          <ChefHat className="w-3.5 h-3.5" />
-          Recipe
+          <GitBranch className="w-3.5 h-3.5" />
+          Iterate (v{lastSaved.version + 1})
         </Button>
-
-        {lastSaved && (
-          <Button
-            onClick={handleIterate}
-            disabled={!hasFields}
-            variant="ghost"
-            size="sm"
-            className="h-7 text-xs"
-          >
-            <GitBranch className="w-3.5 h-3.5" />
-            Iterate (v{lastSaved.version + 1})
-          </Button>
-        )}
-      </div>
-
-      {/* Secondary actions */}
-      <div className="flex flex-wrap gap-2">
-        <Button
-          onClick={handleRandomFill}
-          variant="ghost"
-          size="sm"
-          className="h-7 text-xs"
-        >
-          <Shuffle className="w-3.5 h-3.5" />
-          Random Fill
-        </Button>
-
-        <Button
-          onClick={handleClearFields}
-          variant="ghost"
-          size="sm"
-          className={cn(
-            "h-7 text-xs",
-            showClearConfirm && "bg-red-500/10 text-red-400 border-red-400/30 hover:bg-red-500/20",
-          )}
-        >
-          <Eraser className="w-3.5 h-3.5" />
-          {showClearConfirm ? "Confirm Clear?" : "Clear Fields"}
-        </Button>
-
-        <Button
-          onClick={handleClearStyles}
-          variant="ghost"
-          size="sm"
-          className="h-7 text-xs text-text-3"
-        >
-          <X className="w-3.5 h-3.5" />
-          Clear Styles
-        </Button>
-      </div>
+      )}
     </div>
   );
 }

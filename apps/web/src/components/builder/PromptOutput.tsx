@@ -6,6 +6,7 @@ import {
   Copy, Check, ChevronDown, Share2,
   Star, Save, Sparkles, Loader2, Image as ImageIcon,
   Lightbulb, AlertTriangle, ThumbsUp, ThumbsDown,
+  Shuffle, Eraser, ChefHat,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBuilderStore, useUIStore, useHistoryStore } from "@/lib/store";
@@ -26,6 +27,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { api } from "@/lib/api";
 
 export function PromptOutput() {
@@ -52,11 +61,14 @@ export function PromptOutput() {
   const addToast = useUIStore((s: UIStore) => s.addToast);
   const projects = useHistoryStore((s) => s.projects);
   const savedPrompts = useHistoryStore((s) => s.savedPrompts);
+  const setField = useBuilderStore((s) => s.setField);
 
   const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
   const [shared, setShared] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [showClearDialog, setShowClearDialog] = useState(false);
+  const [recipeSaved, setRecipeSaved] = useState(false);
   const [isPolishing, setIsPolishing] = useState(false);
   const [polishedResult, setPolishedResult] = useState<string | null>(null);
   const [generateOpen, setGenerateOpen] = useState(false);
@@ -77,6 +89,9 @@ export function PromptOutput() {
   // AI variations state
   const [variationsLoading, setVariationsLoading] = useState(false);
   const [variationsResult, setVariationsResult] = useState<string[] | null>(null);
+
+  // Manual edits to the output
+  const [manualEdit, setManualEdit] = useState("");
 
   const result = useMemo(() => {
     if (!activeTemplateId) return null;
@@ -132,24 +147,39 @@ export function PromptOutput() {
     setPolishedResult(null);
     setCurrentJobId(null);
     setRewardMessage(null);
+    setManualEdit("");
   }, [result?.full]);
+
+  // Sync manual edit with polished result when it arrives
+  // But don't populate if the result contains placeholder tokens
+  useEffect(() => {
+    if (polishedResult) {
+      setManualEdit(polishedResult);
+    } else if (result?.full) {
+      // Check if the result contains placeholder tokens (like [SUBJECT], [PRODUCT/SERVICE], etc.)
+      const hasPlaceholders = /\[([A-Z\s/]+)\]/.test(result.full);
+      if (!hasPlaceholders) {
+        setManualEdit(result.full);
+      }
+    }
+  }, [polishedResult, result?.full]);
 
   const activeGen = GENERATORS.find((g) => g.id === selectedGenerator);
 
   async function handleCopy() {
-    if (!result || !activeTemplateId) return;
-    await navigator.clipboard.writeText(polishedResult || result.full);
+    if (!currentDisplayPrompt) return;
+    await navigator.clipboard.writeText(currentDisplayPrompt);
     setCopied(true);
     addToast({ message: "Prompt copied!", type: "success" });
     setTimeout(() => setCopied(false), 2000);
   }
 
-  function handleSaveVary() {
-    if (!result || !activeTemplateId) return;
+  function handleSavePrompt() {
+    if (!currentDisplayPrompt || !activeTemplateId) return;
     const template = getTemplateById(activeTemplateId);
     promptService.savePrompt({
       title: (template?.name ?? "Prompt") + (templateFields.subject ? ` — ${templateFields.subject}` : ""),
-      content: polishedResult || result.full,
+      content: currentDisplayPrompt,
       templateId: activeTemplateId,
       generatorId: selectedGenerator,
       fieldData: templateFields,
@@ -170,12 +200,72 @@ export function PromptOutput() {
     setTimeout(() => setSaved(false), 2000);
   }
 
-  async function handleShare() {
+  function handleSaveRecipe() {
     if (!result || !activeTemplateId) return;
+    const template = getTemplateById(activeTemplateId);
+    recipeServiceMod.saveRecipe({
+      title: `${template?.name ?? "Prompt"} Recipe`,
+      templateId: activeTemplateId,
+      generatorId: selectedGenerator,
+      fieldData: templateFields,
+      styles: selectedStyles,
+      palette: selectedPalette,
+      keywords: selectedKeywords,
+      negative: negativePrompt,
+      phrases: selectedPhrases,
+      garmentMode: garmentMode ?? null,
+      referenceImageUrl: referenceImageUrl ?? null,
+      variables,
+      variations,
+      mockup: mockup.enabled ? mockup : null,
+    });
+    setRecipeSaved(true);
+    addToast({ message: "Recipe saved!", type: "success" });
+    setTimeout(() => setRecipeSaved(false), 2000);
+  }
+
+  function handleRandomFill() {
+    if (!activeTemplateId) return;
+    const template = getTemplateById(activeTemplateId);
+    if (!template) return;
+    
+    template.fields.forEach((field) => {
+      if (field.id === "avoid") return;
+      const presets = getPresetsForField(template.id, field.id);
+      if (presets.length > 0) {
+        const randomPreset = presets[Math.floor(Math.random() * presets.length)];
+        setField(field.id, randomPreset);
+      }
+    });
+    addToast({ message: "Fields randomized!", type: "success" });
+  }
+
+  function handleClearFields() {
+    setShowClearDialog(true);
+  }
+
+  function confirmClearFields() {
+    if (!activeTemplateId) return;
+    const template = getTemplateById(activeTemplateId);
+    if (!template) return;
+    
+    template.fields.forEach((f) => setField(f.id, ""));
+    setShowClearDialog(false);
+    addToast({ message: "Fields cleared", type: "info" });
+  }
+
+  function handleCopyFromHeader() {
+    if (!currentDisplayPrompt) return;
+    navigator.clipboard.writeText(currentDisplayPrompt);
+    addToast({ message: "Prompt copied to clipboard!", type: "success" });
+  }
+
+  async function handleShare() {
+    if (!currentDisplayPrompt || !activeTemplateId) return;
     setIsSharing(true);
     try {
       const payload = JSON.stringify({
-        content: polishedResult || result.full,
+        content: currentDisplayPrompt,
         templateId: activeTemplateId,
         generatorId: selectedGenerator,
       });
@@ -194,13 +284,13 @@ export function PromptOutput() {
   }
 
   const handlePolish = async () => {
-    if (!result || !activeTemplateId || !activeGen) return;
+    if (!currentDisplayPrompt || !activeTemplateId || !activeGen) return;
 
     setIsPolishing(true);
     setRewardMessage(null);
     try {
       const { jobId } = await api.ai.polish({
-        prompt: result.full,
+        prompt: currentDisplayPrompt,
         generator: activeGen.name,
         templateId: activeTemplateId,
       });
@@ -247,9 +337,9 @@ export function PromptOutput() {
     }
   };
 
-  const currentDisplayPrompt = polishedResult || result?.full;
-  const wordCount = result ? result.full.split(/\s+/).filter(Boolean).length : 0;
-  const charCount = result ? result.full.length : 0;
+  const currentDisplayPrompt = manualEdit || polishedResult || (result?.full && !/\[([A-Z\s/]+)\]/.test(result.full) ? result.full : "") || "";
+  const wordCount = currentDisplayPrompt ? currentDisplayPrompt.split(/\s+/).filter(Boolean).length : 0;
+  const charCount = currentDisplayPrompt ? currentDisplayPrompt.length : 0;
 
   return (
     <div className="relative flex flex-col h-full overflow-hidden bg-bg-1">
@@ -281,6 +371,37 @@ export function PromptOutput() {
             onClick={() => setPromptStarred(!promptStarred)}
           >
             <Star className={cn("w-4 h-4", promptStarred && "fill-current")} />
+          </Button>
+          
+          {/* Utility controls */}
+          <div className="h-4 w-px bg-glass-border" />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleRandomFill}
+            className="h-7 w-7 text-text-3 hover:text-accent cursor-pointer transition-colors duration-150"
+            aria-label="Random fill all fields"
+          >
+            <Shuffle className="w-3.5 h-3.5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleClearFields}
+            className="h-7 w-7 text-text-3 hover:text-red-400 cursor-pointer transition-colors duration-150"
+            aria-label="Clear all fields"
+          >
+            <Eraser className="w-3.5 h-3.5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleCopyFromHeader}
+            disabled={!currentDisplayPrompt}
+            className="h-7 w-7 text-text-3 hover:text-accent cursor-pointer transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
+            aria-label="Copy prompt to clipboard"
+          >
+            <Copy className="w-3.5 h-3.5" />
           </Button>
         </div>
 
@@ -325,12 +446,7 @@ export function PromptOutput() {
       {/* Scrollable output content */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-5">
-          {!result ? (
-            <p className="text-sm text-text-3 text-center py-10">
-              Fill in fields to generate output
-            </p>
-          ) : (
-            <div className="space-y-3">
+          <div className="space-y-3">
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <p className="text-xs font-medium text-text-2">
@@ -350,16 +466,22 @@ export function PromptOutput() {
                     exit={{ opacity: 0, y: -4 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
                     className={cn(
-                      "relative border rounded-[var(--radius-lg)] p-3.5",
+                      "relative border rounded-[var(--radius-lg)]",
                       polishedResult ? "bg-bg-input border-accent-gold/25" : "bg-bg-input border-glass-border"
                     )}
                   >
-                    <pre className={cn(
-                      "text-sm leading-relaxed break-words whitespace-pre-wrap font-mono",
-                      polishedResult ? "text-accent-gold" : "text-accent"
-                    )}>
-                      {currentDisplayPrompt}
-                    </pre>
+                    <textarea
+                      value={currentDisplayPrompt}
+                      onChange={(e) => setManualEdit(e.target.value)}
+                      placeholder="Start building your prompt by filling in the fields..."
+                      className={cn(
+                        "w-full min-h-[200px] bg-transparent border-0 outline-none resize-y p-3.5",
+                        "text-sm leading-relaxed font-mono",
+                        "focus-visible:outline-none focus-visible:ring-0",
+                        "placeholder:text-text-3",
+                        polishedResult ? "text-accent-gold" : "text-accent"
+                      )}
+                    />
                     {polishedResult && (
                       <BorderBeam color="var(--color-accent-gold)" size={60} duration={4} />
                     )}
@@ -423,16 +545,16 @@ export function PromptOutput() {
                 {wordCount > 75 && <span className="text-warn flex items-center gap-1"><AlertTriangle className="w-3.5 h-3.5" />Limit</span>}
               </div>
             </div>
-          )}
         </div>
       </div>
 
       {/* ── Sticky action footer ── */}
-      <div className="shrink-0 relative z-10 border-t border-glass-border bg-bg-1 p-4 space-y-2">
+      <div className="shrink-0 relative z-10 border-t border-glass-border bg-bg-1 px-4 py-4 space-y-2">
+        {/* Row 1: Polish + Generate */}
         <div className="flex gap-2">
           <Button
             onClick={handlePolish}
-            disabled={!result || isPolishing || !!polishedResult}
+            disabled={!currentDisplayPrompt || isPolishing || !!polishedResult}
             className={cn(
               "flex-1 rounded-full font-semibold text-xs cursor-pointer",
               polishedResult ? "bg-accent-gold/15 text-accent-gold border border-accent-gold/30" : "bg-accent text-white",
@@ -443,7 +565,7 @@ export function PromptOutput() {
           </Button>
           <Button
             onClick={() => setGenerateOpen(true)}
-            disabled={!result}
+            disabled={!currentDisplayPrompt}
             variant="outline"
             className="flex-1 rounded-full text-xs hover:text-accent hover:border-accent/40 cursor-pointer"
           >
@@ -451,41 +573,55 @@ export function PromptOutput() {
           </Button>
         </div>
 
-        {/* Save Vary + Share row */}
+        {/* Row 2: Save Prompt + Save Recipe + Share */}
         <div className="flex gap-2">
           <Button
-            onClick={handleSaveVary}
-            disabled={!result}
+            onClick={handleSavePrompt}
+            disabled={!currentDisplayPrompt}
             variant="outline"
             className={cn(
-              "flex-1 rounded-full text-xs cursor-pointer",
+              "flex-1 rounded-full text-xs cursor-pointer min-w-0",
               saved
                 ? "bg-success/15 text-success border-success/30"
                 : "hover:text-accent hover:border-accent/40",
             )}
           >
-            {saved ? <Check className="w-3.5 h-3.5 mr-1.5" /> : <Save className="w-3.5 h-3.5 mr-1.5" />}
-            {saved ? "Saved!" : "Save Vary"}
+            {saved ? <Check className="w-3.5 h-3.5 mr-1.5 shrink-0" /> : <Save className="w-3.5 h-3.5 mr-1.5 shrink-0" />}
+            <span className="truncate">{saved ? "Saved!" : "Save Prompt"}</span>
+          </Button>
+          <Button
+            onClick={handleSaveRecipe}
+            disabled={!result}
+            variant="outline"
+            className={cn(
+              "flex-1 rounded-full text-xs cursor-pointer min-w-0",
+              recipeSaved
+                ? "bg-success/15 text-success border-success/30"
+                : "hover:text-accent hover:border-accent/40",
+            )}
+          >
+            {recipeSaved ? <Check className="w-3.5 h-3.5 mr-1.5 shrink-0" /> : <ChefHat className="w-3.5 h-3.5 mr-1.5 shrink-0" />}
+            <span className="truncate">{recipeSaved ? "Recipe Saved!" : "Save Recipe"}</span>
           </Button>
           <Button
             onClick={handleShare}
-            disabled={!result || isSharing}
+            disabled={!currentDisplayPrompt || isSharing}
             variant="outline"
             className={cn(
-              "flex-1 rounded-full text-xs cursor-pointer",
+              "flex-1 rounded-full text-xs cursor-pointer min-w-0",
               shared
                 ? "bg-accent/15 text-accent border-accent/30"
                 : "hover:text-accent hover:border-accent/40",
             )}
           >
             {isSharing ? (
-              <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+              <Loader2 className="w-3.5 h-3.5 mr-1.5 shrink-0 animate-spin" />
             ) : shared ? (
-              <Check className="w-3.5 h-3.5 mr-1.5" />
+              <Check className="w-3.5 h-3.5 mr-1.5 shrink-0" />
             ) : (
-              <Share2 className="w-3.5 h-3.5 mr-1.5" />
+              <Share2 className="w-3.5 h-3.5 mr-1.5 shrink-0" />
             )}
-            {isSharing ? "Sharing…" : shared ? "Link Copied!" : "Share"}
+            <span className="truncate">{isSharing ? "Sharing…" : shared ? "Link Copied!" : "Share"}</span>
           </Button>
         </div>
       </div>
@@ -493,8 +629,35 @@ export function PromptOutput() {
       <GenerateModal
         open={generateOpen}
         onClose={() => setGenerateOpen(false)}
-        initialPrompt={polishedResult || result?.full || ""}
+        initialPrompt={currentDisplayPrompt}
       />
+
+      {/* Clear Fields Confirmation Dialog */}
+      <Dialog open={showClearDialog} onOpenChange={setShowClearDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Clear all fields?</DialogTitle>
+            <DialogDescription>
+              This will remove all content from your fields. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setShowClearDialog(false)}
+              className="rounded-full"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmClearFields}
+              className="bg-red-500 hover:bg-red-600 text-white rounded-full"
+            >
+              Clear Fields
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
