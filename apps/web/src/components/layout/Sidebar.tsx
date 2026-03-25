@@ -90,8 +90,8 @@ function Logo({ collapsed }: { collapsed?: boolean }) {
       </div>
       {!collapsed && (
         <div className="flex flex-col">
-          <span className="font-heading font-bold text-[15px] text-text-1 tracking-tight">
-            Savage
+          <span className="font-display font-bold text-[15px] text-text-1 tracking-tight uppercase">
+            SIDEKICK
           </span>
           <span className="text-[11px] text-text-3 font-medium -mt-0.5">
             Prompt Builder

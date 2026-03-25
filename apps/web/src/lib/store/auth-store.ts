@@ -30,7 +30,7 @@ export type AuthStore = AuthState & AuthActions;
 const DEV_USER: AuthUser = {
   id: "admin-001",
   name: "Admin",
-  email: "admin@savage.app",
+  email: "admin@sidekick.app",
   avatarUrl: null,
 };
 

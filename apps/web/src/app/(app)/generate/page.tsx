@@ -261,7 +261,7 @@ function GeneratePageInner() {
   function handleDownload(image: GeneratedImage, index: number) {
     const a = document.createElement("a");
     a.href = image.url;
-    a.download = `savage-${Date.now()}-${index + 1}.png`;
+    a.download = `sidekick-${Date.now()}-${index + 1}.png`;
     a.click();
   }
 

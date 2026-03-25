@@ -23,7 +23,7 @@ export function TopBar() {
   const theme = useSettingsStore((s) => s.theme);
   const toggleTheme = useSettingsStore((s) => s.toggleTheme);
 
-  const meta = PAGE_META[pathname ?? ""] ?? { title: "Savage Prompt Builder" };
+  const meta = PAGE_META[pathname ?? ""] ?? { title: "SIDEKICK Prompt Builder" };
 
   return (
     <header className="flex items-center justify-between h-14 px-6 md:px-8 border-b border-border bg-bg-1/80 backdrop-blur-md sticky top-0 z-30">

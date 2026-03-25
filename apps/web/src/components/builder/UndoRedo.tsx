@@ -38,6 +38,7 @@ export function UndoRedo() {
         onClick={undo}
         disabled={undoCount === 0}
         title="Undo (Ctrl+Z)"
+        aria-label="Undo (Ctrl+Z)"
         className={clsx(
           "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-150",
           undoCount > 0
@@ -51,6 +52,7 @@ export function UndoRedo() {
         onClick={redo}
         disabled={redoCount === 0}
         title="Redo (Ctrl+Shift+Z)"
+        aria-label="Redo (Ctrl+Shift+Z)"
         className={clsx(
           "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-150",
           redoCount > 0

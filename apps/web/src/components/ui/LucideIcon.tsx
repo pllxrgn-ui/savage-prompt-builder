@@ -78,6 +78,7 @@ import {
   Store,
   Phone,
   PaintBucket,
+  Paintbrush,
   type LucideProps,
 } from "lucide-react";
 import {
@@ -88,6 +89,8 @@ import {
   Sneaker,
   BaseballCap,
   CoatHanger,
+  ShirtFolded,
+  Tote,
   Jeep,
   Van,
   Truck,
@@ -98,6 +101,13 @@ import {
   Bone,
 } from "@phosphor-icons/react";
 import type { Icon as PhosphorIconType } from "@phosphor-icons/react";
+import {
+  TankTopIcon,
+  LongSleeveIcon,
+  ShortsIcon,
+  JacketIcon,
+  JerseyIcon,
+} from "./GarmentIcons";
 
 const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   User,
@@ -179,6 +189,16 @@ const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   Store,
   Phone,
   PaintBucket,
+  Paintbrush,
+};
+
+// Custom garment SVG icons registered with "garment:" prefix
+const GARMENT_MAP: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+  TankTop: TankTopIcon,
+  LongSleeve: LongSleeveIcon,
+  Shorts: ShortsIcon,
+  Jacket: JacketIcon,
+  Jersey: JerseyIcon,
 };
 
 // Phosphor icons registered with "ph:" prefix
@@ -190,6 +210,8 @@ const PHOSPHOR_MAP: Record<string, PhosphorIconType> = {
   Sneaker,
   BaseballCap,
   CoatHanger,
+  ShirtFolded,
+  Tote,
   Jeep,
   Van,
   Truck,
@@ -204,8 +226,14 @@ interface LucideIconProps extends LucideProps {
   name: string;
 }
 
-// Supports both Lucide ("Shirt") and Phosphor ("ph:TShirt") icon names.
+// Supports Lucide ("Shirt"), Phosphor ("ph:TShirt"), and custom garment ("garment:TankTop") icons.
 export function LucideIcon({ name, ...props }: LucideIconProps) {
+  if (name.startsWith("garment:")) {
+    const garmentName = name.slice(8);
+    const GIcon = GARMENT_MAP[garmentName];
+    if (!GIcon) return null;
+    return <GIcon width="1em" height="1em" {...props} />;
+  }
   if (name.startsWith("ph:")) {
     const phosphorName = name.slice(3);
     const PhIcon = PHOSPHOR_MAP[phosphorName];

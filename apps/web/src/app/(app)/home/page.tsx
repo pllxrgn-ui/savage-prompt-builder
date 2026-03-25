@@ -137,7 +137,7 @@ function HeroPromptPreview() {
             <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
             <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
           </div>
-          <span className="text-[11px] text-text-3 font-mono ml-2">savage-prompt-builder</span>
+          <span className="text-[11px] text-text-3 font-mono ml-2">sidekick-prompt-builder</span>
         </div>
 
         <div className="p-5 space-y-4">
@@ -371,7 +371,7 @@ export default function HomePage() {
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handlePolish();
                     }}
-                    placeholder="Paste any rough idea… Savage will refine it into a precise prompt"
+                    placeholder="Paste any rough idea… SIDEKICK will refine it into a precise prompt"
                     rows={3}
                     aria-label="Quick prompt polish input"
                     className="w-full bg-transparent text-text-1 placeholder:text-text-3 text-base p-4 pr-36 resize-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent/50"
@@ -461,7 +461,7 @@ export default function HomePage() {
         {/* ── SHOWCASE MARQUEE ── */}
         <BlurFade delay={0.12}>
           <section className="overflow-hidden relative pb-2">
-            <p className="label-section mb-4">Made with Savage</p>
+            <p className="label-section mb-4">Made with SIDEKICK</p>
             <div className="relative">
               <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-bg-base to-transparent z-10" />
               <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-bg-base to-transparent z-10" />

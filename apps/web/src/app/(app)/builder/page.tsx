@@ -4,7 +4,7 @@ import { Suspense, useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Wand2, ArrowLeft, Paintbrush, Palette, Tags, Ban, Layers,
-  FileText, Sparkles, ChevronRight, ChevronLeft, Check,
+  FileText, Sparkles, ChevronRight, ChevronLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBuilderStore } from "@/lib/store";
@@ -14,6 +14,8 @@ import {
   TEMPLATE_GROUPS,
   getTemplatesByGroup,
 } from "@/lib/data";
+import { getWorkflowForTemplate, hasCustomWorkflow } from "@/lib/workflows";
+import type { WorkflowPhase } from "@/lib/workflows";
 import { LucideIcon } from "@/components/ui/LucideIcon";
 import { BlurFade } from "@/components/ui/blur-fade";
 import { Button } from "@/components/ui/button";
@@ -34,6 +36,7 @@ import { AISuggestButton } from "@/components/builder/AISuggestButton";
 import { VariationTabs } from "@/components/builder/VariationTabs";
 import { SaveRecipeModal } from "@/components/builder/SaveRecipeModal";
 import { PromptOutput } from "@/components/builder/PromptOutput";
+import { ClothingWorkflow } from "@/components/builder/clothing";
 import { decodeBuilderState } from "@/lib/services/share-service";
 import { useSearchParams } from "next/navigation";
 
@@ -145,8 +148,23 @@ function BuilderPageInner() {
     [activeTemplateId],
   );
 
-  const activeIndex = WORKFLOW_STEPS.findIndex((s) => s.id === activeStepId);
-  const activeStep = WORKFLOW_STEPS[activeIndex] ?? WORKFLOW_STEPS[0];
+  // Workflow registry: custom or generic phases
+  const isClothing = activeTemplateId === "clothing";
+  const workflow = useMemo(
+    () => (activeTemplateId ? getWorkflowForTemplate(activeTemplateId) : null),
+    [activeTemplateId],
+  );
+  const workflowPhases = workflow?.phases ?? WORKFLOW_STEPS;
+
+  const activeIndex = workflowPhases.findIndex((s) => s.id === activeStepId);
+  const activePhase = workflowPhases[activeIndex] ?? workflowPhases[0];
+
+  // Reset activeStepId when switching templates
+  useEffect(() => {
+    if (workflow) {
+      setActiveStepId(workflow.phases[0].id as StepId);
+    }
+  }, [workflow]);
 
   function scrollToStep(id: StepId) {
     setActiveStepId(id);
@@ -352,12 +370,12 @@ function BuilderPageInner() {
           {/* ── Left: Workflow step navigator (XL screens only) ── */}
           <aside className="hidden xl:flex flex-col w-52 shrink-0 border-r border-glass-border bg-bg-1 py-4 px-3 gap-0.5">
             <p className="label-section px-3 pb-3">Workflow</p>
-            {WORKFLOW_STEPS.map((step, i) => {
-              const isActive = activeStepId === step.id;
+            {workflowPhases.map((phase, i) => {
+              const isActive = activeStepId === phase.id;
               return (
                 <button
-                  key={step.id}
-                  onClick={() => scrollToStep(step.id)}
+                  key={phase.id}
+                  onClick={() => scrollToStep(phase.id as StepId)}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-left transition-all duration-150 cursor-pointer group",
                     isActive
@@ -381,7 +399,7 @@ function BuilderPageInner() {
                       isActive ? "text-accent" : "text-text-2 group-hover:text-text-1",
                     )}
                   >
-                    {step.label}
+                    {phase.label}
                   </span>
                 </button>
               );
@@ -409,8 +427,8 @@ function BuilderPageInner() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setActiveStepId(WORKFLOW_STEPS[activeIndex - 1].id)}
-                  className="fixed left-2 xl:left-56 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-bg-2/95 hover:bg-bg-3 border border-glass-border hover:border-border-strong text-text-3 hover:text-accent cursor-pointer z-20 shadow-xl backdrop-blur-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                  onClick={() => setActiveStepId(workflowPhases[activeIndex - 1].id as StepId)}
+                  className="fixed left-[13%] xl:left-[max(13.5rem,calc(35vw_-_252px))] top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-bg-2/95 hover:bg-bg-3 border border-glass-border hover:border-border-strong text-text-3 hover:text-accent cursor-pointer z-20 shadow-xl backdrop-blur-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                   aria-label="Previous step"
                 >
                   <ChevronLeft className="w-5 h-5" />
@@ -418,12 +436,12 @@ function BuilderPageInner() {
               )}
               
               {/* Floating next arrow */}
-              {activeIndex < WORKFLOW_STEPS.length - 1 && (
+              {activeIndex < workflowPhases.length - 1 && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setActiveStepId(WORKFLOW_STEPS[activeIndex + 1].id)}
-                  className="fixed right-2 lg:right-[476px] top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-bg-2/95 hover:bg-bg-3 border border-glass-border hover:border-border-strong text-text-3 hover:text-accent cursor-pointer z-20 shadow-xl backdrop-blur-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                  onClick={() => setActiveStepId(workflowPhases[activeIndex + 1].id as StepId)}
+                  className="fixed right-[32%] lg:right-[35%] top-1/2 -translate-y-1/2 h-11 w-11 rounded-full bg-bg-2/95 hover:bg-bg-3 border border-glass-border hover:border-border-strong text-text-3 hover:text-accent cursor-pointer z-20 shadow-xl backdrop-blur-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                   aria-label="Next step"
                 >
                   <ChevronRight className="w-5 h-5" />
@@ -445,52 +463,58 @@ function BuilderPageInner() {
                         <span className="text-xs font-bold text-accent">{activeIndex + 1}</span>
                       </div>
                       <div>
-                        <h3 className="text-sm font-heading font-semibold text-text-1">{activeStep.label}</h3>
-                        <p className="text-xs text-text-3">{activeStep.description}</p>
+                        <h3 className="text-sm font-heading font-semibold text-text-1">{activePhase.label}</h3>
+                        <p className="text-sm text-text-3">{activePhase.description}</p>
                       </div>
                     </div>
 
                     {/* Step content */}
                     <div className="ml-11">
-                      {activeStepId === "fields" && (
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-end">
-                            <AISuggestButton />
-                          </div>
-                          <div className="bg-bg-1 border border-glass-border rounded-[var(--radius-lg)] p-4 space-y-4">
-                            {template.fields
-                              .filter((f) => !["mood", "colors", "avoid"].includes(f.id))
-                              .map((field) => {
-                              if (template.id === "social" && field.id === "subject") {
-                                return <PlatformDropdown key={field.id} />;
-                              }
-                              return <FieldInput key={field.id} field={field} templateId={template.id} />;
-                            })}
-                          </div>
-                        </div>
-                      )}
-
-                      {activeStepId === "styles" && (
-                        <div className="space-y-3">
-                          <StylesDrawer templateId={template.id} styles={styles} />
-                          <AIStyleGenerator />
-                        </div>
-                      )}
-
-                      {activeStepId === "colors" && <PalettePanel />}
-                      {activeStepId === "keywords" && <KeywordsPanel />}
-                      {activeStepId === "negative" && <NegativePanel />}
-
-                      {activeStepId === "mockup" && (
-                        <div className="space-y-5">
-                          <MockupPanel templateId={template.id} onMockupChange={setMockup} />
-                          {(template.id === "clothing" || template.id === "collection") && (
-                            <GarmentSelector />
+                      {isClothing ? (
+                        <ClothingWorkflow activePhaseId={activeStepId} />
+                      ) : (
+                        <>
+                          {activeStepId === "fields" && (
+                            <div className="space-y-4">
+                              <div className="flex items-center justify-end">
+                                <AISuggestButton />
+                              </div>
+                              <div className="bg-bg-1 border border-glass-border rounded-[var(--radius-lg)] p-4 space-y-4">
+                                {template.fields
+                                  .filter((f) => !["mood", "colors", "avoid"].includes(f.id))
+                                  .map((field) => {
+                                  if (template.id === "social" && field.id === "subject") {
+                                    return <PlatformDropdown key={field.id} />;
+                                  }
+                                  return <FieldInput key={field.id} field={field} templateId={template.id} />;
+                                })}
+                              </div>
+                            </div>
                           )}
-                          <div className="pt-4 border-t border-glass-border">
-                            <BuilderActions template={template} onRecipe={() => setRecipeModalOpen(true)} />
-                          </div>
-                        </div>
+
+                          {activeStepId === "styles" && (
+                            <div className="space-y-3">
+                              <StylesDrawer templateId={template.id} styles={styles} />
+                              <AIStyleGenerator />
+                            </div>
+                          )}
+
+                          {activeStepId === "colors" && <PalettePanel />}
+                          {activeStepId === "keywords" && <KeywordsPanel />}
+                          {activeStepId === "negative" && <NegativePanel />}
+
+                          {activeStepId === "mockup" && (
+                            <div className="space-y-5">
+                              <MockupPanel templateId={template.id} onMockupChange={setMockup} />
+                              {(template.id === "clothing" || template.id === "collection") && (
+                                <GarmentSelector />
+                              )}
+                              <div className="pt-4 border-t border-glass-border">
+                                <BuilderActions template={template} onRecipe={() => setRecipeModalOpen(true)} />
+                              </div>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </motion.div>
@@ -504,18 +528,16 @@ function BuilderPageInner() {
             </div>
 
             {/* Step navigation footer */}
-            <div className="shrink-0 flex items-center justify-between px-5 py-2 border-t border-glass-border bg-bg-1">
-              {/* Left spacer - removed Prev button for cleaner layout */}
-              <div className="min-w-[90px]" />
-
+            <div className="shrink-0 flex items-center justify-center px-5 py-2 border-t border-glass-border bg-bg-1">
               {/* Step icon dots */}
               <div className="flex items-center gap-1.5">
-                {WORKFLOW_STEPS.map((s, i) => {
-                  const StepIcon = s.Icon;
+                {workflowPhases.map((s, i) => {
+                  const phaseIcon = 'icon' in s ? (s as WorkflowPhase).icon : null;
+                  const StepIcon = 'Icon' in s ? (s as WorkflowStep).Icon : null;
                   return (
                     <button
                       key={s.id}
-                      onClick={() => setActiveStepId(s.id)}
+                      onClick={() => setActiveStepId(s.id as StepId)}
                       aria-label={`Go to ${s.label}`}
                       title={s.label}
                       className={cn(
@@ -528,33 +550,17 @@ function BuilderPageInner() {
                           : "bg-glass text-text-3 hover:text-text-1 hover:bg-glass-hover",
                       )}
                     >
-                      <StepIcon className="w-3.5 h-3.5" />
+                      {phaseIcon ? (
+                        <LucideIcon name={phaseIcon} className="w-3.5 h-3.5" />
+                      ) : StepIcon ? (
+                        <StepIcon className="w-3.5 h-3.5" />
+                      ) : (
+                        <span className="text-[10px] font-bold">{i + 1}</span>
+                      )}
                     </button>
                   );
                 })}
               </div>
-
-              {/* Next — show target step name + icon, or Done on last step */}
-              {activeIndex < WORKFLOW_STEPS.length - 1 ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setActiveStepId(WORKFLOW_STEPS[activeIndex + 1].id)}
-                  className="gap-1.5 text-xs text-text-3 hover:text-text-1 cursor-pointer min-w-[90px] justify-end px-2"
-                >
-                  <span>{WORKFLOW_STEPS[activeIndex + 1].label}</span>
-                  {(() => { const S = WORKFLOW_STEPS[activeIndex + 1].Icon; return <S className="w-3.5 h-3.5 shrink-0" />; })()}
-                  <ChevronRight className="w-3.5 h-3.5 shrink-0" />
-                </Button>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-1.5 text-xs text-accent cursor-pointer min-w-[90px] justify-end px-2"
-                >
-                  Done <Check className="w-3.5 h-3.5 shrink-0" />
-                </Button>
-              )}
             </div>
           </main>
 

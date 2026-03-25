@@ -10,10 +10,14 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBuilderStore, useUIStore, useHistoryStore } from "@/lib/store";
+import { useClothingStore } from "@/lib/store/clothing-store";
 import * as promptService from "@/lib/services/prompt-service";
 import * as recipeServiceMod from "@/lib/services/recipe-service";
 import { GENERATORS, PHRASES, getTemplateById, getPresetsForField } from "@/lib/data";
-import { buildPrompt } from "@/lib/prompt-engine";
+import { buildPrompt, buildClothingPrompt } from "@/lib/prompt-engine";
+import { getPrintMethodById } from "@/lib/data/clothing/print-methods";
+import { PALETTES } from "@/lib/data/palettes";
+import { CLOTHING_BACKGROUNDS, GARMENT_COLORS } from "@/lib/data/clothing";
 import { LucideIcon } from "@/components/ui/LucideIcon";
 import type { GeneratorId, UIStore } from "@/types";
 import { GenerateModal } from "@/components/generate/GenerateModal";
@@ -36,6 +40,23 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { api } from "@/lib/api";
+import type { ClothingState, ClothingStore } from "@/lib/store/clothing-store";
+
+/** Extract only state fields (no action functions) from the clothing store for serialization. */
+function extractClothingState(store: ClothingStore): Record<string, unknown> {
+  const {
+    subjects, customSubject, vibeTheme, letteringStyle, letteringText, layout,
+    referenceImageUrls, garmentType, placements, printSize, garmentColor,
+    customGarmentColors, printMethod, artStyles, colorPalette, customPaletteColors,
+    detailLevel, background, customBackgroundColors, outputQuality, extraNotes, customTags,
+  } = store;
+  return {
+    subjects, customSubject, vibeTheme, letteringStyle, letteringText, layout,
+    referenceImageUrls, garmentType, placements, printSize, garmentColor,
+    customGarmentColors, printMethod, artStyles, colorPalette, customPaletteColors,
+    detailLevel, background, customBackgroundColors, outputQuality, extraNotes, customTags,
+  };
+}
 
 export function PromptOutput() {
   const {
@@ -93,8 +114,53 @@ export function PromptOutput() {
   // Manual edits to the output
   const [manualEdit, setManualEdit] = useState("");
 
+  // Clothing store selectors (only read when clothing template is active)
+  const clothingState = useClothingStore();
+  const isClothing = activeTemplateId === "clothing";
+
   const result = useMemo(() => {
     if (!activeTemplateId) return null;
+
+    // Clothing template: use clothing-specific builder
+    if (isClothing) {
+      const pm = clothingState.printMethod
+        ? getPrintMethodById(clothingState.printMethod)
+        : null;
+      const clothingOutput = buildClothingPrompt({
+        subjects: clothingState.subjects,
+        customSubject: clothingState.customSubject,
+        vibeTheme: clothingState.vibeTheme,
+        letteringStyle: clothingState.letteringStyle,
+        letteringText: clothingState.letteringText,
+        layout: clothingState.layout,
+        garmentType: clothingState.garmentType,
+        placements: clothingState.placements,
+        printSize: clothingState.printSize,
+        garmentColor: clothingState.garmentColor,
+        customGarmentColors: clothingState.customGarmentColors,
+        printMethodPrefix: pm?.promptPrefix ?? null,
+        printMethodAutoNegatives: pm?.autoNegatives ?? [],
+        artStyles: clothingState.artStyles,
+        colorPalette: clothingState.colorPalette
+          ? (PALETTES.find((p) => p.id === clothingState.colorPalette)?.name ?? clothingState.colorPalette)
+          : null,
+        customPaletteColors: clothingState.customPaletteColors,
+        detailLevel: clothingState.detailLevel,
+        background: clothingState.background ?? "transparent",
+        customBackgroundColors: clothingState.customBackgroundColors,
+        outputQuality: clothingState.outputQuality,
+        extraNotes: clothingState.extraNotes,
+        userNegatives: clothingState.customTags["negatives"] ?? [],
+        customTags: clothingState.customTags,
+      });
+      return {
+        full: clothingOutput.positive + (clothingOutput.negative ? `\n\nNegative: ${clothingOutput.negative}` : ""),
+        positive: clothingOutput.positive,
+        negative: clothingOutput.negative,
+      };
+    }
+
+    // Generic templates: use standard builder
     const raw = buildPrompt({
       templateId: activeTemplateId,
       fields: templateFields,
@@ -128,6 +194,8 @@ export function PromptOutput() {
     return { ...raw, full, positive, negative };
   }, [
     activeTemplateId,
+    isClothing,
+    clothingState,
     templateFields,
     selectedStyles,
     selectedPalette,
@@ -201,7 +269,7 @@ export function PromptOutput() {
   }
 
   function handleSaveRecipe() {
-    if (!result || !activeTemplateId) return;
+    if (!currentDisplayPrompt || !activeTemplateId) return;
     const template = getTemplateById(activeTemplateId);
     recipeServiceMod.saveRecipe({
       title: `${template?.name ?? "Prompt"} Recipe`,
@@ -218,6 +286,7 @@ export function PromptOutput() {
       variables,
       variations,
       mockup: mockup.enabled ? mockup : null,
+      ...(isClothing ? { clothingData: extractClothingState(clothingState) } : {}),
     });
     setRecipeSaved(true);
     addToast({ message: "Recipe saved!", type: "success" });
@@ -226,6 +295,12 @@ export function PromptOutput() {
 
   function handleRandomFill() {
     if (!activeTemplateId) return;
+
+    if (isClothing) {
+      addToast({ message: "Random fill is not available for the clothing builder yet.", type: "info" });
+      return;
+    }
+
     const template = getTemplateById(activeTemplateId);
     if (!template) return;
     
@@ -246,10 +321,15 @@ export function PromptOutput() {
 
   function confirmClearFields() {
     if (!activeTemplateId) return;
-    const template = getTemplateById(activeTemplateId);
-    if (!template) return;
-    
-    template.fields.forEach((f) => setField(f.id, ""));
+
+    if (isClothing) {
+      useClothingStore.getState().resetClothing();
+    } else {
+      const template = getTemplateById(activeTemplateId);
+      if (!template) return;
+      template.fields.forEach((f) => setField(f.id, ""));
+    }
+
     setShowClearDialog(false);
     addToast({ message: "Fields cleared", type: "info" });
   }
@@ -369,6 +449,7 @@ export function PromptOutput() {
               promptStarred ? "text-warn" : "text-text-3 hover:text-warn",
             )}
             onClick={() => setPromptStarred(!promptStarred)}
+            aria-label={promptStarred ? "Unstar prompt" : "Star prompt"}
           >
             <Star className={cn("w-4 h-4", promptStarred && "fill-current")} />
           </Button>
@@ -485,6 +566,96 @@ export function PromptOutput() {
                     {polishedResult && (
                       <BorderBeam color="var(--color-accent-gold)" size={60} duration={4} />
                     )}
+
+                    {/* Color indicator strips */}
+                    {isClothing && (() => {
+                      const garmentColor = clothingState.garmentColor
+                        ? GARMENT_COLORS.find((c) => c.id === clothingState.garmentColor)
+                        : null;
+                      const customGarmentColors = clothingState.customGarmentColors;
+                      const palette = clothingState.colorPalette
+                        ? PALETTES.find((p) => p.id === clothingState.colorPalette)
+                        : null;
+                      const customPaletteColors = clothingState.customPaletteColors;
+                      const presetBg = clothingState.background
+                        ? CLOTHING_BACKGROUNDS.find((b) => b.id === clothingState.background)
+                        : null;
+                      const customBgColors = clothingState.customBackgroundColors;
+
+                      const hasGarment = garmentColor || customGarmentColors.length > 0;
+                      const hasPalette = palette || customPaletteColors.length > 0;
+                      const hasBg = presetBg || customBgColors.length > 0;
+                      if (!hasGarment && !hasPalette && !hasBg) return null;
+
+                      return (
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-3.5 py-2 border-t border-glass-border">
+                          {/* Garment color */}
+                          {hasGarment && (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-medium text-text-3 uppercase tracking-wider">Garment</span>
+                              {garmentColor && garmentColor.id !== "custom" && (
+                                <span
+                                  className="w-4 h-4 rounded border border-white/20 shrink-0"
+                                  style={{ backgroundColor: garmentColor.hex }}
+                                  title={garmentColor.label}
+                                />
+                              )}
+                              {customGarmentColors.map((hex, i) => (
+                                <span
+                                  key={`gc-${i}`}
+                                  className="w-4 h-4 rounded border border-white/20 shrink-0"
+                                  style={{ backgroundColor: hex }}
+                                  title={hex}
+                                />
+                              ))}
+                            </div>
+                          )}
+                          {/* Color palette */}
+                          {hasPalette && (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-medium text-text-3 uppercase tracking-wider">Palette</span>
+                              {palette && palette.colors.map((hex, i) => (
+                                <span
+                                  key={`p-${i}`}
+                                  className="w-4 h-4 rounded border border-white/20 shrink-0"
+                                  style={{ backgroundColor: hex }}
+                                  title={`${palette.name} — ${hex}`}
+                                />
+                              ))}
+                              {customPaletteColors.map((hex, i) => (
+                                <span
+                                  key={`cp-${i}`}
+                                  className="w-4 h-4 rounded border border-white/20 shrink-0"
+                                  style={{ backgroundColor: hex }}
+                                  title={hex}
+                                />
+                              ))}
+                            </div>
+                          )}
+                          {/* Background */}
+                          {hasBg && (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-medium text-text-3 uppercase tracking-wider">BG</span>
+                              {presetBg && (
+                                <span
+                                  className="w-4 h-4 rounded border border-white/20 shrink-0"
+                                  style={{ backgroundColor: presetBg.hex }}
+                                  title={presetBg.label}
+                                />
+                              )}
+                              {customBgColors.map((hex, i) => (
+                                <span
+                                  key={`bg-${i}`}
+                                  className="w-4 h-4 rounded border border-white/20 shrink-0"
+                                  style={{ backgroundColor: hex }}
+                                  title={hex}
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </motion.div>
                 </AnimatePresence>
 
@@ -591,7 +762,7 @@ export function PromptOutput() {
           </Button>
           <Button
             onClick={handleSaveRecipe}
-            disabled={!result}
+            disabled={!currentDisplayPrompt}
             variant="outline"
             className={cn(
               "flex-1 rounded-full text-xs cursor-pointer min-w-0",

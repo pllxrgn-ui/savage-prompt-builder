@@ -438,10 +438,10 @@ export default function PricingPage() {
         <p className="text-text-3 text-sm">
           Questions?{" "}
           <a
-            href="mailto:hello@savageprompt.com"
+            href="mailto:hello@sidekickprompt.com"
             className="text-accent hover:underline"
           >
-            hello@savageprompt.com
+            hello@sidekickprompt.com
           </a>
         </p>
       </div>

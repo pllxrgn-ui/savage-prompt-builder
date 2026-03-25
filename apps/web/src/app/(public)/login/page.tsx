@@ -130,8 +130,8 @@ export default function LoginPage() {
             <div className="flex items-center justify-center w-10 h-10 rounded-[var(--radius-md)] bg-accent/15 border border-accent/20">
               <Flame className="w-5 h-5 text-accent" />
             </div>
-            <span className="font-display font-semibold text-[15px] text-text-1 tracking-tight">
-              Savage
+            <span className="font-display font-bold text-[15px] text-text-1 tracking-tight uppercase">
+              SIDEKICK
             </span>
           </div>
         </BlurFade>
@@ -195,7 +195,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-center w-12 h-12 rounded-[var(--radius-md)] bg-accent/15 border border-accent/20">
                 <Flame className="w-6 h-6 text-accent" />
               </div>
-              <p className="font-display font-bold text-2xl text-text-1 tracking-tight">Savage</p>
+              <p className="font-display font-bold text-2xl text-text-1 tracking-tight uppercase">SIDEKICK</p>
             </div>
           </BlurFade>
 

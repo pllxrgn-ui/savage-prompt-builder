@@ -58,7 +58,7 @@ export default function LibraryPage() {
   function handleDownloadMedia(img: GeneratedImage) {
     const a = document.createElement("a");
     a.href = img.url;
-    a.download = `savage-${img.id}.png`;
+    a.download = `sidekick-${img.id}.png`;
     a.click();
   }
 
