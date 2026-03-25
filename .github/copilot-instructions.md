@@ -274,20 +274,25 @@ When building for a specific page, check there first.
 
 ---
 
-## Skills — When to Read Full SKILL.md
+## Skills — Auto-Applied by Task Type
 
-Only read full SKILL.md files for **new patterns, unfamiliar domains, or complex tasks**. For routine edits, use the inline checklists below.
+Skills are **always** applied automatically based on what you're working on — no need to explicitly request them. Read the SKILL.md before implementing whenever the task matches a trigger. Cap at 3 skills max per task.
 
-| Task Type | Read Full SKILL.md? | When |
-|-----------|---------------------|------|
-| **New** UI component or page from scratch | `frontend-design` | Yes — first time only |
-| Editing existing UI components | No — use inline checklist below | Always |
-| Active redesign / design system work | `frontend-design` + `ui-ux-pro-max` | Yes |
-| Auth, API routes, input validation | `security-review` | Yes — always for auth/security |
-| New Drizzle schema or migration | `database-design` | Yes |
-| Writing tests | `unit-testing` | Yes |
-| Reviewing a PR or diff | `code-review` | Yes |
-| Performance / bundle analysis | `performance-optimization` | Yes |
+For all UI work, always read and apply **all three**: `frontend-design` + `web-accessibility` + `ui-ux-pro-max`. These three always travel together for any component, page, or layout work.
+
+For routine edits where the project's inline checklists fully cover the work, those checklists are used as a shortcut — the full SKILL.md is still available if deeper guidance is needed.
+
+| Task Type | Skill(s) | Notes |
+|-----------|----------|-------|
+| Any UI component or page (new **or** edit) | `frontend-design` + `web-accessibility` + `ui-ux-pro-max` | Always — all three |
+| Active redesign / design system work | `frontend-design` + `web-accessibility` + `ui-ux-pro-max` | All three |
+| WCAG / a11y audit, ARIA, focus | `web-accessibility` + `frontend-design` | Always |
+| Auth, API routes, input validation | `security-review` | Always — no exceptions |
+| New Drizzle schema or migration | `database-design` | Always |
+| Writing or updating tests | `unit-testing` | Always |
+| Reviewing a PR or diff | `code-review` | Always |
+| Performance / bundle analysis | `performance-optimization` | Always |
+| React hooks, state, component patterns | `react-best-practices` | When relevant |
 
 ---
 

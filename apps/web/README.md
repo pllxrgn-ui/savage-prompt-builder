@@ -1,4 +1,4 @@
-# Savage Prompt Builder — Web App
+# SIDEKICK Prompt Builder — Web App
 
 AI image prompt builder with 20 templates, 9 generator formats, and a dark-first design system.
 
