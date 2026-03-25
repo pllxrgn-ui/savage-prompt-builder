@@ -1,65 +1,74 @@
-"use client";
+"use client"
 
-import { useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, useRef, type ComponentPropsWithoutRef } from "react"
+import { useInView, useMotionValue, useSpring } from "motion/react"
 
-interface NumberTickerProps {
-  value: number;
-  direction?: "up" | "down";
-  className?: string;
-  delay?: number;
-  decimalPlaces?: number;
+import { cn } from "@/lib/utils"
+
+interface NumberTickerProps extends ComponentPropsWithoutRef<"span"> {
+  value: number
+  startValue?: number
+  direction?: "up" | "down"
+  delay?: number
+  decimalPlaces?: number
 }
 
 export function NumberTicker({
   value,
+  startValue = 0,
   direction = "up",
   delay = 0,
   className,
   decimalPlaces = 0,
+  ...props
 }: NumberTickerProps) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [displayed, setDisplayed] = useState(direction === "down" ? value : 0);
-  const [hasStarted, setHasStarted] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null)
+  const motionValue = useMotionValue(direction === "down" ? value : startValue)
+  const springValue = useSpring(motionValue, {
+    damping: 60,
+    stiffness: 100,
+  })
+  const isInView = useInView(ref, { once: true, margin: "0px" })
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting && !hasStarted) {
-          setHasStarted(true);
-          setTimeout(() => {
-            const startVal = direction === "down" ? value : 0;
-            const endVal = direction === "down" ? 0 : value;
-            const duration = 1500;
-            const startTime = performance.now();
+    let timer: ReturnType<typeof setTimeout> | null = null
 
-            function update(now: number) {
-              const elapsed = now - startTime;
-              const progress = Math.min(elapsed / duration, 1);
-              // Ease out cubic
-              const eased = 1 - Math.pow(1 - progress, 3);
-              const current = startVal + (endVal - startVal) * eased;
-              setDisplayed(current);
-              if (progress < 1) requestAnimationFrame(update);
-            }
+    if (isInView) {
+      timer = setTimeout(() => {
+        motionValue.set(direction === "down" ? startValue : value)
+      }, delay * 1000)
+    }
 
-            requestAnimationFrame(update);
-          }, delay * 1000);
+    return () => {
+      if (timer !== null) {
+        clearTimeout(timer)
+      }
+    }
+  }, [motionValue, isInView, delay, value, direction, startValue])
+
+  useEffect(
+    () =>
+      springValue.on("change", (latest) => {
+        if (ref.current) {
+          ref.current.textContent = Intl.NumberFormat("en-US", {
+            minimumFractionDigits: decimalPlaces,
+            maximumFractionDigits: decimalPlaces,
+          }).format(Number(latest.toFixed(decimalPlaces)))
         }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [value, direction, delay, hasStarted]);
+      }),
+    [springValue, decimalPlaces]
+  )
 
   return (
     <span
       ref={ref}
-      className={cn("inline-block tabular-nums tracking-tight", className)}
+      className={cn(
+        "inline-block tracking-wider text-black tabular-nums dark:text-white",
+        className
+      )}
+      {...props}
     >
-      {displayed.toFixed(decimalPlaces).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+      {startValue}
     </span>
-  );
+  )
 }

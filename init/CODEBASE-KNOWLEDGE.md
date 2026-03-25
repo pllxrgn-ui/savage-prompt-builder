@@ -1,7 +1,7 @@
 # Savage Prompt Builder — Codebase Knowledge Base
 
 > **MANDATORY**: Read this file before starting any work. Update it after making structural changes.  
-> **Last Updated**: March 19, 2026
+> **Last Updated**: March 25, 2026
 
 **Project**: AI prompt engineering tool for generative image/video models (Nanobanana 2 primary, Midjourney, DALL·E, Stable Diffusion, Flux, Leonardo, Firefly, Ideogram, Replicate).  
 **Tech Stack**: Next.js 16 · React 19 · TypeScript strict · Tailwind v4 · shadcn/ui · Magic UI · Framer Motion · Zustand 5 · Supabase · Drizzle ORM · Lucide icons · Phosphor icons
@@ -140,7 +140,7 @@ Location: `apps/web/src/components/`
 ### ui/ (~35 components)
 **shadcn/ui primitives**: button, card, dialog, input, label, tabs, select, switch, separator, badge, dropdown-menu, slider, scroll-area, sheet, tooltip, accordion  
 **Magic UI**: magic-card, shimmer-button, border-beam, blur-fade, marquee, number-ticker, animated-gradient-text, animated-shiny-text, typing-animation, grid-pattern, dot-pattern, circuit-traces, AmbientGlow  
-**Custom**: LucideIcon (dual-library: ~80 Lucide + 15 Phosphor icons, use `"ph:Name"` prefix for Phosphor), AccentPicker, AnimatedLayout (PageTransition, StaggerContainer, FadeUpItem), ProUpgradeCard (Crown icon + Link to `/pricing`), ThemeToggle, ToastProvider, MasonryShowcase (4-column vertical Marquee with showcase images), CreditBalance (color-coded credit pill with Zap icon)
+**Custom**: LucideIcon (dual-library: ~80 Lucide + 15 Phosphor icons, use `"ph:Name"` prefix for Phosphor), AccentPicker, AnimatedLayout (PageTransition, StaggerContainer, FadeUpItem), ProUpgradeCard (Crown icon + Link to `/pricing`), ThemeToggle, ToastProvider, MasonryShowcase (4-column vertical Marquee with showcase images), CreditBalance (color-coded credit pill with Zap icon), VideoHeroBackground (looping ambient video — currently unused/dead code)
 
 ### builder/ (18 components)
 - `FieldInput.tsx` — Template field text inputs
@@ -182,7 +182,9 @@ AuthProvider (Supabase session wrapper)
 Location: `apps/web/src/hooks/`
 
 - `useAuth()` — `{ user, isPro, isAuthenticated, login, logout, devMode }`
+- `useAuthGate()` — `{ requireAuth, AuthGateModal }` — wraps actions to require auth, shows login modal for unauthenticated users (Radix Dialog)
 - `useKeyboardShortcuts()` — Keyboard bindings (Cmd+S, etc.)
+- `useFocusTrap()` — Focus trap for modals/dialogs
 - `use-pro-gate.ts` — Pro feature gating logic
 
 ---
@@ -213,10 +215,10 @@ Location: `apps/web/src/app/api/`
 
 | Route | Auth | Purpose |
 |-------|------|---------|
-| `/` | Public | Landing page |
-| `/login` | Public | Auth (Supabase OAuth + email + guest) |
+| `/` | Public | Redirects to `/home` |
+| `/login` | Public | Auth (Supabase OAuth + email + guest) — superhero themed copy |
 | `/auth/callback` | Public | OAuth callback |
-| `/home` | Protected | Dashboard + template showcase |
+| `/home` | Public | Greeter dashboard — works for both auth'd and unauth'd users (auth gate on interactions) |
 | `/builder` | Protected | Core prompt builder (single-step tabs with AnimatePresence) |
 | `/generate` | Protected | Image generation results grid |
 | `/library` | Protected | Saved prompts + recipes |
@@ -458,4 +460,6 @@ POLLINATIONS_API_KEY=
 |------|---------|
 | 2026-03-19 | Session 2: Visual QA + UI polish — fixed mobile builder gap (height calc), template card hover states (border + bg), chip strip cutoff (fade gradients), pricing/upgrade navigation (ProUpgradeCard → Link, TopNav → /pricing), Dev Mode toggle in settings. |
 | 2026-03-19 | L-series sprint: CreditBalance component, ValidationGate component, AISuggestButton component. auth-store gains credits state + actions. SavedPrompt type extended. loadRecipe + PromptCard.handleLoad fixed for full field restore. builder-store count: 19 → 19 components, generate count: 1 → 2 components. |
+| 2026-03-25 | Session 5: Hero redesign (cinematic centered layout, "Every creative vision needs a sidekick"), auth gate system (useAuthGate hook + AuthGateModal), login superhero copy, /home made public (greeter dashboard), TopNav auth gating, video backgrounds removed from home+login, showcase branding "SIDEKICK Studios", marquee gap fix, Gen & Jade feedback doc created. |
+| 2026-03-23 | Session 4: Pricing page overhaul — 4-tier credit-based (Free/Starter/Pro/Studio), annual billing default, comparison table, FAQ. |
 | 2026-03-13 | Initial creation. Emoji removal from mockup-config (→ Lucide icons + hex color swatches). MockupPanel upgraded to shadcn Select + Switch. LucideIcon expanded to 64 icons. |

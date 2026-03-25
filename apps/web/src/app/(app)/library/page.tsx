@@ -119,7 +119,10 @@ export default function LibraryPage() {
   const diffPromptB = diffIds[1] ? savedPrompts.find((p) => p.id === diffIds[1]) ?? null : null;
 
   return (
-    <div className="p-5 md:p-8 pb-20 md:pb-8 max-w-7xl mx-auto min-h-screen">
+    <div className="relative p-5 md:p-8 pb-20 md:pb-8 max-w-7xl mx-auto min-h-screen">
+      {/* Ambient glow */}
+      <div className="pointer-events-none fixed top-0 left-0 right-0 h-[400px] opacity-30 bg-hero-glow" />
+
       {/* Header */}
       <BlurFade>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">

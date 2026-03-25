@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Flame, ArrowRight, Sparkles } from "lucide-react";
 import { BlurFade } from "@/components/ui/blur-fade";
+import { VideoHeroBackground } from "@/components/ui/VideoHeroBackground";
 
 const LINE_1 = "Craft prompts that";
 const LINE_2 = "actually work";
@@ -63,6 +64,8 @@ export default function LandingPage() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center">
+      <VideoHeroBackground />
+
       {/* Content — fades/scales out on exit */}
       <div
         className="relative z-10 flex flex-col items-center text-center px-6 max-w-3xl transition-all duration-500"

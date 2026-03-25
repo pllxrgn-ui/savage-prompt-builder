@@ -22,7 +22,9 @@ import { LucideIcon } from "@/components/ui/LucideIcon";
 import type { GeneratorId, UIStore } from "@/types";
 import { GenerateModal } from "@/components/generate/GenerateModal";
 import { BorderBeam } from "@/components/ui/border-beam";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { Button } from "@/components/ui/button";
+import { celebrationBurst, bigCelebration, microSparkle } from "@/lib/confetti";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -238,6 +240,7 @@ export function PromptOutput() {
     if (!currentDisplayPrompt) return;
     await navigator.clipboard.writeText(currentDisplayPrompt);
     setCopied(true);
+    celebrationBurst();
     addToast({ message: "Prompt copied!", type: "success" });
     setTimeout(() => setCopied(false), 2000);
   }
@@ -264,6 +267,7 @@ export function PromptOutput() {
       variations,
     });
     setSaved(true);
+    celebrationBurst();
     addToast({ message: "Saved to history!", type: "success" });
     setTimeout(() => setSaved(false), 2000);
   }
@@ -289,6 +293,7 @@ export function PromptOutput() {
       ...(isClothing ? { clothingData: extractClothingState(clothingState) } : {}),
     });
     setRecipeSaved(true);
+    celebrationBurst();
     addToast({ message: "Recipe saved!", type: "success" });
     setTimeout(() => setRecipeSaved(false), 2000);
   }
@@ -383,6 +388,7 @@ export function PromptOutput() {
       if (results && results.length > 0) {
         setPolishedResult(results[0]);
         setPolishRating(null);
+        bigCelebration();
         addToast({ message: "Prompt polished successfully!", type: "success" });
       }
     } catch (error: any) {
@@ -723,19 +729,30 @@ export function PromptOutput() {
       <div className="shrink-0 relative z-10 border-t border-glass-border bg-bg-1 px-4 py-4 space-y-2">
         {/* Row 1: Polish + Generate */}
         <div className="flex gap-2">
+          {polishedResult ? (
+            <Button
+              onClick={handlePolish}
+              disabled
+              className="flex-1 rounded-full font-semibold text-xs cursor-pointer bg-accent-gold/15 text-accent-gold border border-accent-gold/30"
+            >
+              <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+              Polished ✓
+            </Button>
+          ) : (
+            <ShimmerButton
+              onClick={handlePolish}
+              disabled={!currentDisplayPrompt || isPolishing}
+              className="flex-1 h-9 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {isPolishing ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 mr-1.5" />}
+              {isPolishing ? "Polishing…" : "Polish Prompt"}
+            </ShimmerButton>
+          )}
           <Button
-            onClick={handlePolish}
-            disabled={!currentDisplayPrompt || isPolishing || !!polishedResult}
-            className={cn(
-              "flex-1 rounded-full font-semibold text-xs cursor-pointer",
-              polishedResult ? "bg-accent-gold/15 text-accent-gold border border-accent-gold/30" : "bg-accent text-white",
-            )}
-          >
-            {isPolishing ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5 mr-1.5" />}
-            {isPolishing ? "Polishing…" : polishedResult ? "Polished ✓" : "Polish Prompt"}
-          </Button>
-          <Button
-            onClick={() => setGenerateOpen(true)}
+            onClick={(e) => {
+              microSparkle(e.clientX, e.clientY);
+              setGenerateOpen(true);
+            }}
             disabled={!currentDisplayPrompt}
             variant="outline"
             className="flex-1 rounded-full text-xs hover:text-accent hover:border-accent/40 cursor-pointer"

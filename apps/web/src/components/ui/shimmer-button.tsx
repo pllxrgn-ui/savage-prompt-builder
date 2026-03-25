@@ -47,26 +47,12 @@ export const ShimmerButton = React.forwardRef<HTMLButtonElement, ShimmerButtonPr
         ref={ref}
         {...props}
       >
-        {/* Shimmer layer */}
-        <div
-          className={cn(
-            "absolute inset-0 overflow-visible [container-type:size]",
-          )}
-        >
-          <div className="absolute inset-0 h-[100cqh] animate-shimmer-slide-x [aspect-ratio:1] [border-radius:0] [mask:none]">
-            <div className="animate-spin-around absolute inset-[-100%] w-auto rotate-0 [background:conic-gradient(from_calc(270deg-(var(--spread)*0.5)),transparent_0,var(--shimmer-color)_var(--spread),transparent_var(--spread))] [translate:0_0]" />
-          </div>
+        {/* Shimmer sweep layer */}
+        <div className="absolute inset-0 overflow-hidden [border-radius:var(--radius)]">
+          <div className="animate-shimmer-sweep absolute inset-0 -translate-x-full [background:linear-gradient(90deg,transparent_0%,var(--shimmer-color)_50%,transparent_100%)] opacity-20" />
         </div>
-        {children}
 
-        {/* Highlight */}
-        <div
-          className={cn(
-            "absolute inset-[var(--cut)] [border-radius:calc(var(--radius)-var(--cut))]",
-            "[background:var(--bg)]",
-          )}
-        />
-        <span className="relative z-10">{children}</span>
+        <span className="relative z-10 flex items-center gap-1.5">{children}</span>
       </button>
     );
   },

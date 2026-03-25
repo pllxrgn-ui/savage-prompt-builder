@@ -41,11 +41,20 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Gating Logic
-  const isAuthPage = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup') || request.nextUrl.pathname === '/'
-  const isProtectedPage = request.nextUrl.pathname.startsWith('/builder') || request.nextUrl.pathname.startsWith('/library') || request.nextUrl.pathname.startsWith('/settings') || request.nextUrl.pathname.startsWith('/home') || request.nextUrl.pathname.startsWith('/moodboard') || request.nextUrl.pathname.startsWith('/generate')
+  const pathname = request.nextUrl.pathname;
+  const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/signup');
+  const isProtectedPage = pathname.startsWith('/builder') || pathname.startsWith('/library') || pathname.startsWith('/settings') || pathname.startsWith('/moodboard') || pathname.startsWith('/generate');
+  // /home is public (greeter dashboard) — not in protected list
 
   const guestCookie = request.cookies.get('spb-guest')?.value;
   const isGuest = guestCookie ? await verifyGuestToken(guestCookie) : false;
+
+  // Landing page → redirect to /home (greeter dashboard)
+  if (pathname === '/') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/home';
+    return NextResponse.redirect(url);
+  }
 
   if (!user && !isGuest && isProtectedPage) {
     // no user and no guest cookie → redirect to login
@@ -54,10 +63,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (user && isAuthPage && request.nextUrl.pathname !== '/') {
-    // User is logged in, redirect them away from login/signup to builder
+  if (user && isAuthPage) {
+    // User is logged in, redirect them away from login/signup to home
     const url = request.nextUrl.clone()
-    url.pathname = '/builder'
+    url.pathname = '/home'
     return NextResponse.redirect(url)
   }
 

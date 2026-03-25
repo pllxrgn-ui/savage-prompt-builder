@@ -10,9 +10,9 @@ import { BlurFade } from "@/components/ui/blur-fade";
 import { useAuthStore } from "@/lib/store/auth-store";
 
 /* ── Typing animation for the login hero headline ── */
-const L1 = "Craft prompts";
-const L2 = "that actually";
-const L3 = "work.";
+const L1 = "Unleash your";
+const L2 = "creative";
+const L3 = "superpower.";
 const TOTAL = L1.length + L2.length + L3.length;
 
 function LoginHeroTyping() {
@@ -122,6 +122,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex relative">
+
       {/* ── Left panel: cinematic branding ── */}
       <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 relative z-10">
         {/* Logo — group 1 */}
@@ -155,8 +156,8 @@ export default function LoginPage() {
           {/* Subtitle — group 2 */}
           <BlurFade delay={1.0} yOffset={10}>
             <p className="text-text-2 text-lg leading-relaxed max-w-sm">
-              Polish raw ideas into precise AI image prompts.
-              Built for designers, tattoo artists, and creators.
+              Your AI sidekick for perfect prompts.
+              Built for designers, tattoo artists, and creators who demand precision.
             </p>
           </BlurFade>
 

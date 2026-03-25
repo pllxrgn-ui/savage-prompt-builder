@@ -35,6 +35,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CreditBalance } from "@/components/ui/CreditBalance";
+import { useAuthGate } from "@/hooks/useAuthGate";
+
+/* ── Protected routes that require auth gate */
+const PROTECTED_HREFS = new Set(["/builder", "/generate", "/library", "/moodboard"]);
 
 /* ── Nav configuration ── */
 const NAV_ITEMS = [
@@ -51,16 +55,19 @@ function NavLink({
   icon: Icon,
   badge,
   isActive,
+  onGatedClick,
 }: {
   href: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   badge: string | null;
   isActive: boolean;
+  onGatedClick?: (e: React.MouseEvent) => void;
 }) {
   return (
     <Link
-      href={href}
+      href={onGatedClick ? "#" : href}
+      onClick={onGatedClick}
       className={cn(
         "relative flex items-center gap-2 px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors duration-150 cursor-pointer",
         isActive ? "text-text-1" : "text-text-3 hover:text-text-1 hover:bg-glass",
@@ -249,6 +256,7 @@ export function MobileTopBar() {
 
 export function MobileTabBar() {
   const pathname = usePathname();
+  const { isAuthenticated, requireAuth, AuthGateModal } = useAuthGate();
 
   return (
     <nav
@@ -261,12 +269,14 @@ export function MobileTabBar() {
         const isActive =
           pathname === href ||
           (href !== "/home" && pathname?.startsWith(href));
+        const needsGate = !isAuthenticated && PROTECTED_HREFS.has(href);
 
         if (primary) {
           return (
             <Link
               key={href}
-              href={href}
+              href={needsGate ? "#" : href}
+              onClick={needsGate ? (e: React.MouseEvent) => { e.preventDefault(); requireAuth(() => {})(); } : undefined}
               aria-label={label}
               className="relative flex flex-col items-center -mt-5 cursor-pointer group"
             >
@@ -301,7 +311,8 @@ export function MobileTabBar() {
         return (
           <Link
             key={href}
-            href={href}
+            href={needsGate ? "#" : href}
+            onClick={needsGate ? (e: React.MouseEvent) => { e.preventDefault(); requireAuth(() => {})(); } : undefined}
             aria-label={label}
             className={cn(
                 "flex flex-col items-center gap-1 min-w-[48px] min-h-[48px] py-2 rounded-2xl",
@@ -327,6 +338,7 @@ export function MobileTabBar() {
           </Link>
         );
       })}
+      <AuthGateModal />
     </nav>
   );
 }
@@ -336,6 +348,7 @@ export function TopNav() {
   const pathname = usePathname();
   const theme = useSettingsStore((s) => s.theme);
   const toggleTheme = useSettingsStore((s) => s.toggleTheme);
+  const { isAuthenticated, requireAuth, AuthGateModal } = useAuthGate();
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -364,6 +377,7 @@ export function TopNav() {
           {NAV_ITEMS.map(({ href, label, icon: Icon, badge }) => {
             const isActive =
               pathname === href || pathname?.startsWith(href);
+            const needsGate = !isAuthenticated && PROTECTED_HREFS.has(href);
             return (
               <NavLink
                 key={href}
@@ -372,6 +386,7 @@ export function TopNav() {
                 icon={Icon}
                 badge={badge}
                 isActive={isActive}
+                onGatedClick={needsGate ? (e: React.MouseEvent) => { e.preventDefault(); requireAuth(() => {})(); } : undefined}
               />
             );
           })}
@@ -419,6 +434,8 @@ export function TopNav() {
           {/* User menu */}
           <UserMenu />
         </div>
+
+        <AuthGateModal />
       </motion.header>
     </TooltipProvider>
   );

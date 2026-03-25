@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 /* ============================================
    SIDEKICK Prompt Builder — Design System
    Refined Luxury: Clean, Breathable, Elegant
@@ -139,6 +141,27 @@
   --color-glass-border: var(--glass-border);
   --color-glass-border-strong: var(--glass-border-strong);
   --color-radius-2xl: var(--radius-2xl);
+  --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite alternate;
+  --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
+  @keyframes shimmer-slide {
+  to {
+    transform: translate(calc(100cqw - 100%), 0);
+    }
+  }
+  @keyframes spin-around {
+  0% {
+    transform: translateZ(0) rotate(0);
+    }
+  15%, 35% {
+    transform: translateZ(0) rotate(90deg);
+    }
+  65%, 85% {
+    transform: translateZ(0) rotate(270deg);
+    }
+  100% {
+    transform: translateZ(0) rotate(360deg);
+    }
+  }
 }
 
 /* --- Base Styles --- */
@@ -248,8 +271,6 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-
-
 /* --- Marquee animations (Magic UI) --- */
 @keyframes marquee {
   from { transform: translateX(0); }
@@ -270,24 +291,13 @@ body {
 }
 
 /* --- Shimmer button animations --- */
-@keyframes shimmer-slide-x {
-  from { transform: translateX(-100%) }
-  to { transform: translateX(100%) }
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
 }
 
-@keyframes spin-around {
-  0% { transform: translateZ(0) rotate(0); }
-  15%, 35% { transform: translateZ(0) rotate(90deg); }
-  65%, 85% { transform: translateZ(0) rotate(270deg); }
-  100% { transform: translateZ(0) rotate(360deg); }
-}
-
-.animate-shimmer-slide-x {
-  animation: shimmer-slide-x var(--speed, 3s) ease-in-out infinite alternate;
-}
-
-.animate-spin-around {
-  animation: spin-around calc(var(--speed, 3s) * 2) infinite linear;
+.animate-shimmer-sweep {
+  animation: shimmer-sweep var(--speed, 3s) ease-in-out infinite;
 }
 
 /* --- Gradient animation (AnimatedGradientText) --- */
@@ -399,8 +409,6 @@ body {
 .ambient-blob-1 { animation: ambient-drift-1 25s ease-in-out infinite; }
 .ambient-blob-2 { animation: ambient-drift-2 30s ease-in-out infinite; }
 .ambient-blob-3 { animation: ambient-drift-3 22s ease-in-out infinite; }
-
-
 
 /* Aurora background keyframes */
 @keyframes aurora-drift-1 {

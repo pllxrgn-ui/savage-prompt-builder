@@ -336,6 +336,9 @@ function BuilderPageInner() {
   // ── Builder workspace (template selected) ────────────────────────────────
   return (
     <>
+      {/* Ambient glow */}
+      <div className="pointer-events-none fixed top-0 left-0 right-0 h-[400px] opacity-30 bg-hero-glow" />
+
       {/* Full-height three-panel workspace */}
       <div className="flex flex-col h-[calc(100dvh-112px)] md:h-[calc(100dvh-56px)]">
 
