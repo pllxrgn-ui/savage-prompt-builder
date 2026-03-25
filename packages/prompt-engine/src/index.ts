@@ -159,3 +159,5 @@ export function buildPrompt(input: PromptInput): BuiltPrompt {
 export { buildTemplatePrompt, templateBuilders } from "./template-builders";
 export { formatForGenerator, generatorFormats } from "./generator-formats";
 export type { FormatInput } from "./generator-formats";
+export { buildClothingPrompt } from "./clothing-builder";
+export type { ClothingPromptInput, ClothingPromptOutput } from "./clothing-builder";

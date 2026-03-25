@@ -44,6 +44,7 @@ export interface Recipe {
   variables: Record<string, string>;
   variations: Record<string, string>[];
   mockup: { enabled: boolean; item: string; color: string; display: string } | null;
+  clothingData?: Record<string, unknown>;
   createdAt: string;
 }
 

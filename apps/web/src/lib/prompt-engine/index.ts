@@ -5,6 +5,7 @@
 export {
   buildPrompt,
   buildTemplatePrompt,
+  buildClothingPrompt,
   formatForGenerator,
   templateBuilders,
   generatorFormats,
@@ -14,4 +15,6 @@ export type {
   PromptInput,
   BuiltPrompt,
   FormatInput,
+  ClothingPromptInput,
+  ClothingPromptOutput,
 } from "@spb/prompt-engine";

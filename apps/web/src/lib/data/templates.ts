@@ -96,7 +96,7 @@ export const TEMPLATES: Template[] = [
     group: "branding",
     description: "Brand marks",
     fields: [
-      { id: "brandname", label: "BRAND NAME", question: "What's the brand called?", placeholder: "SAVAGE, APEX, NOIR...", color: "#F472B6", required: true },
+      { id: "brandname", label: "BRAND NAME", question: "What's the brand called?", placeholder: "SIDEKICK, APEX, NOIR...", color: "#F472B6", required: true },
       { id: "subject", label: "SUBJECT", question: "Brand symbol?", placeholder: "phoenix, crown, lion...", color: "#FF4D6D" },
       { id: "style", label: "STYLE", question: "Design style?", placeholder: "line art, emblem badge...", color: "#FF6B35" },
       { id: "mood", label: "MOOD", question: "Brand feel?", placeholder: "premium, bold...", color: "#A78BFA" },

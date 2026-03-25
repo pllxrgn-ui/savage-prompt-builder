@@ -1,4 +1,5 @@
 export { useBuilderStore } from "./builder-store";
+export { useClothingStore } from "./clothing-store";
 export { useUIStore } from "./ui-store";
 export { useSettingsStore } from "./settings-store";
 export { useHistoryStore } from "./history-store";

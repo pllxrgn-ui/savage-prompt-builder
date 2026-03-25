@@ -22,7 +22,7 @@ export const FIELD_PRESETS: Record<string, Record<string, string[]>> = {
     avoid: ["text", "logos", "fine print", "busy backgrounds", "low quality", "stock photo feel"],
   },
   brand: {
-    brandname: ["SAVAGE", "APEX", "NOIR", "ZENITH", "ATLAS", "PULSE", "FORGE", "EMBER", "DRIFT", "NOVA"],
+    brandname: ["SIDEKICK", "APEX", "NOIR", "ZENITH", "ATLAS", "PULSE", "FORGE", "EMBER", "DRIFT", "NOVA"],
     subject: ["phoenix", "crown", "lion", "shield", "mountain", "wave", "flame", "compass", "diamond", "wolf"],
     style: ["line art", "emblem badge", "minimalist", "lettermark", "geometric", "vintage seal", "abstract", "monogram"],
     mood: ["premium", "bold", "trustworthy", "modern", "timeless", "innovative", "luxurious", "approachable"],
